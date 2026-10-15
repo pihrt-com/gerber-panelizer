@@ -1,0 +1,72 @@
+<Window x:Class="GerberPanelizer.App.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:GerberPanelizer.App"
+        Title="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[Settings]}"
+        Width="620" Height="650" WindowStartupLocation="CenterOwner" ResizeMode="CanMinimize" Background="#F6F9F8" FontFamily="Segoe UI">
+    <Border Padding="24">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="16" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="16" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock FontSize="21" FontWeight="SemiBold" Foreground="#193E3A" Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[Settings]}" />
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <StackPanel Margin="0,0,12,0">
+                            <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[Language]}" Margin="0,0,0,5" />
+                            <ComboBox SelectedValue="{Binding Language}" SelectedValuePath="Tag">
+                                <ComboBoxItem Tag="cs">Čeština</ComboBoxItem>
+                                <ComboBoxItem Tag="en">English</ComboBoxItem>
+                                <ComboBoxItem Tag="de">Deutsch</ComboBoxItem>
+                                <ComboBoxItem Tag="fr">Français</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[BoardSpacing]}" Margin="0,0,0,5" />
+                            <TextBox Text="{Binding BoardSpacingMm, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                    </Grid>
+                    <Grid Margin="0,16,0,0">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="16" /><RowDefinition Height="Auto" /><RowDefinition Height="16" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                        <StackPanel Margin="0,0,12,0"><TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WorkAreaWidth]}" Margin="0,0,0,5" /><TextBox Text="{Binding WorkAreaWidthMm, UpdateSourceTrigger=PropertyChanged}" /></StackPanel>
+                        <StackPanel Grid.Column="1"><TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WorkAreaHeight]}" Margin="0,0,0,5" /><TextBox Text="{Binding WorkAreaHeightMm, UpdateSourceTrigger=PropertyChanged}" /></StackPanel>
+                        <StackPanel Grid.Row="2" Margin="0,0,12,0"><TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[SafetyMargin]}" Margin="0,0,0,5" /><TextBox Text="{Binding SafetyMarginMm, UpdateSourceTrigger=PropertyChanged}" /></StackPanel>
+                        <StackPanel Grid.Row="2" Grid.Column="1"><TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[BottomMirrorPolicy]}" Margin="0,0,0,5" /><ComboBox SelectedValue="{Binding BottomMirrorPolicy}" SelectedValuePath="Tag"><ComboBoxItem Tag="Off">Off</ComboBoxItem><ComboBoxItem Tag="MirrorX">Mirror X</ComboBoxItem><ComboBoxItem Tag="MirrorY">Mirror Y</ComboBoxItem></ComboBox></StackPanel>
+                        <CheckBox Grid.Row="4" Grid.ColumnSpan="2" IsChecked="{Binding AllowRotation}" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[AllowRotation]}" />
+                    </Grid>
+                    <TextBlock FontWeight="SemiBold" Foreground="#193E3A" Margin="0,20,0,4" Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[LayerColours]}" />
+                    <TextBlock FontSize="12" Foreground="{StaticResource MutedTextBrush}" Margin="0,0,0,8" Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[LayerColoursHint]}" />
+                    <ItemsControl ItemsSource="{Binding LayerColors}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="10" Margin="0,0,0,8" Background="#F3F7F6" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="130" /><ColumnDefinition Width="*" /><ColumnDefinition Width="12" /><ColumnDefinition Width="48" /></Grid.ColumnDefinitions>
+                                        <TextBlock VerticalAlignment="Center" FontWeight="SemiBold" Text="{Binding DisplayName}" />
+                                        <TextBox Grid.Column="1" Text="{Binding Hex, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[HexColourHint]}" />
+                                        <Button Grid.Column="3" Background="{Binding PreviewBrush}" BorderBrush="#6B7D7A" BorderThickness="1" Padding="0" ToolTip="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[ColorPickerHint]}" Command="{Binding DataContext.PickColorCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}">
+                                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE790;" Foreground="White" FontSize="17" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Button>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ScrollViewer>
+            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Command="{Binding ImportSettingsCommand}" Margin="0,0,8,0" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[ImportSettings]}" />
+                <Button Command="{Binding ExportSettingsCommand}" Margin="0,0,18,0" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[ExportSettings]}" />
+                <Button IsCancel="True" Margin="0,0,8,0" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[Cancel]}" />
+                <Button IsDefault="True" Style="{StaticResource PrimaryButton}" Command="{Binding SaveCommand}" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[Save]}" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

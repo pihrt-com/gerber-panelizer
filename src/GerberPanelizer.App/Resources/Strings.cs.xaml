@@ -1,0 +1,98 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <sys:String x:Key="ImportFiles" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vložit soubory</sys:String>
+    <sys:String x:Key="ImportedBoards" xmlns:sys="clr-namespace:System;assembly=mscorlib">Načtené desky</sys:String>
+    <sys:String x:Key="ManufacturingSide" xmlns:sys="clr-namespace:System;assembly=mscorlib">Strana výroby</sys:String>
+    <sys:String x:Key="Layers" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vrstvy</sys:String>
+    <sys:String x:Key="WorkArea" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pracovní plocha stroje</sys:String>
+    <sys:String x:Key="CanvasEmptyTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pro začátek vložte výrobní data</sys:String>
+    <sys:String x:Key="CanvasEmptyHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">ZIP, RAR, Gerber nebo Excellon soubory</sys:String>
+    <sys:String x:Key="Tip" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vložte desky, vyberte stranu výroby a spusťte panelizaci.</sys:String>
+    <sys:String x:Key="Panelize" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panelizovat</sys:String>
+    <sys:String x:Key="Print" xmlns:sys="clr-namespace:System;assembly=mscorlib">Tisk</sys:String>
+    <sys:String x:Key="Export" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exportovat ZIP</sys:String>
+    <sys:String x:Key="Settings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nastavení</sys:String>
+    <sys:String x:Key="Language" xmlns:sys="clr-namespace:System;assembly=mscorlib">Jazyk</sys:String>
+    <sys:String x:Key="WorkAreaWidth" xmlns:sys="clr-namespace:System;assembly=mscorlib">Šířka pracovní plochy (mm)</sys:String>
+    <sys:String x:Key="WorkAreaHeight" xmlns:sys="clr-namespace:System;assembly=mscorlib">Výška pracovní plochy (mm)</sys:String>
+    <sys:String x:Key="BoardSpacing" xmlns:sys="clr-namespace:System;assembly=mscorlib">Mezera mezi deskami (mm)</sys:String>
+    <sys:String x:Key="SafetyMargin" xmlns:sys="clr-namespace:System;assembly=mscorlib">Bezpečný okraj (mm)</sys:String>
+    <sys:String x:Key="AllowRotation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Povolit automatické otočení</sys:String>
+    <sys:String x:Key="Save" xmlns:sys="clr-namespace:System;assembly=mscorlib">Uložit nastavení</sys:String>
+    <sys:String x:Key="Cancel" xmlns:sys="clr-namespace:System;assembly=mscorlib">Zrušit</sys:String>
+    <sys:String x:Key="ExitConfirmationTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Ukončit Gerber Panelizer</sys:String>
+    <sys:String x:Key="ExitConfirmationText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Opravdu chcete ukončit aplikaci?</sys:String>
+    <sys:String x:Key="LayerColours" xmlns:sys="clr-namespace:System;assembly=mscorlib">Barvy vrstev</sys:String>
+    <sys:String x:Key="LayerColoursHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Zadejte hexadecimální hodnotu nebo klikněte na vzorek barvy pro výběr v paletě.</sys:String>
+    <sys:String x:Key="HexColourHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Platný formát: #RRGGBB</sys:String>
+    <sys:String x:Key="ColorPickerHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vybrat barvu</sys:String>
+    <sys:String x:Key="LayerDrill" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vrtání</sys:String>
+    <sys:String x:Key="LayerTop" xmlns:sys="clr-namespace:System;assembly=mscorlib">Horní vrstva</sys:String>
+    <sys:String x:Key="LayerBottom" xmlns:sys="clr-namespace:System;assembly=mscorlib">Spodní vrstva</sys:String>
+    <sys:String x:Key="LayerOutline" xmlns:sys="clr-namespace:System;assembly=mscorlib">Obrys</sys:String>
+    <sys:String x:Key="LayerSilkscreen" xmlns:sys="clr-namespace:System;assembly=mscorlib">Potisk</sys:String>
+    <sys:String x:Key="InvalidDimensions" xmlns:sys="clr-namespace:System;assembly=mscorlib">Rozměry pracovní plochy musí být větší než nula a mezery nesmí být záporné.</sys:String>
+    <sys:String x:Key="InvalidLayerColours" xmlns:sys="clr-namespace:System;assembly=mscorlib">Všechny barvy vrstev musí být v platném hexadecimálním formátu #RRGGBB.</sys:String>
+    <sys:String x:Key="SettingsReadFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Soubor s nastavením se nepodařilo načíst.</sys:String>
+    <sys:String x:Key="SettingsInvalid" xmlns:sys="clr-namespace:System;assembly=mscorlib">Soubor s nastavením nemá platný formát.</sys:String>
+    <sys:String x:Key="ExportSettings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Export nastavení</sys:String>
+    <sys:String x:Key="ImportSettings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Import nastavení</sys:String>
+    <sys:String x:Key="BottomMirrorPolicy" xmlns:sys="clr-namespace:System;assembly=mscorlib">Zrcadlení spodní strany</sys:String>
+    <sys:String x:Key="NewProject" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nový projekt</sys:String>
+    <sys:String x:Key="SaveProject" xmlns:sys="clr-namespace:System;assembly=mscorlib">Uložit projekt</sys:String>
+    <sys:String x:Key="LoadProject" xmlns:sys="clr-namespace:System;assembly=mscorlib">Otevřít projekt</sys:String>
+    <sys:String x:Key="DeleteBoard" xmlns:sys="clr-namespace:System;assembly=mscorlib">Smazat desku</sys:String>
+    <sys:String x:Key="CloneBoard" xmlns:sys="clr-namespace:System;assembly=mscorlib">Duplikovat desku</sys:String>
+    <sys:String x:Key="StatusLog" xmlns:sys="clr-namespace:System;assembly=mscorlib">Podrobnosti</sys:String>
+    <sys:String x:Key="StatusReady" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připraveno.</sys:String>
+    <sys:String x:Key="StatusImportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Import se nezdařil: {0}</sys:String>
+    <sys:String x:Key="StatusNoBoardImported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nebyla načtena žádná deska; pozornost vyžaduje {0} chyb.</sys:String>
+    <sys:String x:Key="StatusNoLayersRecognised" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nebyly nalezeny rozpoznané výrobní vrstvy.</sys:String>
+    <sys:String x:Key="StatusImported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Načteno desek: {0}; výrobních souborů: {1}. Chyby: {2}, varování: {3}.</sys:String>
+    <sys:String x:Key="NewProjectConfirm" xmlns:sys="clr-namespace:System;assembly=mscorlib">Založit nový projekt a zahodit aktuální neuložený seznam desek?</sys:String>
+    <sys:String x:Key="StatusNewProject" xmlns:sys="clr-namespace:System;assembly=mscorlib">Byl vytvořen nový prázdný projekt.</sys:String>
+    <sys:String x:Key="StatusProjectSaved" xmlns:sys="clr-namespace:System;assembly=mscorlib">Projekt byl uložen do {0}.</sys:String>
+    <sys:String x:Key="StatusProjectSaveFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Projekt nelze uložit: {0}</sys:String>
+    <sys:String x:Key="StatusProjectLoadFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Projekt nelze otevřít: {0}</sys:String>
+    <sys:String x:Key="StatusProjectNoSources" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0}: nejsou uloženy zdrojové soubory.</sys:String>
+    <sys:String x:Key="StatusProjectLoaded" xmlns:sys="clr-namespace:System;assembly=mscorlib">Projekt načten: desek {0}, chybějících zdrojových souborů {1}.</sys:String>
+    <sys:String x:Key="StatusBoardDeleted" xmlns:sys="clr-namespace:System;assembly=mscorlib">Deska {0} byla smazána.</sys:String>
+    <sys:String x:Key="BoardCopyName" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} (kopie)</sys:String>
+    <sys:String x:Key="StatusBoardCloned" xmlns:sys="clr-namespace:System;assembly=mscorlib">Deska {0} byla duplikována.</sys:String>
+    <sys:String x:Key="StatusBoardMoved" xmlns:sys="clr-namespace:System;assembly=mscorlib">Deska {0} byla přesunuta.</sys:String>
+    <sys:String x:Key="StatusManufacturingSide" xmlns:sys="clr-namespace:System;assembly=mscorlib">Strana výroby: {0}. Pro použití vybraných vrstev spusťte panelizaci znovu.</sys:String>
+    <sys:String x:Key="StatusBottomMirrorNotImplemented" xmlns:sys="clr-namespace:System;assembly=mscorlib">Je nastaveno zrcadlení spodní strany ({0}), ale zrcadlený export Gerberu/Excellonu není implementován. Pro bezpečné pokračování vyberte Vypnuto.</sys:String>
+    <sys:String x:Key="StatusSelectBoard" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pro panelizaci vyberte alespoň jednu načtenou desku.</sys:String>
+    <sys:String x:Key="StatusPanelized" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panelizováno desek: {0}, na ploše {1}.</sys:String>
+    <sys:String x:Key="StatusPanelizedUnplaced" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panelizováno desek: {0}; desek, které se na plochu {2} nevejdou: {1}.</sys:String>
+    <sys:String x:Key="StatusPanelSettingsInvalid" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nastavení panelu není platné: {0}</sys:String>
+    <sys:String x:Key="StatusPanelizeBeforeExport" xmlns:sys="clr-namespace:System;assembly=mscorlib">Před exportem desky panelizujte.</sys:String>
+    <sys:String x:Key="StatusExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exportováno výrobních souborů: {0}, do {1}. Varování: {2}.</sys:String>
+    <sys:String x:Key="StatusExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Export se nezdařil: {0}</sys:String>
+    <sys:String x:Key="StatusPrintSent" xmlns:sys="clr-namespace:System;assembly=mscorlib">Náhled byl odeslán na vybranou tiskárnu.</sys:String>
+    <sys:String x:Key="StatusPanelizeBeforePrint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Před otevřením náhledu tisku desky panelizujte.</sys:String>
+    <sys:String x:Key="StatusPrintPreviewOpened" xmlns:sys="clr-namespace:System;assembly=mscorlib">Náhled tisku byl otevřen.</sys:String>
+    <sys:String x:Key="StatusSettingsSaved" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nastavení bylo uloženo. Pro použití nové pracovní plochy spusťte panelizaci znovu.</sys:String>
+    <sys:String x:Key="SideTop" xmlns:sys="clr-namespace:System;assembly=mscorlib">horní</sys:String>
+    <sys:String x:Key="SideBottom" xmlns:sys="clr-namespace:System;assembly=mscorlib">spodní</sys:String>
+    <sys:String x:Key="SideBoth" xmlns:sys="clr-namespace:System;assembly=mscorlib">obě</sys:String>
+    <sys:String x:Key="BoardDetail" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0:0.##} × {1:0.##} mm · {2} souborů</sys:String>
+    <sys:String x:Key="BoardDetailNoOutline" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} souborů · bez měřitelného obrysu</sys:String>
+    <sys:String x:Key="ZoomHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Kolečko: přiblížení · prostřední tlačítko nebo mezerník + tažení: posun · Home: celé zobrazení</sys:String>
+    <sys:String x:Key="PrintPreview" xmlns:sys="clr-namespace:System;assembly=mscorlib">Náhled tisku</sys:String>
+    <sys:String x:Key="PanelPrintPreview" xmlns:sys="clr-namespace:System;assembly=mscorlib">Náhled tisku panelu</sys:String>
+    <sys:String x:Key="PrintPreviewDescription" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0:0.##} × {1:0.##} mm · {2} desek</sys:String>
+    <sys:String x:Key="FitToPage" xmlns:sys="clr-namespace:System;assembly=mscorlib">Přizpůsobit stránce</sys:String>
+    <sys:String x:Key="ActualSize" xmlns:sys="clr-namespace:System;assembly=mscorlib">100 % (skutečná velikost)</sys:String>
+    <sys:String x:Key="Scale" xmlns:sys="clr-namespace:System;assembly=mscorlib">Měřítko</sys:String>
+    <sys:String x:Key="PrintNow" xmlns:sys="clr-namespace:System;assembly=mscorlib">Tisk…</sys:String>
+    <sys:String x:Key="Close" xmlns:sys="clr-namespace:System;assembly=mscorlib">Zavřít</sys:String>
+    <sys:String x:Key="PanelPrintJob" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panel Gerber Panelizer</sys:String>
+    <sys:String x:Key="FilterProductionData" xmlns:sys="clr-namespace:System;assembly=mscorlib">Výrobní data</sys:String>
+    <sys:String x:Key="FilterArchives" xmlns:sys="clr-namespace:System;assembly=mscorlib">Archivy</sys:String>
+    <sys:String x:Key="FilterGerberExcellon" xmlns:sys="clr-namespace:System;assembly=mscorlib">Gerber a Excellon</sys:String>
+    <sys:String x:Key="FilterAllFiles" xmlns:sys="clr-namespace:System;assembly=mscorlib">Všechny soubory</sys:String>
+    <sys:String x:Key="FilterProject" xmlns:sys="clr-namespace:System;assembly=mscorlib">Projekt Gerber Panelizer</sys:String>
+    <sys:String x:Key="FilterZipArchive" xmlns:sys="clr-namespace:System;assembly=mscorlib">Archiv ZIP</sys:String>
+    <sys:String x:Key="FilterSettingsJson" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nastavení JSON</sys:String>
+    <sys:String x:Key="StatusProjectAbsoluteSource" xmlns:sys="clr-namespace:System;assembly=mscorlib">Projekt obsahuje nepřenosnou absolutní cestu ke zdrojovému souboru.</sys:String>
+</ResourceDictionary>

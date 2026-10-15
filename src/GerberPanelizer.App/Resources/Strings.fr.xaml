@@ -1,0 +1,60 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <sys:String x:Key="ImportFiles" xmlns:sys="clr-namespace:System;assembly=mscorlib">Importer des fichiers</sys:String>
+    <sys:String x:Key="ImportedBoards" xmlns:sys="clr-namespace:System;assembly=mscorlib">Cartes importées</sys:String>
+    <sys:String x:Key="ManufacturingSide" xmlns:sys="clr-namespace:System;assembly=mscorlib">Face de fabrication</sys:String>
+    <sys:String x:Key="Layers" xmlns:sys="clr-namespace:System;assembly=mscorlib">Couches</sys:String>
+    <sys:String x:Key="WorkArea" xmlns:sys="clr-namespace:System;assembly=mscorlib">Zone de travail de la machine</sys:String>
+    <sys:String x:Key="CanvasEmptyTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Ajoutez des données de fabrication pour commencer</sys:String>
+    <sys:String x:Key="CanvasEmptyHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Fichiers ZIP, RAR, Gerber ou Excellon</sys:String>
+    <sys:String x:Key="Tip" xmlns:sys="clr-namespace:System;assembly=mscorlib">Importez les cartes, choisissez la face, puis lancez la panélisation.</sys:String>
+    <sys:String x:Key="Panelize" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panéliser</sys:String>
+    <sys:String x:Key="Print" xmlns:sys="clr-namespace:System;assembly=mscorlib">Imprimer</sys:String>
+    <sys:String x:Key="Export" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exporter le ZIP</sys:String>
+    <sys:String x:Key="Settings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Paramètres</sys:String>
+    <sys:String x:Key="Language" xmlns:sys="clr-namespace:System;assembly=mscorlib">Langue</sys:String>
+    <sys:String x:Key="WorkAreaWidth" xmlns:sys="clr-namespace:System;assembly=mscorlib">Largeur de la zone (mm)</sys:String>
+    <sys:String x:Key="WorkAreaHeight" xmlns:sys="clr-namespace:System;assembly=mscorlib">Hauteur de la zone (mm)</sys:String>
+    <sys:String x:Key="BoardSpacing" xmlns:sys="clr-namespace:System;assembly=mscorlib">Espacement des cartes (mm)</sys:String>
+    <sys:String x:Key="SafetyMargin" xmlns:sys="clr-namespace:System;assembly=mscorlib">Marge de sécurité (mm)</sys:String>
+    <sys:String x:Key="AllowRotation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Autoriser la rotation automatique</sys:String>
+    <sys:String x:Key="Save" xmlns:sys="clr-namespace:System;assembly=mscorlib">Enregistrer les paramètres</sys:String>
+    <sys:String x:Key="Cancel" xmlns:sys="clr-namespace:System;assembly=mscorlib">Annuler</sys:String>
+    <sys:String x:Key="ExitConfirmationTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Quitter Gerber Panelizer</sys:String>
+    <sys:String x:Key="ExitConfirmationText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Voulez-vous vraiment quitter l’application ?</sys:String>
+    <sys:String x:Key="LayerColours" xmlns:sys="clr-namespace:System;assembly=mscorlib">Couleurs des couches</sys:String>
+    <sys:String x:Key="LayerColoursHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Entrez une valeur hexadécimale ou cliquez sur l’échantillon pour choisir une couleur.</sys:String>
+    <sys:String x:Key="HexColourHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Format valide : #RRGGBB</sys:String>
+    <sys:String x:Key="ColorPickerHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Choisir une couleur</sys:String>
+    <sys:String x:Key="LayerDrill" xmlns:sys="clr-namespace:System;assembly=mscorlib">Perçage</sys:String>
+    <sys:String x:Key="LayerTop" xmlns:sys="clr-namespace:System;assembly=mscorlib">Face supérieure</sys:String>
+    <sys:String x:Key="LayerBottom" xmlns:sys="clr-namespace:System;assembly=mscorlib">Face inférieure</sys:String>
+    <sys:String x:Key="LayerOutline" xmlns:sys="clr-namespace:System;assembly=mscorlib">Contour</sys:String>
+    <sys:String x:Key="LayerSilkscreen" xmlns:sys="clr-namespace:System;assembly=mscorlib">Sérigraphie</sys:String>
+    <sys:String x:Key="ExportSettings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exporter les paramètres</sys:String>
+    <sys:String x:Key="ImportSettings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Importer les paramètres</sys:String>
+    <sys:String x:Key="BottomMirrorPolicy" xmlns:sys="clr-namespace:System;assembly=mscorlib">Miroir de la face inférieure</sys:String>
+    <sys:String x:Key="NewProject" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nouveau projet</sys:String>
+    <sys:String x:Key="SaveProject" xmlns:sys="clr-namespace:System;assembly=mscorlib">Enregistrer le projet</sys:String>
+    <sys:String x:Key="LoadProject" xmlns:sys="clr-namespace:System;assembly=mscorlib">Ouvrir le projet</sys:String>
+    <sys:String x:Key="DeleteBoard" xmlns:sys="clr-namespace:System;assembly=mscorlib">Supprimer la carte</sys:String>
+    <sys:String x:Key="CloneBoard" xmlns:sys="clr-namespace:System;assembly=mscorlib">Dupliquer la carte</sys:String>
+    <sys:String x:Key="StatusLog" xmlns:sys="clr-namespace:System;assembly=mscorlib">Détails</sys:String>
+    <sys:String x:Key="SideTop" xmlns:sys="clr-namespace:System;assembly=mscorlib">dessus</sys:String>
+    <sys:String x:Key="SideBottom" xmlns:sys="clr-namespace:System;assembly=mscorlib">dessous</sys:String>
+    <sys:String x:Key="SideBoth" xmlns:sys="clr-namespace:System;assembly=mscorlib">les deux</sys:String>
+    <sys:String x:Key="ZoomHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Molette : zoom · bouton central ou Espace + glisser : déplacer · Accueil : tout afficher</sys:String>
+    <sys:String x:Key="PrintPreview" xmlns:sys="clr-namespace:System;assembly=mscorlib">Aperçu avant impression</sys:String>
+    <sys:String x:Key="PanelPrintPreview" xmlns:sys="clr-namespace:System;assembly=mscorlib">Aperçu du panneau</sys:String>
+    <sys:String x:Key="FitToPage" xmlns:sys="clr-namespace:System;assembly=mscorlib">Ajuster à la page</sys:String>
+    <sys:String x:Key="ActualSize" xmlns:sys="clr-namespace:System;assembly=mscorlib">100 % (taille réelle)</sys:String>
+    <sys:String x:Key="Scale" xmlns:sys="clr-namespace:System;assembly=mscorlib">Échelle</sys:String>
+    <sys:String x:Key="PrintNow" xmlns:sys="clr-namespace:System;assembly=mscorlib">Imprimer…</sys:String>
+    <sys:String x:Key="Close" xmlns:sys="clr-namespace:System;assembly=mscorlib">Fermer</sys:String>
+    <sys:String x:Key="FilterProductionData" xmlns:sys="clr-namespace:System;assembly=mscorlib">Données de fabrication</sys:String>
+    <sys:String x:Key="FilterArchives" xmlns:sys="clr-namespace:System;assembly=mscorlib">Archives</sys:String>
+    <sys:String x:Key="FilterGerberExcellon" xmlns:sys="clr-namespace:System;assembly=mscorlib">Gerber et Excellon</sys:String>
+    <sys:String x:Key="FilterAllFiles" xmlns:sys="clr-namespace:System;assembly=mscorlib">Tous les fichiers</sys:String>
+    <sys:String x:Key="FilterProject" xmlns:sys="clr-namespace:System;assembly=mscorlib">Projet Gerber Panelizer</sys:String>
+    <sys:String x:Key="FilterZipArchive" xmlns:sys="clr-namespace:System;assembly=mscorlib">Archive ZIP</sys:String>
+    <sys:String x:Key="FilterSettingsJson" xmlns:sys="clr-namespace:System;assembly=mscorlib">Paramètres JSON</sys:String>
+</ResourceDictionary>

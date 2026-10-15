@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{094AD06C-F6CA-4336-8A9A-739F23B79834}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GerberPanelizer.Core", "src\GerberPanelizer.Core\GerberPanelizer.Core.csproj", "{F144D288-D1B7-4665-9CB5-D062BA35AD91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GerberPanelizer.App", "src\GerberPanelizer.App\GerberPanelizer.App.csproj", "{3241E28B-51AA-46FF-8486-17C6E5DDFE53}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{C94E194B-A132-4380-8C16-B9D5DE880720}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GerberPanelizer.Core.Tests", "tests\GerberPanelizer.Core.Tests\GerberPanelizer.Core.Tests.csproj", "{4B13BD66-6F3E-4737-B289-FA9944230E85}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F144D288-D1B7-4665-9CB5-D062BA35AD91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F144D288-D1B7-4665-9CB5-D062BA35AD91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F144D288-D1B7-4665-9CB5-D062BA35AD91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F144D288-D1B7-4665-9CB5-D062BA35AD91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3241E28B-51AA-46FF-8486-17C6E5DDFE53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3241E28B-51AA-46FF-8486-17C6E5DDFE53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3241E28B-51AA-46FF-8486-17C6E5DDFE53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3241E28B-51AA-46FF-8486-17C6E5DDFE53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B13BD66-6F3E-4737-B289-FA9944230E85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B13BD66-6F3E-4737-B289-FA9944230E85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B13BD66-6F3E-4737-B289-FA9944230E85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B13BD66-6F3E-4737-B289-FA9944230E85}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F144D288-D1B7-4665-9CB5-D062BA35AD91} = {094AD06C-F6CA-4336-8A9A-739F23B79834}
+		{3241E28B-51AA-46FF-8486-17C6E5DDFE53} = {094AD06C-F6CA-4336-8A9A-739F23B79834}
+		{4B13BD66-6F3E-4737-B289-FA9944230E85} = {C94E194B-A132-4380-8C16-B9D5DE880720}
+	EndGlobalSection
+EndGlobal

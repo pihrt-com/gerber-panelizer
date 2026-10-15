@@ -1,0 +1,22 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+
+# Local .NET command-line state used by this workspace
+.dotnet-cli/
+
+# Visual Studio and JetBrains user state
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.idea/
+
+# Publish output and installer artifacts
+artifacts/
+publish/
+
+# Windows Explorer metadata
+Thumbs.db
+Desktop.ini

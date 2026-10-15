@@ -1,0 +1,19 @@
+<Project>
+  <Target Name="GenerateBuildStamp" BeforeTargets="CoreCompile">
+    <Exec Command="git rev-parse --short=12 HEAD" WorkingDirectory="$(MSBuildThisFileDirectory)" ConsoleToMSBuild="true" IgnoreExitCode="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="_GitRevision" />
+    </Exec>
+    <PropertyGroup>
+      <_GitRevision Condition="'$(_GitRevision)' == ''">development</_GitRevision>
+      <_BuildDateUtc>$([System.DateTime]::UtcNow.ToString('yyyy-MM-dd HH:mm:ss UTC'))</_BuildDateUtc>
+      <_BuildStampDirectory>$(IntermediateOutputPath)Generated</_BuildStampDirectory>
+      <_BuildStampFile>$(_BuildStampDirectory)BuildStamp.g.cs</_BuildStampFile>
+      <_EscapedSemicolon>$([MSBuild]::Escape(';'))</_EscapedSemicolon>
+    </PropertyGroup>
+    <MakeDir Directories="$(_BuildStampDirectory)" />
+    <WriteLinesToFile File="$(_BuildStampFile)" Overwrite="true" Lines="// &lt;auto-generated /&gt;&#xA;namespace GerberPanelizer.Build$(_EscapedSemicolon)&#xA;internal static class BuildStamp&#xA;{&#xA;    internal const string Version = &quot;$(Version)&quot;$(_EscapedSemicolon)&#xA;    internal const string Revision = &quot;$(_GitRevision)&quot;$(_EscapedSemicolon)&#xA;    internal const string DateUtc = &quot;$(_BuildDateUtc)&quot;$(_EscapedSemicolon)&#xA;}" />
+    <ItemGroup>
+      <Compile Include="$(_BuildStampFile)" Visible="false" />
+    </ItemGroup>
+  </Target>
+</Project>
