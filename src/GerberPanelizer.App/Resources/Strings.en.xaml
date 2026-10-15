@@ -19,6 +19,18 @@
     <sys:String x:Key="AllowRotation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Allow automatic rotation</sys:String>
     <sys:String x:Key="Save" xmlns:sys="clr-namespace:System;assembly=mscorlib">Save settings</sys:String>
     <sys:String x:Key="Cancel" xmlns:sys="clr-namespace:System;assembly=mscorlib">Cancel</sys:String>
+    <sys:String x:Key="UpdateCheck" xmlns:sys="clr-namespace:System;assembly=mscorlib">Check for updates</sys:String>
+    <sys:String x:Key="UpdateCurrent" xmlns:sys="clr-namespace:System;assembly=mscorlib">You are using the current version {0}.</sys:String>
+    <sys:String x:Key="UpdateAvailable" xmlns:sys="clr-namespace:System;assembly=mscorlib">A newer version {0} is available. Do you want to open the GitHub download page?</sys:String>
+    <sys:String x:Key="UpdateFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Updates could not be checked: {0}</sys:String>
+    <sys:String x:Key="StatusUpdateCurrent" xmlns:sys="clr-namespace:System;assembly=mscorlib">You are using the current version {0}.</sys:String>
+    <sys:String x:Key="StatusUpdateAvailable" xmlns:sys="clr-namespace:System;assembly=mscorlib">A newer version {0} is available.</sys:String>
+    <sys:String x:Key="StatusUpdateFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Updates could not be checked: {0}</sys:String>
+    <sys:String x:Key="ExportOverwriteTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Overwrite export?</sys:String>
+    <sys:String x:Key="ExportOverwriteText" xmlns:sys="clr-namespace:System;assembly=mscorlib">The file already exists: {0}&#10;&#10;Do you want to replace it with the new export?</sys:String>
+    <sys:String x:Key="ExportSuccessTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Export complete</sys:String>
+    <sys:String x:Key="ExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">The manufacturing ZIP was successfully exported to:&#10;{0}</sys:String>
+    <sys:String x:Key="ExportTargetIsDirectory" xmlns:sys="clr-namespace:System;assembly=mscorlib">The selected target is a folder, not a ZIP file.</sys:String>
     <sys:String x:Key="ExitConfirmationTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exit Gerber Panelizer</sys:String>
     <sys:String x:Key="ExitConfirmationText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Do you really want to exit the application?</sys:String>
     <sys:String x:Key="LayerColours" xmlns:sys="clr-namespace:System;assembly=mscorlib">Layer colours</sys:String>

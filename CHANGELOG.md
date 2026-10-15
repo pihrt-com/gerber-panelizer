@@ -8,6 +8,10 @@
 - Corrected the WPF window and taskbar icon source so the custom PCB icon is visibly used at runtime.
 - Added a localized confirmation prompt before the application exits.
 - Fixed discontinuities at 45-degree trace joins and made the entire gridded work area zoom and pan with pointer-based mouse-wheel input.
+- Fixed the Top-layer preview so rectangular and obround SMT pad flashes are rendered instead of disappearing.
+- Export now asks before replacing an existing ZIP, writes safely through a temporary archive, and confirms the final export location.
+- Reclassified safe aperture-macro renaming as normal export behavior instead of a solder-mask warning.
+- Added a header control that checks the latest GitHub Release and offers to open its download page when a newer version is available.
 
 ## 2026-10-14
 

@@ -19,6 +19,18 @@
     <sys:String x:Key="AllowRotation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Povolit automatické otočení</sys:String>
     <sys:String x:Key="Save" xmlns:sys="clr-namespace:System;assembly=mscorlib">Uložit nastavení</sys:String>
     <sys:String x:Key="Cancel" xmlns:sys="clr-namespace:System;assembly=mscorlib">Zrušit</sys:String>
+    <sys:String x:Key="UpdateCheck" xmlns:sys="clr-namespace:System;assembly=mscorlib">Kontrola aktualizací</sys:String>
+    <sys:String x:Key="UpdateCurrent" xmlns:sys="clr-namespace:System;assembly=mscorlib">Používáte aktuální verzi {0}.</sys:String>
+    <sys:String x:Key="UpdateAvailable" xmlns:sys="clr-namespace:System;assembly=mscorlib">Je dostupná novější verze {0}. Chcete otevřít stránku pro stažení na GitHubu?</sys:String>
+    <sys:String x:Key="UpdateFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Aktualizace se nepodařilo ověřit: {0}</sys:String>
+    <sys:String x:Key="StatusUpdateCurrent" xmlns:sys="clr-namespace:System;assembly=mscorlib">Používáte aktuální verzi {0}.</sys:String>
+    <sys:String x:Key="StatusUpdateAvailable" xmlns:sys="clr-namespace:System;assembly=mscorlib">Je dostupná novější verze {0}.</sys:String>
+    <sys:String x:Key="StatusUpdateFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Aktualizace se nepodařilo ověřit: {0}</sys:String>
+    <sys:String x:Key="ExportOverwriteTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Přepsat export?</sys:String>
+    <sys:String x:Key="ExportOverwriteText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Soubor již existuje: {0}&#10;&#10;Chcete jej nahradit novým exportem?</sys:String>
+    <sys:String x:Key="ExportSuccessTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Export dokončen</sys:String>
+    <sys:String x:Key="ExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Výrobní ZIP byl úspěšně exportován do:&#10;{0}</sys:String>
+    <sys:String x:Key="ExportTargetIsDirectory" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vybraný cíl je složka, nikoli ZIP soubor.</sys:String>
     <sys:String x:Key="ExitConfirmationTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Ukončit Gerber Panelizer</sys:String>
     <sys:String x:Key="ExitConfirmationText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Opravdu chcete ukončit aplikaci?</sys:String>
     <sys:String x:Key="LayerColours" xmlns:sys="clr-namespace:System;assembly=mscorlib">Barvy vrstev</sys:String>

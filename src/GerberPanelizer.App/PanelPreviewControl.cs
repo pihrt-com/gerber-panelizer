@@ -304,7 +304,27 @@ public sealed class PanelPreviewControl : FrameworkElement
             var end = ToScreen(operation.End.Translate(placement.Offset.X, placement.Offset.Y));
             var diameter = Math.Max(1, operation.ApertureDiameterMillimetres * PixelsPerMillimetre);
             if (operation.Type == GerberOperationType.Draw) context.DrawLine(CreateTracePen(brush, diameter), start, end);
-            if (operation.Type == GerberOperationType.Flash) context.DrawEllipse(brush, null, end, diameter / 2, diameter / 2);
+            if (operation.Type == GerberOperationType.Flash) DrawGerberFlash(context, brush, end, operation.Aperture);
+        }
+    }
+
+    private void DrawGerberFlash(DrawingContext context, Brush brush, Point center, GerberAperture aperture)
+    {
+        var width = Math.Max(1, aperture.WidthMillimetres * PixelsPerMillimetre);
+        var height = Math.Max(1, aperture.HeightMillimetres * PixelsPerMillimetre);
+        var bounds = new Rect(center.X - width / 2, center.Y - height / 2, width, height);
+        switch (aperture.Shape)
+        {
+            case GerberApertureShape.Rectangle:
+                context.DrawRectangle(brush, null, bounds);
+                break;
+            case GerberApertureShape.Obround:
+                context.DrawRoundedRectangle(brush, null, bounds, Math.Min(width, height) / 2, Math.Min(width, height) / 2);
+                break;
+            case GerberApertureShape.Circle:
+            case GerberApertureShape.Polygon:
+                context.DrawEllipse(brush, null, center, width / 2, height / 2);
+                break;
         }
     }
 

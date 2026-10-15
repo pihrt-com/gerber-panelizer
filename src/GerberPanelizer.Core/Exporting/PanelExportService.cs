@@ -88,11 +88,6 @@ public sealed class PanelExportService
                 output.Append($"%ADD{outputCode}{definition}*%\n");
             }
 
-            if (macroMap.Count > 0)
-            {
-                warnings.Add($"{file.Name}: aperture macros were renamed to avoid cross-board collisions; verify the exported layer visually.");
-            }
-
             foreach (var token in GetGerberBodyTokens(file.Content))
             {
                 var transformed = TransformGerberToken(token, parsed.CoordinateFormat, placement, apertureMap);

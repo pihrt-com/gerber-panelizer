@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Diagnostics;
+using System.Net.Http;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Media;
@@ -23,6 +25,7 @@ public sealed class MainViewModel : ObservableObject
     private readonly ManufacturingImporter importer = new();
     private readonly ShelfPanelizer panelizer = new();
     private readonly PanelExportService exporter = new();
+    private static readonly HttpClient UpdateClient = new() { Timeout = TimeSpan.FromSeconds(10) };
     private AppSettings settings;
     private PanelizationResult? panelization;
     private string statusText;
@@ -30,6 +33,7 @@ public sealed class MainViewModel : ObservableObject
     private string? projectPath;
     private ImportedBoardItemViewModel? selectedBoard;
     private bool isStatusLogExpanded;
+    private bool isCheckingForUpdates;
 
     public MainViewModel(Window owner)
     {
@@ -51,6 +55,7 @@ public sealed class MainViewModel : ObservableObject
         ExportCommand = new(_ => Export(), _ => panelization is { Placements.Count: > 0 });
         PrintCommand = new(_ => Print());
         OpenSettingsCommand = new(_ => OpenSettings());
+        CheckForUpdatesCommand = new(_ => CheckForUpdates(), _ => !IsCheckingForUpdates);
         AddStatus(StatusSeverity.Information, statusText);
     }
 
@@ -72,6 +77,7 @@ public sealed class MainViewModel : ObservableObject
     public RelayCommand ExportCommand { get; }
     public RelayCommand PrintCommand { get; }
     public RelayCommand OpenSettingsCommand { get; }
+    public RelayCommand CheckForUpdatesCommand { get; }
     public string VersionCaption => $"v{BuildStamp.Version}";
     public string BuildCaption => $"{BuildStamp.DateUtc} · {BuildStamp.Revision}";
     public string WorkAreaCaption => $"{settings.WorkAreaWidthMm:0.##} × {settings.WorkAreaHeightMm:0.##} mm";
@@ -86,6 +92,14 @@ public sealed class MainViewModel : ObservableObject
         set { if (SetProperty(ref selectedBoard, value)) RefreshBoardCommands(); }
     }
     public bool IsStatusLogExpanded { get => isStatusLogExpanded; set => SetProperty(ref isStatusLogExpanded, value); }
+    public bool IsCheckingForUpdates
+    {
+        get => isCheckingForUpdates;
+        private set
+        {
+            if (SetProperty(ref isCheckingForUpdates, value)) CheckForUpdatesCommand.RaiseCanExecuteChanged();
+        }
+    }
     public Visibility BoardPreviewVisibility => PlacementPreviews.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
     public Visibility EmptyPreviewVisibility => PlacementPreviews.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
 
@@ -288,10 +302,63 @@ public sealed class MainViewModel : ObservableObject
     private void Export()
     {
         if (panelization is not { Placements.Count: > 0 }) { AddStatus(StatusSeverity.Warning, L("StatusPanelizeBeforeExport")); return; }
-        var dialog = new SaveFileDialog { Filter = $"{L("FilterZipArchive")}|*.zip", DefaultExt = ".zip", FileName = "panelized-production-data.zip", Title = LocalizationService.Instance["Export"], OverwritePrompt = true };
+        var dialog = new SaveFileDialog { Filter = $"{L("FilterZipArchive")}|*.zip", DefaultExt = ".zip", FileName = "panelized-production-data.zip", Title = LocalizationService.Instance["Export"], OverwritePrompt = false };
         if (dialog.ShowDialog(owner) != true) return;
-        try { var result = exporter.Export(dialog.FileName, panelization.Placements); AddStatus(result.Warnings.Count == 0 ? StatusSeverity.Success : StatusSeverity.Warning, L("StatusExported", result.Entries.Count, Path.GetFileName(result.ArchivePath), result.Warnings.Count), result.Warnings); }
+        if (Directory.Exists(dialog.FileName)) { AddStatus(StatusSeverity.Error, L("StatusExportFailed", L("ExportTargetIsDirectory"))); return; }
+        if (File.Exists(dialog.FileName) && MessageBox.Show(owner, L("ExportOverwriteText", dialog.FileName), L("ExportOverwriteTitle"), MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
+
+        var temporaryArchivePath = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(dialog.FileName))!, $".{Path.GetFileNameWithoutExtension(dialog.FileName)}-{Guid.NewGuid():N}.tmp");
+        try
+        {
+            var result = exporter.Export(temporaryArchivePath, panelization.Placements);
+            File.Move(temporaryArchivePath, dialog.FileName, overwrite: true);
+            AddStatus(result.Warnings.Count == 0 ? StatusSeverity.Success : StatusSeverity.Warning, L("StatusExported", result.Entries.Count, Path.GetFileName(dialog.FileName), result.Warnings.Count), result.Warnings);
+            MessageBox.Show(owner, L("ExportSuccessText", dialog.FileName), L("ExportSuccessTitle"), MessageBoxButton.OK, MessageBoxImage.Information);
+        }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException or NotSupportedException) { AddStatus(StatusSeverity.Error, L("StatusExportFailed", exception.Message)); }
+        finally
+        {
+            if (File.Exists(temporaryArchivePath)) File.Delete(temporaryArchivePath);
+        }
+    }
+
+    private async void CheckForUpdates()
+    {
+        IsCheckingForUpdates = true;
+        try
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/repos/pihrt-com/gerber-panelizer/releases/latest");
+            request.Headers.UserAgent.ParseAdd("GerberPanelizer/1.0");
+            using var response = await UpdateClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            using var document = JsonDocument.Parse(await response.Content.ReadAsStreamAsync());
+            var tagName = document.RootElement.GetProperty("tag_name").GetString() ?? string.Empty;
+            var releaseUrl = document.RootElement.GetProperty("html_url").GetString() ?? "https://github.com/pihrt-com/gerber-panelizer/releases";
+            if (!Version.TryParse(tagName.TrimStart('v', 'V'), out var latestVersion)) throw new InvalidDataException("GitHub release does not contain a valid version tag.");
+            var currentVersion = Version.Parse(BuildStamp.Version);
+            if (latestVersion > currentVersion)
+            {
+                AddStatus(StatusSeverity.Information, L("StatusUpdateAvailable", latestVersion));
+                if (MessageBox.Show(owner, L("UpdateAvailable", latestVersion), L("UpdateCheck"), MessageBoxButton.YesNo, MessageBoxImage.Information, MessageBoxResult.Yes) == MessageBoxResult.Yes)
+                {
+                    Process.Start(new ProcessStartInfo(releaseUrl) { UseShellExecute = true });
+                }
+            }
+            else
+            {
+                AddStatus(StatusSeverity.Success, L("StatusUpdateCurrent", currentVersion));
+                MessageBox.Show(owner, L("UpdateCurrent", currentVersion), L("UpdateCheck"), MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException or JsonException or InvalidDataException)
+        {
+            AddStatus(StatusSeverity.Warning, L("StatusUpdateFailed", exception.Message));
+            MessageBox.Show(owner, L("UpdateFailed", exception.Message), L("UpdateCheck"), MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+        finally
+        {
+            IsCheckingForUpdates = false;
+        }
     }
     private void Print()
     {

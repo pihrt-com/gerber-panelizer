@@ -51,17 +51,17 @@ public sealed class GerberParser
 
             if (!token.Contains('X') && !token.Contains('Y')) continue;
             var next = ReadPoint(token, current, format, warnings);
-            var diameter = apertures.TryGetValue(selectedAperture, out var aperture) ? aperture : 0;
-            operations.Add(new GerberOperation(interpolation, current, next, diameter));
+            var aperture = apertures.TryGetValue(selectedAperture, out var knownAperture) ? knownAperture : GerberAperture.Unknown;
+            operations.Add(new GerberOperation(interpolation, current, next, aperture));
             if (interpolation == GerberOperationType.Draw)
             {
                 bounds = bounds.Include(current).Include(next);
-                maximumApertureDiameter = Math.Max(maximumApertureDiameter, diameter);
+                maximumApertureDiameter = Math.Max(maximumApertureDiameter, aperture.EffectiveDiameterMillimetres);
             }
             else if (interpolation == GerberOperationType.Flash)
             {
                 bounds = bounds.Include(next);
-                maximumApertureDiameter = Math.Max(maximumApertureDiameter, diameter);
+                maximumApertureDiameter = Math.Max(maximumApertureDiameter, aperture.EffectiveDiameterMillimetres);
             }
 
             current = next;
@@ -98,22 +98,52 @@ public sealed class GerberParser
         return new CoordinateFormat(int.Parse(match.Groups["xi"].Value, CultureInfo.InvariantCulture), int.Parse(match.Groups["xd"].Value, CultureInfo.InvariantCulture), true, unit);
     }
 
-    private static Dictionary<int, double> ReadApertures(string content, CoordinateFormat format, ICollection<string> warnings)
+    private static Dictionary<int, GerberAperture> ReadApertures(string content, CoordinateFormat format, ICollection<string> warnings)
     {
-        var apertures = new Dictionary<int, double>();
+        var apertures = new Dictionary<int, GerberAperture>();
         foreach (Match match in ApertureRegex.Matches(content))
         {
-            if (match.Groups["shape"].Value.Equals("C", StringComparison.OrdinalIgnoreCase) && double.TryParse(match.Groups["parameters"].Value.Split('X')[0], NumberStyles.Float, CultureInfo.InvariantCulture, out var value))
+            var shape = match.Groups["shape"].Value.ToUpperInvariant();
+            var parameters = match.Groups["parameters"].Value.Split('X', StringSplitOptions.TrimEntries);
+            if (!TryReadAperture(shape, parameters, format, out var aperture))
             {
-                apertures[int.Parse(match.Groups["code"].Value, CultureInfo.InvariantCulture)] = format.Unit == CoordinateUnit.Inches ? value * 25.4 : value;
+                warnings.Add($"Aperture D{match.Groups["code"].Value} uses unsupported shape '{shape}' and is omitted from the preview.");
+                continue;
             }
-            else
-            {
-                warnings.Add($"Aperture D{match.Groups["code"].Value} is not circular; its stroke width is approximated as zero.");
-            }
+
+            apertures[int.Parse(match.Groups["code"].Value, CultureInfo.InvariantCulture)] = aperture;
         }
 
         return apertures;
+    }
+
+    private static bool TryReadAperture(string shape, IReadOnlyList<string> parameters, CoordinateFormat format, out GerberAperture aperture)
+    {
+        aperture = GerberAperture.Unknown;
+        if (!TryReadDimension(parameters, 0, format, out var width)) return false;
+
+        var height = width;
+        var apertureShape = shape switch
+        {
+            "C" => GerberApertureShape.Circle,
+            "R" => GerberApertureShape.Rectangle,
+            "O" => GerberApertureShape.Obround,
+            "P" => GerberApertureShape.Polygon,
+            _ => GerberApertureShape.Unknown,
+        };
+        if (apertureShape is GerberApertureShape.Unknown) return false;
+        if (apertureShape is GerberApertureShape.Rectangle or GerberApertureShape.Obround && !TryReadDimension(parameters, 1, format, out height)) return false;
+
+        aperture = new GerberAperture(apertureShape, width, height);
+        return true;
+    }
+
+    private static bool TryReadDimension(IReadOnlyList<string> parameters, int index, CoordinateFormat format, out double value)
+    {
+        value = 0;
+        return index < parameters.Count
+            && double.TryParse(parameters[index], NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed)
+            && (value = format.Unit == CoordinateUnit.Inches ? parsed * 25.4 : parsed) > 0;
     }
 
     private static PcbPoint ReadPoint(string token, PcbPoint previous, CoordinateFormat format, ICollection<string> warnings)

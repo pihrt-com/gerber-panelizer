@@ -25,6 +25,30 @@ public sealed class ParserAndPanelizationTests
     }
 
     [Fact]
+    public void GerberParser_ReadsRectangularAndObroundSmtPadFlashes()
+    {
+        const string gerber = "%MOMM*%\n%FSLAX34Y34*%\n%ADD10R,1.600X0.800*%\n%ADD11O,2.000X1.000*%\nD10*\nX10000Y20000D03*\nD11*\nX30000Y20000D03*\nM02*";
+
+        var document = new GerberParser().Parse(gerber);
+        var flashes = document.Operations.Where(operation => operation.Type == GerberOperationType.Flash).ToArray();
+
+        Assert.Collection(
+            flashes,
+            flash =>
+            {
+                Assert.Equal(GerberApertureShape.Rectangle, flash.Aperture.Shape);
+                Assert.Equal(1.6, flash.Aperture.WidthMillimetres, 6);
+                Assert.Equal(.8, flash.Aperture.HeightMillimetres, 6);
+            },
+            flash =>
+            {
+                Assert.Equal(GerberApertureShape.Obround, flash.Aperture.Shape);
+                Assert.Equal(2, flash.Aperture.WidthMillimetres, 6);
+                Assert.Equal(1, flash.Aperture.HeightMillimetres, 6);
+            });
+    }
+
+    [Fact]
     public void ExcellonParser_ReadsFusionMetricDrillCoordinates()
     {
         const string drill = "M48\nMETRIC,TZ,000.000\nT1C0.800\n%\nG90\nM71\nT1\nX19050Y27940\nM30\n";
@@ -60,7 +84,7 @@ public sealed class ParserAndPanelizationTests
 
         try
         {
-            new PanelExportService().Export(archivePath, [new BoardPlacement(board, new PcbPoint(0, 0))]);
+            var result = new PanelExportService().Export(archivePath, [new BoardPlacement(board, new PcbPoint(0, 0))]);
             using var archive = ZipFile.OpenRead(archivePath);
             using var reader = new StreamReader(archive.GetEntry("GerberFiles/copper_top.gbr")!.Open());
             var exported = reader.ReadToEnd();
@@ -68,6 +92,7 @@ public sealed class ParserAndPanelizationTests
             Assert.Contains("%AMGP0_OC8*", exported);
             Assert.Equal(1, exported.Split("5,1,8,0,0,1.0X$1,22.5", StringSplitOptions.None).Length - 1);
             Assert.DoesNotContain("5,1,8,0,0,1.0X$1,22.5*\nD10", exported);
+            Assert.Empty(result.Warnings);
         }
         finally
         {

@@ -64,6 +64,9 @@
                         <TextBlock Text="{Binding VersionCaption}" Foreground="#E4F3F0" FontSize="12" HorizontalAlignment="Right" />
                         <TextBlock Text="{Binding BuildCaption}" Foreground="#B9D6D2" FontSize="10" HorizontalAlignment="Right" />
                     </StackPanel>
+                    <Button Command="{Binding CheckForUpdatesCommand}" ToolTip="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[UpdateCheck]}" Style="{StaticResource HeaderButton}" Padding="10,7">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE777;" />
+                    </Button>
                     <Button Command="{Binding OpenSettingsCommand}" ToolTip="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[Settings]}" Style="{StaticResource HeaderButton}" Padding="10,7">
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" />
                     </Button>

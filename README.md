@@ -11,12 +11,12 @@ The first working release is implemented and published locally as a self-contain
 ## Core capabilities
 
 - Import ZIP, RAR, and individual Gerber/Excellon files.
-- Interactive layer preview with visibility filtering, work-area mouse-wheel zoom, manual board dragging, continuous 45-degree trace rendering, and configurable HEX colours with a click-to-select palette.
+- Interactive layer preview with visibility filtering, work-area mouse-wheel zoom, manual board dragging, continuous 45-degree trace rendering, circular, rectangular, and obround SMT pad flashes, and configurable HEX colours with a click-to-select palette.
 - Configurable milling work area, margins, spacing, and placement rules.
 - Top, Bottom, or both-side production selection; Bottom mirroring is an explicit workflow setting rather than an automatic and potentially incorrect transformation.
-- Panel export as one production ZIP package containing per-layer Gerbers and merged Excellon drilling data.
+- Panel export as one production ZIP package containing per-layer Gerbers and merged Excellon drilling data, with safe confirmation before replacing an existing ZIP and a success dialog showing its final location.
 - Incremental import, board duplication/deletion, portable saved projects, detailed status diagnostics, Czech, English, German, and French UI, panel-only print preview, and printing.
-- Custom PCB application icon embedded in the executable, title bar, and taskbar, plus a localized confirmation before exit.
+- Custom PCB application icon embedded in the executable, title bar, and taskbar, a localized confirmation before exit, and a one-click GitHub Release update check beside Settings.
 
 ## Documentation
 
