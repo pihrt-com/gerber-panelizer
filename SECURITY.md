@@ -26,7 +26,7 @@ Only continue if the checksum exactly matches the release notes for the version 
 
 ## MSI behaviour
 
-The MSI installs Gerber Panelizer for all users in `Program Files\Martin Pihrt\Gerber Panelizer` and appears in Windows Installed Apps for repair or removal. During installation, it offers Desktop and Start-menu shortcut choices; Windows controls taskbar pinning, so users can pin the Start-menu shortcut after installation. It contains the same self-contained program as the portable EXE; no online installer or cloud dependency is used.
+The MSI installs Gerber Panelizer for all users in `Program Files\Martin Pihrt\Gerber Panelizer` and appears in Windows Installed Apps with the PCB icon for repair or removal. Its license page is generated from the complete GPL-3.0 text in [LICENSE](LICENSE). During installation, it offers Desktop and Start-menu shortcut choices; Windows controls taskbar pinning, so users can pin the Start-menu shortcut after installation. If an earlier Gerber Panelizer version is detected, the installer offers to replace it and Windows Installer removes the old version transactionally before installing the new one. It contains the same self-contained program as the portable EXE; no online installer or cloud dependency is used.
 
 ## Reporting security issues
 

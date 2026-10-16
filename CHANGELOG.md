@@ -1,5 +1,11 @@
 # Change log
 
+## 0.1.7 — 2026-10-16
+
+- Replaced the installer’s placeholder license screen with the complete GPL-3.0 text generated directly from the repository `LICENSE` file for every MSI build.
+- Added the PCB icon to MSI metadata, Installed Apps, and custom installer pages.
+- Added explicit prior-version detection: the installer offers to replace an installed Gerber Panelizer version, then removes it transactionally before installing the current release.
+
 ## 0.1.6 — 2026-10-16
 
 - Replaced the invalid executable icon with a valid multi-resolution Windows ICO, including explicit icon metadata for installer shortcuts.
