@@ -32,7 +32,7 @@ if ($LASTEXITCODE -ne 0) {
     throw 'Publishing the application failed.'
 }
 
-dotnet build $installerProject -c Release -p:Version=$Version -p:PublishDirectory=$publishDirectory -p:OutputPath=$outputDirectoryPath
+dotnet build $installerProject -t:Rebuild -c Release -p:Version=$Version -p:PublishDirectory=$publishDirectory -p:OutputPath=$outputDirectoryPath
 if ($LASTEXITCODE -ne 0) {
     throw 'Building the MSI installer failed.'
 }
