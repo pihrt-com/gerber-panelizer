@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using System.Text.RegularExpressions;
 using GerberPanelizer.Core.Exporting;
 using GerberPanelizer.Core.Geometry;
 using GerberPanelizer.Core.Models;
@@ -62,6 +63,29 @@ public sealed class ParserAndPanelizationTests
     }
 
     [Fact]
+    public void ExcellonParser_ReadsM72InchDrillCoordinates()
+    {
+        const string drill = "%\nM48\nM72\nT01C0.0320\n%\nT01\nX3150Y13150\nM30\n";
+
+        var document = new ExcellonParser().Parse(drill);
+
+        var hit = Assert.Single(document.Hits);
+        Assert.Equal(CoordinateUnit.Inches, document.CoordinateFormat.Unit);
+        Assert.Equal(8.001, hit.Position.X, 6);
+        Assert.Equal(33.401, hit.Position.Y, 6);
+        Assert.Equal(0.8128, document.Tools[1], 6);
+    }
+
+    [Fact]
+    public void LayerClassifier_RecognizesLegacyDrdExcellonWithLeadingPercent()
+    {
+        const string drill = "%\nM48\nM72\nT01C0.0320\n%\nT01\nX3150Y3150\nM30\n";
+
+        Assert.Equal(FileFormat.Excellon, LayerClassifier.DetectFormat("board.NC-DRILL.drd", drill));
+        Assert.Equal(ManufacturingLayerKind.Drill, LayerClassifier.DetectLayer("board.NC-DRILL.drd"));
+    }
+
+    [Fact]
     public void ShelfPanelizer_RespectsMarginAndSpacing()
     {
         var board = CreateBoard("test", new PcbBounds(0, 0, 20, 10));
@@ -73,6 +97,19 @@ public sealed class ParserAndPanelizationTests
         Assert.Equal(2, result.Placements[0].Bounds.MinX, 6);
         Assert.Equal(25, result.Placements[1].Bounds.MinX, 6);
         Assert.Empty(result.UnplacedBoards);
+    }
+
+    [Fact]
+    public void ShelfPanelizer_RotatesBoardByNinetyDegreesWhenEnabled()
+    {
+        var board = CreateBoard("rotated", new PcbBounds(0, 0, 25, 15));
+
+        var result = new ShelfPanelizer().Arrange([board], new PanelDefinition(new PcbSize(20, 30), 0, 0), allowRotation: true);
+
+        var placement = Assert.Single(result.Placements);
+        Assert.Equal(90, placement.RotationDegrees, 6);
+        Assert.Equal(15, placement.Bounds.Width, 6);
+        Assert.Equal(25, placement.Bounds.Height, 6);
     }
 
     [Fact]
@@ -100,6 +137,91 @@ public sealed class ParserAndPanelizationTests
         }
     }
 
+    [Fact]
+    public void PanelExport_ConvertsInchGerberAndAppliesRotationAndMirroring()
+    {
+        const string gerber = "%MOIN*%\n%FSLAX24Y24*%\n%ADD10R,0.100X0.200*%\nD10*\nX5000Y10000D03*\nM02*";
+        var board = new ImportedBoard("inch", "inch", [new ManufacturingFile("profile.gbr", "profile.gbr", ManufacturingLayerKind.Profile, FileFormat.Gerber, gerber, new PcbBounds(0, 0, 50.8, 50.8), [])], new PcbBounds(0, 0, 50.8, 50.8));
+        var archivePath = Path.Combine(Path.GetTempPath(), $"gerber-panelizer-{Guid.NewGuid():N}.zip");
+
+        try
+        {
+            new PanelExportService().Export(archivePath, [new BoardPlacement(board, new PcbPoint(10, 20), 90, BoardMirrorMode.MirrorX)]);
+            var exported = ReadEntry(archivePath, "GerberFiles/profile.gbr");
+
+            Assert.Contains("%ADD10R,5.08X2.54*%", exported);
+            Assert.Contains("X0035400000Y0058100000D03", exported);
+        }
+        finally
+        {
+            if (File.Exists(archivePath)) File.Delete(archivePath);
+        }
+    }
+
+    [Fact]
+    public void PanelExport_WritesUnambiguousDecimalMetricDrillCoordinates()
+    {
+        const string drill = "M48\nMETRIC,TZ,000.000\nT1C0.800\n%\nG90\nM71\nT1\nX19050Y27940\nM30\n";
+        var board = new ImportedBoard("drill", "drill", [new ManufacturingFile("drill.xln", "drill.xln", ManufacturingLayerKind.Drill, FileFormat.Excellon, drill, new PcbBounds(19, 27, 20, 29), [])], new PcbBounds(19, 27, 20, 29));
+        var archivePath = Path.Combine(Path.GetTempPath(), $"gerber-panelizer-{Guid.NewGuid():N}.zip");
+
+        try
+        {
+            new PanelExportService().Export(archivePath, [new BoardPlacement(board, new PcbPoint(5, 6))]);
+            var exported = ReadEntry(archivePath, "DrillFiles/drill.xln");
+
+            Assert.Contains("METRIC,TZ\n", exported);
+            Assert.Contains("X24.05Y33.94", exported);
+            Assert.DoesNotContain("X0024050000", exported);
+        }
+        finally
+        {
+            if (File.Exists(archivePath)) File.Delete(archivePath);
+        }
+    }
+
+    [Fact]
+    public void WegstrExport_WritesWegstrIsolationDrillAndOutlinePrograms()
+    {
+        const string profile = "%MOMM*%\n%FSLAX34Y34*%\n%ADD10C,0.200*%\nD10*\nX0Y0D02*\nX100000Y0D01*\nX100000Y50000D01*\nX0Y50000D01*\nX0Y0D01*\nM02*";
+        const string copper = "%MOMM*%\n%FSLAX34Y34*%\n%ADD10C,0.400*%\n%ADD11R,1.000X2.000*%\nD10*\nX20000Y25000D02*\nX80000Y25000D01*\nD11*\nX80000Y25000D03*\nM02*";
+        const string drill = "M48\nMETRIC,TZ,000.000\nT1C0.800\n%\nT1\nX5000Y2500\nM30\n";
+        var files = new ManufacturingFile[]
+        {
+            new("profile.gbr", "profile.gbr", ManufacturingLayerKind.Profile, FileFormat.Gerber, profile, new PcbBounds(0, 0, 10, 5), []),
+            new("copper.gbr", "copper.gbr", ManufacturingLayerKind.CopperBottom, FileFormat.Gerber, copper, new PcbBounds(1.8, 1.5, 8.5, 3.5), []),
+            new("drill.xln", "drill.xln", ManufacturingLayerKind.Drill, FileFormat.Excellon, drill, new PcbBounds(4.6, 2.1, 5.4, 2.9), []),
+        };
+        var board = new ImportedBoard("wegstr", "wegstr", files, new PcbBounds(0, 0, 10, 5));
+        var archivePath = Path.Combine(Path.GetTempPath(), $"gerber-panelizer-{Guid.NewGuid():N}.zip");
+
+        try
+        {
+            var result = new WegstrGCodeExportService().Export(archivePath, [new BoardPlacement(board, new PcbPoint(2, 3), 0, BoardMirrorMode.MirrorX)], new WegstrMachineProfile { IncludeOutline = true });
+            var isolation = ReadEntry(archivePath, "01-copper-isolation.txt");
+            var drillProgram = ReadEntry(archivePath, "02-drill.txt");
+            var outline = ReadEntry(archivePath, "03-board-outline.txt");
+
+            Assert.Equal(["01-copper-isolation.txt", "02-drill.txt", "03-board-outline.txt"], result.Entries);
+            Assert.Contains("( X= 200.000, Y= 130.000, Z= 1.500 )", isolation);
+            Assert.Contains("N120G00G21G17G90G40G49G80", isolation);
+            Assert.Contains("S12000M03", isolation);
+            Assert.Contains("G1Z-0.080F170.0", isolation);
+            Assert.Contains("Y-", isolation);
+            Assert.Single(Regex.Matches(isolation, "G1Z-0\\.080"));
+            Assert.DoesNotMatch(@"Y(?!0\.000)(?:\d)", isolation);
+            Assert.DoesNotContain("M05", isolation);
+            Assert.Contains("G00X7.000Y-124.500Z2.000", drillProgram);
+            Assert.Contains("G1Z-1.800F170.0", drillProgram);
+            Assert.Contains("G1Z-1.700F170.0", outline);
+            Assert.EndsWith("M30\r\n%\r\n", drillProgram);
+        }
+        finally
+        {
+            if (File.Exists(archivePath)) File.Delete(archivePath);
+        }
+    }
+
     [Theory]
     [InlineData("soldermask_top.gbr", ManufacturingLayerKind.SolderMaskTop)]
     [InlineData("soldermask_bottom.gbr", ManufacturingLayerKind.SolderMaskBottom)]
@@ -113,4 +235,11 @@ public sealed class ParserAndPanelizationTests
     }
 
     private static ImportedBoard CreateBoard(string id, PcbBounds bounds) => new(id, id, [], bounds);
+
+    private static string ReadEntry(string archivePath, string entryName)
+    {
+        using var archive = ZipFile.OpenRead(archivePath);
+        using var reader = new StreamReader(archive.GetEntry(entryName)!.Open());
+        return reader.ReadToEnd();
+    }
 }

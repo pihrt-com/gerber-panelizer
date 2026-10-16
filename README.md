@@ -15,11 +15,11 @@ Gerber Panelizer is a lightweight Windows desktop application for preparing prin
 
 ## Project status
 
-The first working release is implemented and published locally as a self-contained Windows x64 executable. It safely processes common metric RS-274X Gerber and Excellon input without requiring a cloud service.
+The application is implemented as a self-contained Windows x64 executable. It processes common metric and inch RS-274X Gerber and Excellon input locally without requiring a cloud service.
 
 ## Latest update — 2026-10-16
 
-Changes in `C:\Users\marti\OneDrive\Dokumenty\GitHub\gerber-panelizer`: added a documented Czech and English screenshot gallery showing a panelized work area and the Settings dialog. The source images are kept in `docs/images` under stable descriptive names.
+Changes in `C:\GitHub\gerber-panelizer`: implemented exact Bottom mirroring and 90-degree panel rotation across preview, Gerber, Excellon, saved projects, and machine output; corrected legacy inch `M72`/`.drd` drill import and exported unambiguous decimal metric Excellon coordinates for TrackMaker; added a configurable Wegstr machine profile with separate TXT programs for copper isolation, drilling, and optional compensated outline cutting.
 
 ## Screenshots
 
@@ -37,9 +37,11 @@ Settings provide the interface language, machine work-area dimensions, safety ma
 
 - Import ZIP, RAR, and individual Gerber/Excellon files.
 - Interactive layer preview with visibility filtering, work-area mouse-wheel zoom, manual board dragging, continuous 45-degree trace rendering, circular, rectangular, and obround SMT pad flashes, and configurable HEX colours with a click-to-select palette.
-- Configurable milling work area, margins, spacing, and placement rules.
-- Top, Bottom, or both-side production selection; Bottom mirroring is an explicit workflow setting rather than an automatic and potentially incorrect transformation.
+- Configurable milling work area, margins, spacing, and automatic 90-degree placement rotation.
+- Top, Bottom, or both-side production selection; optional Bottom Mirror X or Mirror Y is applied consistently to preview, Gerber, Excellon, project data, and G-code.
 - Panel export as one production ZIP package containing per-layer Gerbers and merged Excellon drilling data, with safe confirmation before replacing an existing ZIP and a success dialog showing its final location.
+- Legacy inch `M72`/`.drd` drilling support and explicit decimal metric Excellon output for reliable TrackMaker import.
+- Separate Wegstr ZIP export with `01-copper-isolation.txt`, optional `02-drill.txt`, and optional `03-board-outline.txt`; it uses negative Y from the top-left origin as in the supplied Wegstr samples and exposes depths, isolation offset, outline-cutter diameter, feeds, spindle speed, and tool number in Settings.
 - Incremental import, board duplication/deletion, portable saved projects, detailed status diagnostics, Czech, English, German, and French UI, panel-only print preview, and printing.
 - Custom PCB application icon embedded in the executable, title bar, and taskbar, a localized confirmation before exit, and a one-click GitHub Release update check beside Settings.
 
@@ -49,6 +51,10 @@ Settings provide the interface language, machine work-area dimensions, safety ma
 - [Uživatelská příručka](docs/cs/PRIRUCKA_UZIVATELE.md)
 - [Technical architecture](docs/en/ARCHITECTURE.md)
 - [Technická architektura](docs/cs/ARCHITEKTURA.md)
+
+## Wegstr safety boundary
+
+The Wegstr exporter unions supported circular traces and circle, rectangle, or obround flashes from the selected copper layer, then offsets the resulting copper boundary by the configured tool-centre clearance. It rejects unsupported Gerber arcs and regions instead of silently approximating them, and skips unsupported trace apertures with a warning. Inspect every G-code program in the controller, confirm the work origin, tool-length offsets, cutter diameters, feeds, spindle speed, and depths, and perform a dry run above a sacrificial workpiece before machining.
 
 ## Build
 

@@ -4,8 +4,8 @@ namespace GerberPanelizer.Core.Parsing;
 
 public static class LayerClassifier
 {
-    private static readonly string[] GerberExtensions = [".gbr", ".ger", ".gtl", ".gbl", ".gko", ".gto", ".gbo", ".gts", ".gbs", ".gtp", ".gbp"];
-    private static readonly string[] ExcellonExtensions = [".drl", ".xln", ".exc", ".txt"];
+    private static readonly string[] GerberExtensions = [".gbr", ".ger", ".gtl", ".gbl", ".gko", ".gm1", ".gml", ".gto", ".gbo", ".gts", ".gbs", ".gtp", ".gbp"];
+    private static readonly string[] ExcellonExtensions = [".drl", ".drd", ".xln", ".exc", ".txt"];
 
     public static FileFormat DetectFormat(string path, string? content = null)
     {
@@ -39,5 +39,9 @@ public static class LayerClassifier
     }
 
     private static bool LooksLikeGerber(string content) => content.Contains("%FSL", StringComparison.OrdinalIgnoreCase) || content.Contains("%ADD", StringComparison.OrdinalIgnoreCase);
-    private static bool LooksLikeExcellon(string content) => content.StartsWith("M48", StringComparison.OrdinalIgnoreCase) || content.Contains("METRIC", StringComparison.OrdinalIgnoreCase) && content.Contains("T1C", StringComparison.OrdinalIgnoreCase);
+    private static bool LooksLikeExcellon(string content) => content.Contains("M48", StringComparison.OrdinalIgnoreCase)
+        && (content.Contains("METRIC", StringComparison.OrdinalIgnoreCase)
+            || content.Contains("INCH", StringComparison.OrdinalIgnoreCase)
+            || content.Contains("M71", StringComparison.OrdinalIgnoreCase)
+            || content.Contains("M72", StringComparison.OrdinalIgnoreCase));
 }

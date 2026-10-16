@@ -25,6 +25,7 @@ public sealed class MainViewModel : ObservableObject
     private readonly ManufacturingImporter importer = new();
     private readonly ShelfPanelizer panelizer = new();
     private readonly PanelExportService exporter = new();
+    private readonly WegstrGCodeExportService wegstrExporter = new();
     private static readonly HttpClient UpdateClient = new() { Timeout = TimeSpan.FromSeconds(10) };
     private AppSettings settings;
     private PanelizationResult? panelization;
@@ -53,6 +54,7 @@ public sealed class MainViewModel : ObservableObject
         SelectSideCommand = new(side => SelectSide(side as string));
         PanelizeCommand = new(_ => Panelize(), _ => Boards.Any(board => board.IsIncluded));
         ExportCommand = new(_ => Export(), _ => panelization is { Placements.Count: > 0 });
+        ExportWegstrCommand = new(_ => ExportWegstr(), _ => panelization is { Placements.Count: > 0 });
         PrintCommand = new(_ => Print());
         OpenSettingsCommand = new(_ => OpenSettings());
         CheckForUpdatesCommand = new(_ => CheckForUpdates(), _ => !IsCheckingForUpdates);
@@ -75,6 +77,7 @@ public sealed class MainViewModel : ObservableObject
     public RelayCommand SelectSideCommand { get; }
     public RelayCommand PanelizeCommand { get; }
     public RelayCommand ExportCommand { get; }
+    public RelayCommand ExportWegstrCommand { get; }
     public RelayCommand PrintCommand { get; }
     public RelayCommand OpenSettingsCommand { get; }
     public RelayCommand CheckForUpdatesCommand { get; }
@@ -107,7 +110,7 @@ public sealed class MainViewModel : ObservableObject
 
     private void ImportFiles()
     {
-        var dialog = new OpenFileDialog { Multiselect = true, Filter = $"{L("FilterProductionData")}|*.zip;*.rar;*.gbr;*.ger;*.gtl;*.gbl;*.gko;*.gm1;*.drl;*.xln;*.txt|{L("FilterArchives")}|*.zip;*.rar|{L("FilterGerberExcellon")}|*.gbr;*.ger;*.gtl;*.gbl;*.gko;*.gm1;*.drl;*.xln;*.txt|{L("FilterAllFiles")}|*.*", Title = LocalizationService.Instance["ImportFiles"] };
+        var dialog = new OpenFileDialog { Multiselect = true, Filter = $"{L("FilterProductionData")}|*.zip;*.rar;*.gbr;*.ger;*.gtl;*.gbl;*.gko;*.gm1;*.gml;*.gto;*.gbo;*.gts;*.gbs;*.gtp;*.gbp;*.drl;*.drd;*.xln;*.exc;*.txt|{L("FilterArchives")}|*.zip;*.rar|{L("FilterGerberExcellon")}|*.gbr;*.ger;*.gtl;*.gbl;*.gko;*.gm1;*.gml;*.gto;*.gbo;*.gts;*.gbs;*.gtp;*.gbp;*.drl;*.drd;*.xln;*.exc;*.txt|{L("FilterAllFiles")}|*.*", Title = LocalizationService.Instance["ImportFiles"] };
         if (dialog.ShowDialog(owner) != true) return;
         try
         {
@@ -174,7 +177,7 @@ public sealed class MainViewModel : ObservableObject
             WorkAreaWidthMm = settings.WorkAreaWidthMm,
             WorkAreaHeightMm = settings.WorkAreaHeightMm,
             Boards = Boards.Select(board => new PanelProjectBoard { InstanceId = board.InstanceId, DisplayName = board.Name, IsIncluded = board.IsIncluded, SourcePaths = board.SourcePaths.Select(source => Path.GetRelativePath(directory, source)).ToList() }).ToList(),
-            Placements = (panelization?.Placements ?? []).Select(placement => new PanelProjectPlacement { BoardInstanceId = placement.Board.Id, OffsetX = placement.Offset.X, OffsetY = placement.Offset.Y, RotationDegrees = placement.RotationDegrees }).ToList(),
+            Placements = (panelization?.Placements ?? []).Select(placement => new PanelProjectPlacement { BoardInstanceId = placement.Board.Id, OffsetX = placement.Offset.X, OffsetY = placement.Offset.Y, RotationDegrees = placement.RotationDegrees, MirrorMode = placement.MirrorMode.ToString() }).ToList(),
         };
     }
 
@@ -222,9 +225,9 @@ public sealed class MainViewModel : ObservableObject
     private void RestorePlacements(IEnumerable<PanelProjectPlacement> saved)
     {
         var boards = Boards.ToDictionary(item => item.InstanceId, StringComparer.OrdinalIgnoreCase);
-        var placements = saved.Where(item => boards.ContainsKey(item.BoardInstanceId)).Select(item => new BoardPlacement(boards[item.BoardInstanceId].Board, new PcbPoint(item.OffsetX, item.OffsetY), item.RotationDegrees)).ToList();
+        var placements = saved.Where(item => boards.ContainsKey(item.BoardInstanceId)).Select(item => new BoardPlacement(boards[item.BoardInstanceId].Board, new PcbPoint(item.OffsetX, item.OffsetY), item.RotationDegrees, Enum.TryParse<BoardMirrorMode>(item.MirrorMode, true, out var mirrorMode) ? mirrorMode : BoardMirrorMode.None)).ToList();
         if (placements.Count == 0) return;
-        panelization = new(placements, [], GetUsedBounds(placements)); RebuildPlacementPreviews(); OnPropertyChanged(nameof(RenderPlacements)); ExportCommand.RaiseCanExecuteChanged();
+        panelization = new(placements, [], GetUsedBounds(placements)); RebuildPlacementPreviews(); OnPropertyChanged(nameof(RenderPlacements)); ExportCommand.RaiseCanExecuteChanged(); ExportWegstrCommand.RaiseCanExecuteChanged();
     }
 
     private void ApplyProjectWorkArea(PanelProject project)
@@ -257,7 +260,7 @@ public sealed class MainViewModel : ObservableObject
         if (panelization is null) return;
         var remaining = panelization.Placements.Where(placement => !string.Equals(placement.Board.Id, board.Id, StringComparison.OrdinalIgnoreCase)).ToList();
         if (remaining.Count == panelization.Placements.Count) return;
-        panelization = new(remaining, panelization.UnplacedBoards, GetUsedBounds(remaining)); RebuildPlacementPreviews(); OnPropertyChanged(nameof(RenderPlacements)); ExportCommand.RaiseCanExecuteChanged();
+        panelization = new(remaining, panelization.UnplacedBoards, GetUsedBounds(remaining)); RebuildPlacementPreviews(); OnPropertyChanged(nameof(RenderPlacements)); ExportCommand.RaiseCanExecuteChanged(); ExportWegstrCommand.RaiseCanExecuteChanged();
     }
     private void MovePlacement(object? request)
     {
@@ -276,13 +279,16 @@ public sealed class MainViewModel : ObservableObject
     }
     private void Panelize()
     {
-        if (ManufacturingSide == "Bottom" && !string.Equals(settings.BottomMirrorPolicy, "Off", StringComparison.OrdinalIgnoreCase)) { AddStatus(StatusSeverity.Warning, L("StatusBottomMirrorNotImplemented", settings.BottomMirrorPolicy)); return; }
         var selected = Boards.Where(board => board.IsIncluded).Select(board => FilterBoardForManufacturingSide(board.Board)).ToList();
         if (selected.Count == 0) { AddStatus(StatusSeverity.Warning, L("StatusSelectBoard")); return; }
         try
         {
-            panelization = panelizer.Arrange(selected, new(new(settings.WorkAreaWidthMm, settings.WorkAreaHeightMm), settings.SafetyMarginMm, settings.BoardSpacingMm));
-            RebuildPlacementPreviews(); OnPropertyChanged(nameof(RenderPlacements)); ExportCommand.RaiseCanExecuteChanged();
+            panelization = panelizer.Arrange(selected, new(new(settings.WorkAreaWidthMm, settings.WorkAreaHeightMm), settings.SafetyMarginMm, settings.BoardSpacingMm), settings.AllowRotation);
+            if (ManufacturingSide == "Bottom" && Enum.TryParse<BoardMirrorMode>(settings.BottomMirrorPolicy, true, out var mirrorMode) && mirrorMode != BoardMirrorMode.None)
+            {
+                panelization = panelization with { Placements = panelization.Placements.Select(placement => placement with { MirrorMode = mirrorMode }).ToList() };
+            }
+            RebuildPlacementPreviews(); OnPropertyChanged(nameof(RenderPlacements)); ExportCommand.RaiseCanExecuteChanged(); ExportWegstrCommand.RaiseCanExecuteChanged();
             AddStatus(panelization.UnplacedBoards.Count == 0 ? StatusSeverity.Success : StatusSeverity.Warning, panelization.UnplacedBoards.Count == 0 ? L("StatusPanelized", panelization.Placements.Count, WorkAreaCaption) : L("StatusPanelizedUnplaced", panelization.Placements.Count, panelization.UnplacedBoards.Count, WorkAreaCaption));
         }
         catch (ArgumentException exception) { AddStatus(StatusSeverity.Error, L("StatusPanelSettingsInvalid", exception.Message)); }
@@ -316,6 +322,46 @@ public sealed class MainViewModel : ObservableObject
             MessageBox.Show(owner, L("ExportSuccessText", dialog.FileName), L("ExportSuccessTitle"), MessageBoxButton.OK, MessageBoxImage.Information);
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException or NotSupportedException) { AddStatus(StatusSeverity.Error, L("StatusExportFailed", exception.Message)); }
+        finally
+        {
+            if (File.Exists(temporaryArchivePath)) File.Delete(temporaryArchivePath);
+        }
+    }
+
+    private void ExportWegstr()
+    {
+        if (panelization is not { Placements.Count: > 0 }) { AddStatus(StatusSeverity.Warning, L("StatusPanelizeBeforeExport")); return; }
+        var dialog = new SaveFileDialog { Filter = $"{L("FilterZipArchive")}|*.zip", DefaultExt = ".zip", FileName = "wegstr-machine.zip", Title = LocalizationService.Instance["ExportWegstr"], OverwritePrompt = false };
+        if (dialog.ShowDialog(owner) != true) return;
+        if (Directory.Exists(dialog.FileName)) { AddStatus(StatusSeverity.Error, L("StatusWegstrExportFailed", L("ExportTargetIsDirectory"))); return; }
+        if (File.Exists(dialog.FileName) && MessageBox.Show(owner, L("ExportOverwriteText", dialog.FileName), L("ExportOverwriteTitle"), MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
+        var temporaryArchivePath = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(dialog.FileName))!, $".{Path.GetFileNameWithoutExtension(dialog.FileName)}-{Guid.NewGuid():N}.tmp");
+        try
+        {
+            var profile = new WegstrMachineProfile
+            {
+                WorkAreaWidthMillimetres = settings.WorkAreaWidthMm,
+                WorkAreaHeightMillimetres = settings.WorkAreaHeightMm,
+                MaterialThicknessMillimetres = settings.WegstrMaterialThicknessMm,
+                SafeZMillimetres = settings.WegstrSafeZMm,
+                IsolationDepthMillimetres = settings.WegstrIsolationDepthMm,
+                IsolationOffsetMillimetres = settings.WegstrIsolationOffsetMm,
+                OutlineDepthMillimetres = settings.WegstrOutlineDepthMm,
+                OutlineToolDiameterMillimetres = settings.WegstrOutlineToolDiameterMm,
+                DrillingDepthMillimetres = settings.WegstrDrillingDepthMm,
+                MillingFeedMillimetresPerMinute = settings.WegstrMillingFeedMmPerMinute,
+                PlungeFeedMillimetresPerMinute = settings.WegstrPlungeFeedMmPerMinute,
+                SpindleRpm = settings.WegstrSpindleRpm,
+                MillingToolNumber = settings.WegstrMillingToolNumber,
+                IncludeDrilling = settings.WegstrIncludeDrilling,
+                IncludeOutline = settings.WegstrIncludeOutline,
+            };
+            var result = wegstrExporter.Export(temporaryArchivePath, panelization.Placements, profile);
+            File.Move(temporaryArchivePath, dialog.FileName, overwrite: true);
+            AddStatus(result.Warnings.Count == 0 ? StatusSeverity.Success : StatusSeverity.Warning, L("StatusWegstrExported", result.Entries.Count, Path.GetFileName(dialog.FileName), result.Warnings.Count), result.Warnings);
+            MessageBox.Show(owner, L("WegstrExportSuccessText", dialog.FileName), L("ExportSuccessTitle"), MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException or NotSupportedException or ArgumentOutOfRangeException) { AddStatus(StatusSeverity.Error, L("StatusWegstrExportFailed", exception.Message)); }
         finally
         {
             if (File.Exists(temporaryArchivePath)) File.Delete(temporaryArchivePath);
@@ -392,7 +438,7 @@ public sealed class MainViewModel : ObservableObject
         StatusText = message; StatusEntries.Insert(0, new(DateTimeOffset.Now, severity, message, details?.Where(detail => !string.IsNullOrWhiteSpace(detail)).ToArray() ?? []));
         while (StatusEntries.Count > 100) StatusEntries.RemoveAt(StatusEntries.Count - 1);
     }
-    private void ClearPanelization() { panelization = null; PlacementPreviews.Clear(); OnPropertyChanged(nameof(BoardPreviewVisibility)); OnPropertyChanged(nameof(EmptyPreviewVisibility)); OnPropertyChanged(nameof(RenderPlacements)); ExportCommand.RaiseCanExecuteChanged(); }
+    private void ClearPanelization() { panelization = null; PlacementPreviews.Clear(); OnPropertyChanged(nameof(BoardPreviewVisibility)); OnPropertyChanged(nameof(EmptyPreviewVisibility)); OnPropertyChanged(nameof(RenderPlacements)); ExportCommand.RaiseCanExecuteChanged(); ExportWegstrCommand.RaiseCanExecuteChanged(); }
     private void RefreshBoardCommands() { PanelizeCommand.RaiseCanExecuteChanged(); DeleteBoardCommand.RaiseCanExecuteChanged(); CloneBoardCommand.RaiseCanExecuteChanged(); }
     private static PcbBounds GetUsedBounds(IEnumerable<BoardPlacement> placements) => placements.Aggregate(PcbBounds.Empty, (bounds, placement) => bounds.Include(placement.Bounds));
 }

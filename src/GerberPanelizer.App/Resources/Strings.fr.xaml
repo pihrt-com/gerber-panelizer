@@ -69,4 +69,24 @@
     <sys:String x:Key="FilterProject" xmlns:sys="clr-namespace:System;assembly=mscorlib">Projet Gerber Panelizer</sys:String>
     <sys:String x:Key="FilterZipArchive" xmlns:sys="clr-namespace:System;assembly=mscorlib">Archive ZIP</sys:String>
     <sys:String x:Key="FilterSettingsJson" xmlns:sys="clr-namespace:System;assembly=mscorlib">Paramètres JSON</sys:String>
+    <sys:String x:Key="ExportWegstr" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exporter Wegstr</sys:String>
+    <sys:String x:Key="InvalidWegstrSettings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Les paramètres Wegstr sont invalides. Le Z de sécurité et les avances doivent être positifs, les profondeurs négatives, la vitesse entre 1 et 100000 tr/min et le numéro d'outil entre 1 et 99.</sys:String>
+    <sys:String x:Key="WegstrMachine" xmlns:sys="clr-namespace:System;assembly=mscorlib">Machine Wegstr</sys:String>
+    <sys:String x:Key="WegstrMachineHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">G-code métrique conforme aux exemples Wegstr. Y est négatif depuis l’origine en haut à gauche ; isolation du cuivre, perçage et découpe sont des programmes TXT séparés.</sys:String>
+    <sys:String x:Key="WegstrSafeZ" xmlns:sys="clr-namespace:System;assembly=mscorlib">Z de sécurité (mm)</sys:String>
+    <sys:String x:Key="WegstrSpindleRpm" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vitesse de broche (tr/min)</sys:String>
+    <sys:String x:Key="WegstrMaterialThickness" xmlns:sys="clr-namespace:System;assembly=mscorlib">Épaisseur du matériau (mm)</sys:String>
+    <sys:String x:Key="WegstrIsolationDepth" xmlns:sys="clr-namespace:System;assembly=mscorlib">Profondeur d’isolation cuivre (mm)</sys:String>
+    <sys:String x:Key="WegstrIsolationOffset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Décalage du centre d’outil du cuivre (mm)</sys:String>
+    <sys:String x:Key="WegstrOutlineDepth" xmlns:sys="clr-namespace:System;assembly=mscorlib">Profondeur de découpe (mm)</sys:String>
+    <sys:String x:Key="WegstrOutlineToolDiameter" xmlns:sys="clr-namespace:System;assembly=mscorlib">Diamètre de fraise de contour (mm)</sys:String>
+    <sys:String x:Key="WegstrDrillingDepth" xmlns:sys="clr-namespace:System;assembly=mscorlib">Profondeur de perçage (mm)</sys:String>
+    <sys:String x:Key="WegstrMillingFeed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Avance de fraisage (mm/min)</sys:String>
+    <sys:String x:Key="WegstrPlungeFeed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Avance de plongée/perçage (mm/min)</sys:String>
+    <sys:String x:Key="WegstrMillingTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Numéro d'outil de fraisage</sys:String>
+    <sys:String x:Key="WegstrIncludeDrilling" xmlns:sys="clr-namespace:System;assembly=mscorlib">Inclure un programme de perçage séparé</sys:String>
+    <sys:String x:Key="WegstrIncludeOutline" xmlns:sys="clr-namespace:System;assembly=mscorlib">Inclure une découpe de contour séparée</sys:String>
+    <sys:String x:Key="StatusWegstrExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} fichier(s) G-code Wegstr exporté(s) vers {1}. {2} avertissement(s).</sys:String>
+    <sys:String x:Key="StatusWegstrExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Échec de l’export Wegstr : {0}</sys:String>
+    <sys:String x:Key="WegstrExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Le ZIP G-code Wegstr a été exporté vers :&#10;{0}&#10;&#10;Exécutez d’abord l’isolation du cuivre, puis le perçage et enfin la découpe. Vérifiez chaque parcours avant de démarrer la broche.</sys:String>
 </ResourceDictionary>

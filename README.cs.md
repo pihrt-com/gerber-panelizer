@@ -1,5 +1,11 @@
 # Gerber Panelizer
 
+## Kandidát verze 0.2.0 - 2026-10-16
+
+Změny ve složce `C:\GitHub\gerber-panelizer`: bylo implementováno přesné zrcadlení Bottom a automatická rotace panelizace po 90 stupních v náhledu, Gerberu, Excellonu, uložených projektech i strojovém výstupu; byl opraven import staršího palcového vrtání `M72`/`.drd` a export jednoznačných desetinných metrických souřadnic Excellon pro TrackMaker; přibyl konfigurovatelný profil stroje Wegstr a oddělené TXT programy pro izolaci mědi, vrtání a volitelné vyříznutí obrysu.
+
+Export Wegstr sjednotí podporované kruhové spoje a kruhové, obdélníkové nebo oválné pady vybrané měděné vrstvy a kolem výsledné mědi vypočte nastavené odsazení středu nástroje. Nesnaží se tiše převádět nepodporované Gerber oblouky, regiony, makra ani nekruhové apertury spojů. Před obráběním zkontrolujte všechny G-code programy v řídicím systému, počátek, průměry nástrojů, posuvy, otáčky i hloubky a proveďte zkušební chod nad obětovaným materiálem.
+
 [![Nejnovější vydání](https://img.shields.io/github/v/release/pihrt-com/gerber-panelizer?display_name=tag&sort=semver&label=release)](https://github.com/pihrt-com/gerber-panelizer/releases/latest)
 [![Windows x64](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011%20x64-0078D4?logo=windows&logoColor=white)](https://github.com/pihrt-com/gerber-panelizer/releases/latest)
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/cs-cz/download/dotnet/8.0)
@@ -15,7 +21,7 @@ Gerber Panelizer je odlehčená aplikace pro Windows pro přípravu výrobních 
 
 ## Stav projektu
 
-První funkční verze je hotová a lokálně publikovaná jako samostatné Windows x64 EXE. Bez závislosti na cloudové službě bezpečně zpracovává běžné metrické vstupy RS-274X Gerber a Excellon.
+Aplikace je připravená jako samostatné Windows x64 EXE. Bez závislosti na cloudové službě lokálně zpracovává běžné metrické i palcové vstupy RS-274X Gerber a Excellon.
 
 ## Poslední úprava — 2026-10-16
 
@@ -37,9 +43,11 @@ V Nastavení lze zvolit jazyk, rozměry pracovní plochy, bezpečný okraj, meze
 
 - Import ZIP, RAR a samostatných souborů Gerber/Excellon.
 - Interaktivní náhled vrstev s filtrováním, přiblížením celé pracovní plochy kolečkem myši, ručním přesouváním desek, souvislým vykreslením spojů pod 45°, kruhovými, obdélníkovými i oválnými SMT pady a nastavitelnými HEX barvami s klikací paletou.
-- Nastavitelná pracovní plocha frézky, okraje, mezery a pravidla rozložení.
-- Volba Top, Bottom nebo obou stran, přičemž zrcadlení Bottom je výslovná volba podle technologie výroby.
+- Nastavitelná pracovní plocha frézky, okraje, mezery a automatická rotace rozmístění po 90 stupních.
+- Volba Top, Bottom nebo obou stran; volitelné zrcadlení Bottom podle osy X nebo Y se shodně aplikuje na náhled, Gerber, Excellon, projekt i G-code.
 - Export panelu do jedné výrobní ZIP sady s Gerbery jednotlivých vrstev a sloučeným Excellon vrtáním, včetně bezpečného potvrzení před přepsáním existujícího ZIPu a okna s cílovou cestou po úspěšném exportu.
+- Podpora staršího palcového vrtání `M72`/`.drd` a jednoznačný desetinný metrický výstup Excellon pro spolehlivý import do TrackMakeru.
+- Samostatný ZIP export Wegstr se soubory `01-copper-isolation.txt`, volitelným `02-drill.txt` a volitelným `03-board-outline.txt`; používá zápornou osu Y od levého horního počátku podle vzorků Wegstr a v Nastavení nabízí hloubky, odsazení izolace, průměr frézy obrysu, posuvy, otáčky a číslo nástroje.
 - Postupný import, duplikování a mazání desek, přenositelné uložené projekty, podrobná diagnostika stavů, české, anglické, německé a francouzské rozhraní, náhled tisku samotného panelu a tisk.
 - Vlastní ikona PCB vložená do EXE, titulku a hlavního panelu aplikace, včetně lokalizovaného potvrzení před ukončením a kontroly vydání na GitHubu jedním tlačítkem vedle Nastavení.
 

@@ -1,6 +1,8 @@
 using System.IO.Compression;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
+using GerberPanelizer.Core.Geometry;
 using GerberPanelizer.Core.Models;
 using GerberPanelizer.Core.Panelization;
 using GerberPanelizer.Core.Parsing;
@@ -16,16 +18,14 @@ public sealed class PanelExportService
     private static readonly Regex GerberMacroRegex = new(@"%AM(?<name>[^*%]+)\*(?<body>.*?)%", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
     private static readonly Regex GerberSelectRegex = new(@"(?<![A-Z0-9])D(?<code>\d+)(?!\d)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex GerberCoordinateRegex = new(@"(?<axis>[XYIJ])(?<value>[+-]?\d+(?:\.\d+)?)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex ExcellonToolDefinitionRegex = new(@"^T(?<tool>\d+)C(?<diameter>[+-]?\d+(?:\.\d+)?)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex ExcellonToolSelectRegex = new(@"^T(?<tool>\d+)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex ExcellonCoordinateRegex = new(@"(?<axis>[XY])(?<value>[+-]?\d+(?:\.\d+)?)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex GerberOperationRegex = new(@"D0?[123](?!\d)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     public PanelExportResult Export(string archivePath, IEnumerable<BoardPlacement> placements)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(archivePath);
         var materialized = placements.ToList();
         if (materialized.Count == 0) throw new InvalidOperationException("At least one placed board is required for export.");
-        if (materialized.Any(placement => placement.RotationDegrees != 0)) throw new NotSupportedException("Export of rotated boards is not implemented. Use 0 degree placements.");
+        if (materialized.Any(placement => !IsQuarterTurn(placement.RotationDegrees))) throw new NotSupportedException("Only 0, 90, 180, and 270 degree board rotations can be exported safely.");
 
         var warnings = new List<string>();
         var entries = new List<string>();
@@ -61,10 +61,6 @@ public sealed class PanelExportService
         {
             var (placement, file) = sources[sourceIndex];
             var parsed = new GerberParser().Parse(file.Content);
-            if (parsed.CoordinateFormat.Unit != CoordinateUnit.Millimetres)
-            {
-                throw new NotSupportedException($"Gerber file '{file.Name}' uses inches. Metric Gerber files are required for the current exporter.");
-            }
 
             var apertureMap = new Dictionary<int, int>();
             var macroMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -85,12 +81,14 @@ public sealed class PanelExportService
                 {
                     if (definition.StartsWith(macro.Key, StringComparison.OrdinalIgnoreCase)) definition = macro.Value + definition[macro.Key.Length..];
                 }
+                definition = TransformApertureDefinition(definition, parsed.CoordinateFormat, placement, file.Name);
                 output.Append($"%ADD{outputCode}{definition}*%\n");
             }
 
+            var currentSourcePoint = new PcbPoint(0, 0);
             foreach (var token in GetGerberBodyTokens(file.Content))
             {
-                var transformed = TransformGerberToken(token, parsed.CoordinateFormat, placement, apertureMap);
+                var transformed = TransformGerberToken(token, parsed.CoordinateFormat, placement, apertureMap, ref currentSourcePoint);
                 if (transformed.Length > 0) output.Append(transformed).Append("*\n");
             }
         }
@@ -111,38 +109,82 @@ public sealed class PanelExportService
         }
     }
 
-    private static string TransformGerberToken(string token, CoordinateFormat sourceFormat, BoardPlacement placement, IReadOnlyDictionary<int, int> apertureMap)
+    private static string TransformGerberToken(string token, CoordinateFormat sourceFormat, BoardPlacement placement, IReadOnlyDictionary<int, int> apertureMap, ref PcbPoint currentSourcePoint)
     {
         token = GerberSelectRegex.Replace(token, match =>
         {
             var source = int.Parse(match.Groups["code"].Value);
             return apertureMap.TryGetValue(source, out var output) ? $"D{output}" : match.Value;
         });
-        return GerberCoordinateRegex.Replace(token, match =>
+
+        if (placement.MirrorMode != BoardMirrorMode.None)
+        {
+            token = token.Replace("G02", "GXX", StringComparison.OrdinalIgnoreCase)
+                .Replace("G03", "G02", StringComparison.OrdinalIgnoreCase)
+                .Replace("GXX", "G03", StringComparison.OrdinalIgnoreCase);
+        }
+
+        var matches = GerberCoordinateRegex.Matches(token);
+        if (matches.Count == 0) return token;
+        var sourceX = currentSourcePoint.X;
+        var sourceY = currentSourcePoint.Y;
+        var sourceI = 0d;
+        var sourceJ = 0d;
+        var hasPosition = false;
+        var hasArcOffset = false;
+        foreach (Match match in matches)
         {
             var value = sourceFormat.Parse(match.Groups["value"].Value);
-            var axis = match.Groups["axis"].Value;
-            if (axis == "X") value += placement.Offset.X;
-            if (axis == "Y") value += placement.Offset.Y;
-            return axis + new CoordinateFormat(4, 6, true, CoordinateUnit.Millimetres).FormatMillimetres(value);
-        });
+            switch (match.Groups["axis"].Value.ToUpperInvariant())
+            {
+                case "X": sourceX = value; hasPosition = true; break;
+                case "Y": sourceY = value; hasPosition = true; break;
+                case "I": sourceI = value; hasArcOffset = true; break;
+                case "J": sourceJ = value; hasArcOffset = true; break;
+            }
+        }
+
+        currentSourcePoint = new PcbPoint(sourceX, sourceY);
+        var coordinates = new StringBuilder();
+        if (hasPosition)
+        {
+            var point = placement.TransformPoint(currentSourcePoint);
+            coordinates.Append('X').Append(FormatGerberCoordinate(point.X));
+            coordinates.Append('Y').Append(FormatGerberCoordinate(point.Y));
+        }
+        if (hasArcOffset)
+        {
+            var vector = placement.TransformVector(new PcbPoint(sourceI, sourceJ));
+            coordinates.Append('I').Append(FormatGerberCoordinate(vector.X));
+            coordinates.Append('J').Append(FormatGerberCoordinate(vector.Y));
+        }
+
+        var withoutCoordinates = GerberCoordinateRegex.Replace(token, string.Empty);
+        var operation = GerberOperationRegex.Match(withoutCoordinates);
+        return operation.Success
+            ? withoutCoordinates.Insert(operation.Index, coordinates.ToString())
+            : withoutCoordinates + coordinates;
     }
 
     private static string BuildExcellon(IReadOnlyList<(BoardPlacement placement, ManufacturingFile file)> sources, ICollection<string> warnings)
     {
-        var output = new StringBuilder("M48\n; Generated by Gerber Panelizer\nMETRIC,TZ,0000.000000\n");
+        var output = new StringBuilder("M48\n; Generated by Gerber Panelizer\nMETRIC,TZ\n");
         var definitions = new List<(int OutputTool, double Diameter)>();
         var sourceMaps = new List<(BoardPlacement placement, ManufacturingFile file, ExcellonDocument document, Dictionary<int, int> tools)>();
         var nextTool = 1;
         foreach (var (placement, file) in sources)
         {
             var document = new ExcellonParser().Parse(file.Content);
-            if (document.CoordinateFormat.Unit != CoordinateUnit.Millimetres) throw new NotSupportedException($"Excellon file '{file.Name}' uses inches. Metric drill files are required for the current exporter.");
             var map = new Dictionary<int, int>();
             foreach (var tool in document.Tools.OrderBy(pair => pair.Key))
             {
-                map[tool.Key] = nextTool;
-                definitions.Add((nextTool++, tool.Value));
+                var existing = definitions.FirstOrDefault(item => Math.Abs(item.Diameter - tool.Value) < .0000005);
+                if (existing.OutputTool == 0)
+                {
+                    existing = (nextTool++, tool.Value);
+                    definitions.Add(existing);
+                }
+                map[tool.Key] = existing.OutputTool;
             }
 
             if (document.Hits.Any(hit => hit.ToolNumber == 0)) warnings.Add($"{file.Name}: unassigned drill hits were excluded from tool remapping.");
@@ -160,8 +202,9 @@ public sealed class PanelExportService
                 output.AppendLine($"T{map[group.Key]:00}");
                 foreach (var hit in group)
                 {
-                    output.Append('X').Append(FormatExcellonCoordinate(hit.Position.X + placement.Offset.X));
-                    output.Append('Y').Append(FormatExcellonCoordinate(hit.Position.Y + placement.Offset.Y));
+                    var point = placement.TransformPoint(hit.Position);
+                    output.Append('X').Append(FormatExcellonCoordinate(point.X));
+                    output.Append('Y').Append(FormatExcellonCoordinate(point.Y));
                     output.AppendLine();
                 }
             }
@@ -171,7 +214,46 @@ public sealed class PanelExportService
         return output.ToString();
     }
 
-    private static string FormatExcellonCoordinate(double value) => new CoordinateFormat(4, 6, true, CoordinateUnit.Millimetres).FormatMillimetres(value);
+    private static string TransformApertureDefinition(string definition, CoordinateFormat sourceFormat, BoardPlacement placement, string fileName)
+    {
+        var comma = definition.IndexOf(',');
+        if (comma < 0) return definition;
+        var shape = definition[..comma];
+        var values = definition[(comma + 1)..].Split('X');
+        var isStandard = shape.Equals("C", StringComparison.OrdinalIgnoreCase)
+            || shape.Equals("R", StringComparison.OrdinalIgnoreCase)
+            || shape.Equals("O", StringComparison.OrdinalIgnoreCase)
+            || shape.Equals("P", StringComparison.OrdinalIgnoreCase);
+        if (!isStandard)
+        {
+            if (sourceFormat.Unit == CoordinateUnit.Inches || placement.RotationDegrees != 0 || placement.MirrorMode != BoardMirrorMode.None)
+            {
+                throw new NotSupportedException($"Gerber file '{fileName}' uses custom aperture '{shape}', which cannot be converted or transformed safely.");
+            }
+            return definition;
+        }
+
+        if (sourceFormat.Unit == CoordinateUnit.Inches)
+        {
+            for (var index = 0; index < values.Length; index++)
+            {
+                if (shape.Equals("P", StringComparison.OrdinalIgnoreCase) && index is 1 or 2) continue;
+                if (double.TryParse(values[index], NumberStyles.Float, CultureInfo.InvariantCulture, out var value)) values[index] = (value * 25.4).ToString("0.######", CultureInfo.InvariantCulture);
+            }
+        }
+
+        var quarterTurns = NormalizeQuarterTurns(placement.RotationDegrees);
+        if (quarterTurns % 2 != 0 && (shape.Equals("R", StringComparison.OrdinalIgnoreCase) || shape.Equals("O", StringComparison.OrdinalIgnoreCase)) && values.Length >= 2)
+        {
+            (values[0], values[1]) = (values[1], values[0]);
+        }
+        return shape + ',' + string.Join('X', values);
+    }
+
+    private static bool IsQuarterTurn(double degrees) => Math.Abs(degrees / 90d - Math.Round(degrees / 90d)) < .000001;
+    private static int NormalizeQuarterTurns(double degrees) => ((int)Math.Round(degrees / 90d) % 4 + 4) % 4;
+    private static string FormatGerberCoordinate(double value) => new CoordinateFormat(4, 6, true, CoordinateUnit.Millimetres).FormatMillimetres(value);
+    private static string FormatExcellonCoordinate(double value) => value.ToString("0.######", CultureInfo.InvariantCulture);
     private static void WriteTextEntry(ZipArchive archive, string name, string content)
     {
         var entry = archive.CreateEntry(name, CompressionLevel.Optimal);

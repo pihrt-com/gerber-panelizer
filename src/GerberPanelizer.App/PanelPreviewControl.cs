@@ -169,7 +169,7 @@ public sealed class PanelPreviewControl : FrameworkElement
         var from = ScreenToPanel(pointerOrigin);
         var to = ScreenToPanel(pointer);
         var requested = new PcbPoint(dragOriginOffset.X + to.X - from.X, dragOriginOffset.Y + to.Y - from.Y);
-        transientOffsets[placement] = ClampOffsetToPanel(placement.Board, requested);
+        transientOffsets[placement] = ClampOffsetToPanel(placement, requested);
         InvalidateVisual();
         eventArgs.Handled = true;
     }
@@ -247,9 +247,9 @@ public sealed class PanelPreviewControl : FrameworkElement
 
     private BoardPlacement GetEffectivePlacement(BoardPlacement placement) => transientOffsets.TryGetValue(placement, out var offset) ? placement with { Offset = offset } : placement;
 
-    private PcbPoint ClampOffsetToPanel(ImportedBoard board, PcbPoint requested)
+    private PcbPoint ClampOffsetToPanel(BoardPlacement placement, PcbPoint requested)
     {
-        var bounds = board.Bounds;
+        var bounds = (placement with { Offset = new PcbPoint(0, 0) }).Bounds;
         if (bounds.IsEmpty) return requested;
         var minimumX = -bounds.MinX;
         var maximumX = PanelWidthMm - bounds.MaxX;
@@ -300,8 +300,8 @@ public sealed class PanelPreviewControl : FrameworkElement
         foreach (var operation in document.Operations)
         {
             if (operation.Type == GerberOperationType.Move) continue;
-            var start = ToScreen(operation.Start.Translate(placement.Offset.X, placement.Offset.Y));
-            var end = ToScreen(operation.End.Translate(placement.Offset.X, placement.Offset.Y));
+            var start = ToScreen(placement.TransformPoint(operation.Start));
+            var end = ToScreen(placement.TransformPoint(operation.End));
             var diameter = Math.Max(1, operation.ApertureDiameterMillimetres * PixelsPerMillimetre);
             if (operation.Type == GerberOperationType.Draw) context.DrawLine(CreateTracePen(brush, diameter), start, end);
             if (operation.Type == GerberOperationType.Flash) DrawGerberFlash(context, brush, end, operation.Aperture);
@@ -365,7 +365,7 @@ public sealed class PanelPreviewControl : FrameworkElement
         {
             var diameterMm = document.Tools.TryGetValue(hit.ToolNumber, out var diameter) ? diameter : 0.5;
             var radius = Math.Max(1, diameterMm * PixelsPerMillimetre) / 2;
-            context.DrawEllipse(brush, null, ToScreen(hit.Position.Translate(placement.Offset.X, placement.Offset.Y)), radius, radius);
+            context.DrawEllipse(brush, null, ToScreen(placement.TransformPoint(hit.Position)), radius, radius);
         }
     }
 

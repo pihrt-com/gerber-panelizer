@@ -1,5 +1,11 @@
 # Uživatelská příručka Gerber Panelizer
 
+## Novinky ve verzi 0.2.0
+
+Panelizace nyní podporuje automatickou rotaci desky po 90 stupních a volitelné zrcadlení Bottom podle osy X nebo Y. Stejná transformace se používá v náhledu, Gerberu, vrtání Excellon, uloženém projektu i G-code. Import rozpozná také starší palcové vrtání `M72` v souborech `.drd` a výrobní export zapisuje pro spolehlivý import do TrackMakeru jednoznačné desetinné souřadnice v milimetrech.
+
+Tlačítko **Export Wegstr** vytvoří ZIP se souborem `01-copper-isolation.txt`, volitelným `02-drill.txt` a volitelným `03-board-outline.txt`. Nastavení stroje Wegstr obsahuje bezpečné Z, tloušťku materiálu, hloubku a odsazení izolace mědi, hloubku vrtání a obrysu, průměr frézy obrysu, posuvy, otáčky, číslo nástroje a volby jednotlivých operací. Výstup používá zápornou osu Y od levého horního počátku stejně jako dodané vzorky Wegstr. Před obráběním vždy zkontrolujte dráhy v řídicím systému a proveďte zkušební chod.
+
 ## Účel
 
 Gerber Panelizer spojí více výrobních zakázek DPS do jednoho panelu pro CNC frézku nebo jiný kompatibilní výrobní postup. Pracuje lokálně na počítači s Windows; zdrojové soubory se nikam neodesílají.
@@ -31,13 +37,13 @@ Pokud archiv obsahuje neznámý název vrstvy, před panelizací zkontrolujte so
 
 Pracovní plocha představuje využitelnou oblast stroje, ne nutně fyzický rozměr podkladové desky. Nastavte bezpečný okraj vůči upínkám a limitům stroje a poté mezeru mezi deskami podle průměru frézy a způsobu oddělení.
 
-Automatická panelizace začíná v bezpečné oblasti a umístí desky včetně úplného obrysu, vrtání a zvolených vrstev. První verze používá pouze posun a před exportem ověří, že transformovaná geometrie leží uvnitř nastavené pracovní plochy. Rotaci odmítne, místo aby potichu vytvořila nebezpečný výrobní soubor.
+Automatická panelizace začíná v bezpečné oblasti a umístí desky včetně úplného obrysu, vrtání a zvolených vrstev. Pokud je povolená automatická rotace, může desku otočit o 90 stupňů, aby se vešla. Stejná rotace se použije v náhledu, Gerberu, Excellonu, uloženém projektu i výstupu Wegstr.
 
 Po panelizaci klikněte na desku v pracovní ploše a přetáhněte ji pro jemné doladění polohy. Kolečko myši přibližuje v místě ukazatele; prostřední tlačítko nebo mezerník + tažení posouvá náhled a Home zobrazí celou pracovní plochu. V seznamu načtených desek použijte Duplikovat nebo Smazat, případně stiskněte Delete. Pokud chcete ruční umístění nahradit automatickým, spusťte Panelizovat znovu.
 
 ## Top, Bottom a zrcadlení
 
-Gerberové vrstvy Top a Bottom obvykle používají stejný souřadnicový systém desky. Samotná volba Bottom proto nesmí data potichu zrcadlit. Vyhrazené pravidlo zrcadlení Bottom zůstává výslovným nastavením stroje, ale první verze zrcadlený export zablokuje, dokud nebudou implementované přesné zrcadlové transformace Gerberu a Excellonu.
+Gerberové vrstvy Top a Bottom obvykle používají stejný souřadnicový systém desky. Samotná volba Bottom proto data nezrcadlí; zrcadlení se provede jen při nastavení Mirror X nebo Mirror Y. Zvolená transformace kolem středu každé desky se shodně použije v náhledu, Gerberu, vrtání Excellon, uloženém projektu i G-code Wegstr.
 
 Před výrobou neznámé zakázky vyexportujte zkušební panel a ověřte orientaci na obětované desce. Kontrolujte zejména texty, konektory a nesymetrické rozmístění otvorů.
 
@@ -49,7 +55,7 @@ Náhled pomáhá s přípravou. Výrobní stroj je stále konečnou autoritou pr
 
 ## Nastavení a přenositelnost
 
-Nastavení zahrnuje pracovní plochu, bezpečnostní okraje, mezery, barvy vrstev, výchozí export, jazyk a pravidlo zrcadlení Bottom. Aplikace tyto hodnoty uloží pro aktuálního uživatele Windows.
+Nastavení zahrnuje pracovní plochu, bezpečnostní okraje, mezery, automatickou rotaci, barvy vrstev, jazyk, pravidlo zrcadlení Bottom a profil stroje Wegstr. Profil Wegstr obsahuje bezpečné Z, tloušťku materiálu, hloubky izolace, vrtání a obrysu, odsazení izolace, průměr frézy obrysu, posuvy, otáčky, číslo nástroje a volby zahrnutí vrtání a obrysu. Aplikace tyto hodnoty uloží pro aktuálního uživatele Windows.
 
 Použijte **Exportovat nastavení** pro uložení přenosné konfigurace a **Importovat nastavení** pro její obnovu na jiném počítači. Importované nastavení považujte za profil stroje: před prvním použitím vždy ověřte rozměry a pravidlo zrcadlení.
 

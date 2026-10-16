@@ -59,12 +59,15 @@ public sealed class ExcellonParser
 
     private static CoordinateFormat ReadFormat(string content, ICollection<string> warnings)
     {
-        var unit = content.Contains("INCH", StringComparison.OrdinalIgnoreCase) ? CoordinateUnit.Inches : CoordinateUnit.Millimetres;
+        var unit = content.Contains("INCH", StringComparison.OrdinalIgnoreCase) || Regex.IsMatch(content, @"(?m)^\s*M72\s*$", RegexOptions.IgnoreCase)
+            ? CoordinateUnit.Inches
+            : CoordinateUnit.Millimetres;
         var match = DecimalFormatRegex.Match(content);
         if (!match.Success)
         {
-            warnings.Add("No Excellon decimal format was found; using 3.3 coordinates.");
-            return CoordinateFormat.ExcellonMetricDefault with { Unit = unit };
+            var fallback = unit == CoordinateUnit.Inches ? new CoordinateFormat(2, 4, true, unit) : CoordinateFormat.ExcellonMetricDefault;
+            warnings.Add($"No Excellon decimal format was found; using {fallback.IntegerDigits}.{fallback.DecimalDigits} coordinates.");
+            return fallback;
         }
 
         var parts = match.Groups["format"].Value.Split('.');

@@ -28,4 +28,5 @@ public sealed class PanelProjectPlacement
     public double OffsetX { get; set; }
     public double OffsetY { get; set; }
     public double RotationDegrees { get; set; }
+    public string MirrorMode { get; set; } = "None";
 }

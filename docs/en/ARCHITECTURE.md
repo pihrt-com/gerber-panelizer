@@ -14,11 +14,11 @@
 4. Gerber RS-274X and Excellon files are parsed into a normalized millimetre geometry model while preserving source origin and source format information.
 5. The importer creates a board job with bounds derived from its profile where available.
 
-Both supplied Fusion samples use metric RS-274X with `FSLAX34Y34` and metric Excellon with trailing-zero suppression and 0.001 mm resolution. The implementation must not assume that every future input follows that format.
+The import pipeline handles metric data as well as legacy inch Gerber and Excellon jobs using `M72` and `.drd`. All parsed coordinates and tool diameters are normalized to millimetres. Excellon export writes explicit decimal metric coordinates so consumers such as TrackMaker cannot infer an incompatible implicit precision.
 
 ## Panel model
 
-A panel contains a machine work area, safety margins, placement rules, selected production side, optional explicit Bottom mirroring policy, imported board jobs, and their transforms. A transform is applied uniformly to every selected layer, profile contour, and drill hit belonging to a board. The first release exports translation-only transforms and rejects rotation or Bottom mirroring until their exact production-safe transforms are implemented.
+A panel contains a machine work area, safety margins, placement rules, selected production side, optional explicit Bottom mirroring policy, imported board jobs, and their transforms. Translation, Mirror X/Mirror Y around the board centre, and quarter-turn rotation are applied uniformly to every selected layer, profile contour, drill hit, preview primitive, project placement, and machine path belonging to a board.
 
 Panelization starts with deterministic rectangle packing using profile-derived bounds and required gaps. Its validator checks transformed geometry against the safe work area. Manual placement and more advanced nesting can build on the same transform model.
 
@@ -26,9 +26,9 @@ Panelization starts with deterministic rectangle packing using profile-derived b
 
 Raw Gerber source files must never be concatenated. Different board jobs may assign the same D-code to different apertures or use different aperture macro definitions. The exporter writes one legal header per layer, creates a global aperture/macro table, remaps each board's commands, applies its transform, and writes exactly one end-of-file command.
 
-The same invariant applies to Excellon drilling. The exporter groups tools by geometry, remaps local tool numbers, translates each drill hit, and writes one Excellon header and one final program terminator. It preserves every profile contour rather than replacing the panel outline with a bounding rectangle.
+The same invariant applies to Excellon drilling. The exporter groups equal tool diameters, remaps local tool numbers, transforms each drill hit, and writes one Excellon header with explicit decimal millimetre coordinates and one final program terminator. It preserves every profile contour rather than replacing the panel outline with a bounding rectangle.
 
-The result is a ZIP package with a manifest and separate selected Gerber layers plus one drill file. Validation runs before packaging and rejects a panel with out-of-area geometry or unresolved input data.
+The normal result is a ZIP package with separate selected Gerber layers plus one drill file. The independent Wegstr exporter polygonizes supported copper traces and flashes, unions overlaps with Clipper2, and offsets the resulting boundary for copper isolation. Assigned Excellon hits and cutter-compensated closed profile contours are written as separate TXT programs. Machine coordinates use a top-left origin with negative Y to match the supplied Wegstr examples. Gerber arcs and regions are rejected; unsupported trace apertures are skipped with a warning.
 
 ## Rendering and printing
 

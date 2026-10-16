@@ -1,5 +1,11 @@
 # Technická architektura
 
+## Změny modelu ve verzi 0.2.0
+
+Transformace umístění nyní zahrnuje posun, zrcadlení X/Y kolem středu desky a rotaci po 90 stupních. Jediný transformační model používá náhled, Gerber, Excellon, uložený projekt a Wegstr G-code. Import Excellonu rozpoznává jednotky `M71`/`M72` i příponu `.drd`; výstupní vrtání používá explicitní desetinné milimetry, aby TrackMaker nemusel odhadovat implicitní přesnost.
+
+Samostatný exportér Wegstr převádí podporované spoje a pady měděné vrstvy na polygony, sjednotí jejich překryvy pomocí Clipper2 a vypočte izolační kontury s nastaveným odsazením. Vrtání Excellon a uzavřené profilové kontury exportuje do samostatných TXT programů; profilové kontury kompenzuje o polovinu průměru frézy. Souřadnice stroje používají levý horní počátek a zápornou osu Y podle dodaných vzorků Wegstr. Gerber oblouky a regiony se odmítnou a nepodporované apertury spojů se přeskočí s varováním.
+
 ## Struktura řešení
 
 `GerberPanelizer.Core` je na platformě nezávislá knihovna výrobních dat. Obsahuje klasifikaci vstupů, parser Gerberu a Excellonu, geometrii, rozložení panelu, validaci a vytváření výstupu.
@@ -14,11 +20,11 @@
 4. Gerber RS-274X a Excellon se převedou do normalizovaného geometrického modelu v milimetrech při zachování původního počátku a informací o zdrojovém formátu.
 5. Importer vytvoří zakázku desky s hranicemi odvozenými z profilu, je-li dostupný.
 
-Oba dodané vzorky z Fusionu používají metrický RS-274X s `FSLAX34Y34` a metrický Excellon s potlačenými koncovými nulami a rozlišením 0,001 mm. Implementace nesmí předpokládat stejný formát u všech budoucích vstupů.
+Vstupní řetězec zpracuje metrická data i starší palcové zakázky Gerber a Excellon s `M72` a příponou `.drd`. Všechny načtené souřadnice a průměry nástrojů se normalizují do milimetrů. Excellon export používá explicitní desetinné metrické souřadnice, takže TrackMaker nemusí odhadovat nekompatibilní implicitní přesnost.
 
 ## Model panelu
 
-Panel obsahuje pracovní plochu stroje, bezpečnostní okraje, pravidla rozmístění, zvolenou výrobní stranu, případné výslovné pravidlo zrcadlení Bottom, importované zakázky desek a jejich transformace. Transformace se použije stejně na všechny zvolené vrstvy, kontury profilu i vrtací body dané desky. První verze exportuje pouze posun a rotaci nebo zrcadlení Bottom odmítne, dokud pro ně nejsou implementované přesné výrobně bezpečné transformace.
+Panel obsahuje pracovní plochu stroje, bezpečnostní okraje, pravidla rozmístění, zvolenou výrobní stranu, případné výslovné pravidlo zrcadlení Bottom, importované zakázky desek a jejich transformace. Posun, zrcadlení X/Y kolem středu desky a čtvrtotáčková rotace se používají shodně pro všechny zvolené vrstvy, kontury profilu, vrtací body, náhled, uložené umístění i strojové dráhy dané desky.
 
 Panelizace začíná deterministickým obdélníkovým skládáním, které používá hranice profilů a požadované mezery. Validátor kontroluje transformovanou geometrii vůči bezpečné pracovní ploše. Ruční umístění a pokročilejší nesting mohou stavět na stejném modelu transformací.
 

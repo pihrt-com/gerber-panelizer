@@ -17,6 +17,19 @@ public sealed class SettingsViewModel : ObservableObject
     private double safetyMarginMm;
     private bool allowRotation;
     private string bottomMirrorPolicy;
+    private double wegstrMaterialThicknessMm;
+    private double wegstrSafeZMm;
+    private double wegstrIsolationDepthMm;
+    private double wegstrIsolationOffsetMm;
+    private double wegstrOutlineDepthMm;
+    private double wegstrOutlineToolDiameterMm;
+    private double wegstrDrillingDepthMm;
+    private double wegstrMillingFeedMmPerMinute;
+    private double wegstrPlungeFeedMmPerMinute;
+    private int wegstrSpindleRpm;
+    private int wegstrMillingToolNumber;
+    private bool wegstrIncludeDrilling;
+    private bool wegstrIncludeOutline;
 
     public SettingsViewModel(AppSettings settings, Window window)
     {
@@ -36,6 +49,19 @@ public sealed class SettingsViewModel : ObservableObject
             new("LayerSilkscreen", settings.SilkscreenColor, "#F6F1D6"),
         };
         bottomMirrorPolicy = settings.BottomMirrorPolicy;
+        wegstrMaterialThicknessMm = settings.WegstrMaterialThicknessMm;
+        wegstrSafeZMm = settings.WegstrSafeZMm;
+        wegstrIsolationDepthMm = settings.WegstrIsolationDepthMm;
+        wegstrIsolationOffsetMm = settings.WegstrIsolationOffsetMm;
+        wegstrOutlineDepthMm = settings.WegstrOutlineDepthMm;
+        wegstrOutlineToolDiameterMm = settings.WegstrOutlineToolDiameterMm;
+        wegstrDrillingDepthMm = settings.WegstrDrillingDepthMm;
+        wegstrMillingFeedMmPerMinute = settings.WegstrMillingFeedMmPerMinute;
+        wegstrPlungeFeedMmPerMinute = settings.WegstrPlungeFeedMmPerMinute;
+        wegstrSpindleRpm = settings.WegstrSpindleRpm;
+        wegstrMillingToolNumber = settings.WegstrMillingToolNumber;
+        wegstrIncludeDrilling = settings.WegstrIncludeDrilling;
+        wegstrIncludeOutline = settings.WegstrIncludeOutline;
         SaveCommand = new RelayCommand(_ => Save());
         PickColorCommand = new RelayCommand(color => PickColor(color as LayerColorSettingViewModel));
         ExportSettingsCommand = new RelayCommand(_ => ExportSettings());
@@ -49,6 +75,19 @@ public sealed class SettingsViewModel : ObservableObject
     public double SafetyMarginMm { get => safetyMarginMm; set => SetProperty(ref safetyMarginMm, value); }
     public bool AllowRotation { get => allowRotation; set => SetProperty(ref allowRotation, value); }
     public string BottomMirrorPolicy { get => bottomMirrorPolicy; set => SetProperty(ref bottomMirrorPolicy, value); }
+    public double WegstrMaterialThicknessMm { get => wegstrMaterialThicknessMm; set => SetProperty(ref wegstrMaterialThicknessMm, value); }
+    public double WegstrSafeZMm { get => wegstrSafeZMm; set => SetProperty(ref wegstrSafeZMm, value); }
+    public double WegstrIsolationDepthMm { get => wegstrIsolationDepthMm; set => SetProperty(ref wegstrIsolationDepthMm, value); }
+    public double WegstrIsolationOffsetMm { get => wegstrIsolationOffsetMm; set => SetProperty(ref wegstrIsolationOffsetMm, value); }
+    public double WegstrOutlineDepthMm { get => wegstrOutlineDepthMm; set => SetProperty(ref wegstrOutlineDepthMm, value); }
+    public double WegstrOutlineToolDiameterMm { get => wegstrOutlineToolDiameterMm; set => SetProperty(ref wegstrOutlineToolDiameterMm, value); }
+    public double WegstrDrillingDepthMm { get => wegstrDrillingDepthMm; set => SetProperty(ref wegstrDrillingDepthMm, value); }
+    public double WegstrMillingFeedMmPerMinute { get => wegstrMillingFeedMmPerMinute; set => SetProperty(ref wegstrMillingFeedMmPerMinute, value); }
+    public double WegstrPlungeFeedMmPerMinute { get => wegstrPlungeFeedMmPerMinute; set => SetProperty(ref wegstrPlungeFeedMmPerMinute, value); }
+    public int WegstrSpindleRpm { get => wegstrSpindleRpm; set => SetProperty(ref wegstrSpindleRpm, value); }
+    public int WegstrMillingToolNumber { get => wegstrMillingToolNumber; set => SetProperty(ref wegstrMillingToolNumber, value); }
+    public bool WegstrIncludeDrilling { get => wegstrIncludeDrilling; set => SetProperty(ref wegstrIncludeDrilling, value); }
+    public bool WegstrIncludeOutline { get => wegstrIncludeOutline; set => SetProperty(ref wegstrIncludeOutline, value); }
     public ObservableCollection<LayerColorSettingViewModel> LayerColors { get; }
     public RelayCommand SaveCommand { get; }
     public RelayCommand PickColorCommand { get; }
@@ -65,6 +104,11 @@ public sealed class SettingsViewModel : ObservableObject
         if (LayerColors.Any(color => !color.IsHexValid))
         {
             MessageBox.Show(LocalizationService.Instance["InvalidLayerColours"], "Gerber Panelizer", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+        if (WegstrMaterialThicknessMm <= 0 || WegstrSafeZMm <= 0 || WegstrIsolationDepthMm >= 0 || WegstrIsolationOffsetMm <= 0 || WegstrOutlineDepthMm >= 0 || WegstrOutlineToolDiameterMm <= 0 || WegstrDrillingDepthMm >= 0 || WegstrMillingFeedMmPerMinute <= 0 || WegstrPlungeFeedMmPerMinute <= 0 || WegstrSpindleRpm is < 1 or > 100000 || WegstrMillingToolNumber is < 1 or > 99)
+        {
+            MessageBox.Show(LocalizationService.Instance["InvalidWegstrSettings"], "Gerber Panelizer", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
         AppSettingsService.Save(ToSettings());
@@ -96,6 +140,19 @@ public sealed class SettingsViewModel : ObservableObject
         OutlineColor = LayerColors[3].Hex,
         SilkscreenColor = LayerColors[4].Hex,
         BottomMirrorPolicy = BottomMirrorPolicy,
+        WegstrMaterialThicknessMm = WegstrMaterialThicknessMm,
+        WegstrSafeZMm = WegstrSafeZMm,
+        WegstrIsolationDepthMm = WegstrIsolationDepthMm,
+        WegstrIsolationOffsetMm = WegstrIsolationOffsetMm,
+        WegstrOutlineDepthMm = WegstrOutlineDepthMm,
+        WegstrOutlineToolDiameterMm = WegstrOutlineToolDiameterMm,
+        WegstrDrillingDepthMm = WegstrDrillingDepthMm,
+        WegstrMillingFeedMmPerMinute = WegstrMillingFeedMmPerMinute,
+        WegstrPlungeFeedMmPerMinute = WegstrPlungeFeedMmPerMinute,
+        WegstrSpindleRpm = WegstrSpindleRpm,
+        WegstrMillingToolNumber = WegstrMillingToolNumber,
+        WegstrIncludeDrilling = WegstrIncludeDrilling,
+        WegstrIncludeOutline = WegstrIncludeOutline,
     };
 
     private void ExportSettings()
@@ -124,6 +181,19 @@ public sealed class SettingsViewModel : ObservableObject
             LayerColors[3].Hex = imported.OutlineColor;
             LayerColors[4].Hex = imported.SilkscreenColor;
             BottomMirrorPolicy = imported.BottomMirrorPolicy;
+            WegstrMaterialThicknessMm = imported.WegstrMaterialThicknessMm;
+            WegstrSafeZMm = imported.WegstrSafeZMm;
+            WegstrIsolationDepthMm = imported.WegstrIsolationDepthMm;
+            WegstrIsolationOffsetMm = imported.WegstrIsolationOffsetMm;
+            WegstrOutlineDepthMm = imported.WegstrOutlineDepthMm;
+            WegstrOutlineToolDiameterMm = imported.WegstrOutlineToolDiameterMm;
+            WegstrDrillingDepthMm = imported.WegstrDrillingDepthMm;
+            WegstrMillingFeedMmPerMinute = imported.WegstrMillingFeedMmPerMinute;
+            WegstrPlungeFeedMmPerMinute = imported.WegstrPlungeFeedMmPerMinute;
+            WegstrSpindleRpm = imported.WegstrSpindleRpm;
+            WegstrMillingToolNumber = imported.WegstrMillingToolNumber;
+            WegstrIncludeDrilling = imported.WegstrIncludeDrilling;
+            WegstrIncludeOutline = imported.WegstrIncludeOutline;
         }
         catch (IOException) { MessageBox.Show(LocalizationService.Instance["SettingsReadFailed"], "Gerber Panelizer", MessageBoxButton.OK, MessageBoxImage.Warning); }
         catch (JsonException) { MessageBox.Show(LocalizationService.Instance["SettingsInvalid"], "Gerber Panelizer", MessageBoxButton.OK, MessageBoxImage.Warning); }

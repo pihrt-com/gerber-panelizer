@@ -17,6 +17,19 @@ public sealed class AppSettings
     public string OutlineColor { get; set; } = "#34434B";
     public string SilkscreenColor { get; set; } = "#F6F1D6";
     public string BottomMirrorPolicy { get; set; } = "Off";
+    public double WegstrMaterialThicknessMm { get; set; } = 1.5;
+    public double WegstrSafeZMm { get; set; } = 2;
+    public double WegstrIsolationDepthMm { get; set; } = -0.08;
+    public double WegstrIsolationOffsetMm { get; set; } = 0.1;
+    public double WegstrOutlineDepthMm { get; set; } = -1.7;
+    public double WegstrOutlineToolDiameterMm { get; set; } = 1;
+    public double WegstrDrillingDepthMm { get; set; } = -1.8;
+    public double WegstrMillingFeedMmPerMinute { get; set; } = 170;
+    public double WegstrPlungeFeedMmPerMinute { get; set; } = 170;
+    public int WegstrSpindleRpm { get; set; } = 12000;
+    public int WegstrMillingToolNumber { get; set; } = 1;
+    public bool WegstrIncludeDrilling { get; set; } = true;
+    public bool WegstrIncludeOutline { get; set; }
 }
 
 public static class AppSettingsService

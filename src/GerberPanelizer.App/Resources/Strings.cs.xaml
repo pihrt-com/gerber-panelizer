@@ -72,7 +72,6 @@
     <sys:String x:Key="StatusBoardCloned" xmlns:sys="clr-namespace:System;assembly=mscorlib">Deska {0} byla duplikována.</sys:String>
     <sys:String x:Key="StatusBoardMoved" xmlns:sys="clr-namespace:System;assembly=mscorlib">Deska {0} byla přesunuta.</sys:String>
     <sys:String x:Key="StatusManufacturingSide" xmlns:sys="clr-namespace:System;assembly=mscorlib">Strana výroby: {0}. Pro použití vybraných vrstev spusťte panelizaci znovu.</sys:String>
-    <sys:String x:Key="StatusBottomMirrorNotImplemented" xmlns:sys="clr-namespace:System;assembly=mscorlib">Je nastaveno zrcadlení spodní strany ({0}), ale zrcadlený export Gerberu/Excellonu není implementován. Pro bezpečné pokračování vyberte Vypnuto.</sys:String>
     <sys:String x:Key="StatusSelectBoard" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pro panelizaci vyberte alespoň jednu načtenou desku.</sys:String>
     <sys:String x:Key="StatusPanelized" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panelizováno desek: {0}, na ploše {1}.</sys:String>
     <sys:String x:Key="StatusPanelizedUnplaced" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panelizováno desek: {0}; desek, které se na plochu {2} nevejdou: {1}.</sys:String>
@@ -107,4 +106,24 @@
     <sys:String x:Key="FilterZipArchive" xmlns:sys="clr-namespace:System;assembly=mscorlib">Archiv ZIP</sys:String>
     <sys:String x:Key="FilterSettingsJson" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nastavení JSON</sys:String>
     <sys:String x:Key="StatusProjectAbsoluteSource" xmlns:sys="clr-namespace:System;assembly=mscorlib">Projekt obsahuje nepřenosnou absolutní cestu ke zdrojovému souboru.</sys:String>
+    <sys:String x:Key="ExportWegstr" xmlns:sys="clr-namespace:System;assembly=mscorlib">Export Wegstr</sys:String>
+    <sys:String x:Key="InvalidWegstrSettings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nastavení Wegstr není platné. Bezpečné Z a posuvy musí být kladné, hloubky záporné, otáčky v rozsahu 1-100000 a číslo nástroje 1-99.</sys:String>
+    <sys:String x:Key="WegstrMachine" xmlns:sys="clr-namespace:System;assembly=mscorlib">Stroj Wegstr</sys:String>
+    <sys:String x:Key="WegstrMachineHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Metrický G-code podle vzorků Wegstr. Osa Y je záporná od levého horního počátku; izolace mědi, vrtání a obrys jsou oddělené TXT programy.</sys:String>
+    <sys:String x:Key="WegstrSafeZ" xmlns:sys="clr-namespace:System;assembly=mscorlib">Bezpečné Z (mm)</sys:String>
+    <sys:String x:Key="WegstrSpindleRpm" xmlns:sys="clr-namespace:System;assembly=mscorlib">Otáčky vřetena (ot./min)</sys:String>
+    <sys:String x:Key="WegstrMaterialThickness" xmlns:sys="clr-namespace:System;assembly=mscorlib">Tloušťka materiálu (mm)</sys:String>
+    <sys:String x:Key="WegstrIsolationDepth" xmlns:sys="clr-namespace:System;assembly=mscorlib">Hloubka izolace mědi (mm)</sys:String>
+    <sys:String x:Key="WegstrIsolationOffset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Odsazení středu nástroje od mědi (mm)</sys:String>
+    <sys:String x:Key="WegstrOutlineDepth" xmlns:sys="clr-namespace:System;assembly=mscorlib">Hloubka vyříznutí obrysu (mm)</sys:String>
+    <sys:String x:Key="WegstrOutlineToolDiameter" xmlns:sys="clr-namespace:System;assembly=mscorlib">Průměr frézy obrysu (mm)</sys:String>
+    <sys:String x:Key="WegstrDrillingDepth" xmlns:sys="clr-namespace:System;assembly=mscorlib">Hloubka vrtání (mm)</sys:String>
+    <sys:String x:Key="WegstrMillingFeed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Posuv frézování (mm/min)</sys:String>
+    <sys:String x:Key="WegstrPlungeFeed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Posuv zanoření/vrtání (mm/min)</sys:String>
+    <sys:String x:Key="WegstrMillingTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Číslo frézovacího nástroje</sys:String>
+    <sys:String x:Key="WegstrIncludeDrilling" xmlns:sys="clr-namespace:System;assembly=mscorlib">Přidat samostatné vrtání</sys:String>
+    <sys:String x:Key="WegstrIncludeOutline" xmlns:sys="clr-namespace:System;assembly=mscorlib">Přidat samostatné vyříznutí obrysu</sys:String>
+    <sys:String x:Key="StatusWegstrExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exportováno {0} souborů G-code Wegstr do {1}. Varování: {2}.</sys:String>
+    <sys:String x:Key="StatusWegstrExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Export Wegstr se nezdařil: {0}</sys:String>
+    <sys:String x:Key="WegstrExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">ZIP s G-code pro Wegstr byl úspěšně exportován do:&#10;{0}&#10;&#10;Pořadí je izolace mědi, vrtání a nakonec vyříznutí obrysu. Před zapnutím vřetena ověřte všechny dráhy na řídicím systému.</sys:String>
 </ResourceDictionary>

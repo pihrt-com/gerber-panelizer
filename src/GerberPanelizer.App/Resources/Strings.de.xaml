@@ -69,4 +69,24 @@
     <sys:String x:Key="FilterProject" xmlns:sys="clr-namespace:System;assembly=mscorlib">Gerber-Panelizer-Projekt</sys:String>
     <sys:String x:Key="FilterZipArchive" xmlns:sys="clr-namespace:System;assembly=mscorlib">ZIP-Archiv</sys:String>
     <sys:String x:Key="FilterSettingsJson" xmlns:sys="clr-namespace:System;assembly=mscorlib">JSON-Einstellungen</sys:String>
+    <sys:String x:Key="ExportWegstr" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr exportieren</sys:String>
+    <sys:String x:Key="InvalidWegstrSettings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Die Wegstr-Einstellungen sind ungültig. Sicherheits-Z und Vorschübe müssen positiv, Schnitttiefen negativ, die Drehzahl 1-100000 und die Werkzeugnummer 1-99 sein.</sys:String>
+    <sys:String x:Key="WegstrMachine" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr-Maschine</sys:String>
+    <sys:String x:Key="WegstrMachineHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Metrischer G-Code nach den Wegstr-Beispielen. Y läuft vom Ursprung links oben negativ; Kupferisolation, Bohren und Konturschnitt sind getrennte TXT-Programme.</sys:String>
+    <sys:String x:Key="WegstrSafeZ" xmlns:sys="clr-namespace:System;assembly=mscorlib">Sicherheits-Z (mm)</sys:String>
+    <sys:String x:Key="WegstrSpindleRpm" xmlns:sys="clr-namespace:System;assembly=mscorlib">Spindeldrehzahl (U/min)</sys:String>
+    <sys:String x:Key="WegstrMaterialThickness" xmlns:sys="clr-namespace:System;assembly=mscorlib">Materialstärke (mm)</sys:String>
+    <sys:String x:Key="WegstrIsolationDepth" xmlns:sys="clr-namespace:System;assembly=mscorlib">Tiefe der Kupferisolation (mm)</sys:String>
+    <sys:String x:Key="WegstrIsolationOffset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Werkzeugmittelpunkt-Abstand zum Kupfer (mm)</sys:String>
+    <sys:String x:Key="WegstrOutlineDepth" xmlns:sys="clr-namespace:System;assembly=mscorlib">Konturschnitttiefe (mm)</sys:String>
+    <sys:String x:Key="WegstrOutlineToolDiameter" xmlns:sys="clr-namespace:System;assembly=mscorlib">Konturfräserdurchmesser (mm)</sys:String>
+    <sys:String x:Key="WegstrDrillingDepth" xmlns:sys="clr-namespace:System;assembly=mscorlib">Bohrtiefe (mm)</sys:String>
+    <sys:String x:Key="WegstrMillingFeed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Fräsvorschub (mm/min)</sys:String>
+    <sys:String x:Key="WegstrPlungeFeed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Eintauch-/Bohrvorschub (mm/min)</sys:String>
+    <sys:String x:Key="WegstrMillingTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Fräswerkzeugnummer</sys:String>
+    <sys:String x:Key="WegstrIncludeDrilling" xmlns:sys="clr-namespace:System;assembly=mscorlib">Separates Bohrprogramm hinzufügen</sys:String>
+    <sys:String x:Key="WegstrIncludeOutline" xmlns:sys="clr-namespace:System;assembly=mscorlib">Separaten Konturschnitt hinzufügen</sys:String>
+    <sys:String x:Key="StatusWegstrExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} Wegstr-G-Code-Datei(en) nach {1} exportiert. {2} Warnung(en).</sys:String>
+    <sys:String x:Key="StatusWegstrExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr-Export fehlgeschlagen: {0}</sys:String>
+    <sys:String x:Key="WegstrExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Das Wegstr-G-Code-ZIP wurde erfolgreich exportiert nach:&#10;{0}&#10;&#10;Führen Sie zuerst die Kupferisolation, dann das Bohren und zuletzt den Konturschnitt aus. Prüfen Sie jeden Werkzeugweg vor dem Spindelstart.</sys:String>
 </ResourceDictionary>

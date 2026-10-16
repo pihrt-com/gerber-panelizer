@@ -72,7 +72,6 @@
     <sys:String x:Key="StatusBoardCloned" xmlns:sys="clr-namespace:System;assembly=mscorlib">Duplicated board {0}.</sys:String>
     <sys:String x:Key="StatusBoardMoved" xmlns:sys="clr-namespace:System;assembly=mscorlib">Moved board {0}.</sys:String>
     <sys:String x:Key="StatusManufacturingSide" xmlns:sys="clr-namespace:System;assembly=mscorlib">Production side: {0}. Panelize again to apply the selected layers.</sys:String>
-    <sys:String x:Key="StatusBottomMirrorNotImplemented" xmlns:sys="clr-namespace:System;assembly=mscorlib">Bottom mirroring ({0}) is configured, but mirrored Gerber/Excellon export is not implemented. Select Off to continue safely.</sys:String>
     <sys:String x:Key="StatusSelectBoard" xmlns:sys="clr-namespace:System;assembly=mscorlib">Select at least one imported board for panelization.</sys:String>
     <sys:String x:Key="StatusPanelized" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panelized {0} board(s) on {1}.</sys:String>
     <sys:String x:Key="StatusPanelizedUnplaced" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panelized {0} board(s); {1} board(s) do not fit on {2}.</sys:String>
@@ -107,4 +106,24 @@
     <sys:String x:Key="FilterZipArchive" xmlns:sys="clr-namespace:System;assembly=mscorlib">ZIP archive</sys:String>
     <sys:String x:Key="FilterSettingsJson" xmlns:sys="clr-namespace:System;assembly=mscorlib">JSON settings</sys:String>
     <sys:String x:Key="StatusProjectAbsoluteSource" xmlns:sys="clr-namespace:System;assembly=mscorlib">The project contains a non-portable absolute source path.</sys:String>
+    <sys:String x:Key="ExportWegstr" xmlns:sys="clr-namespace:System;assembly=mscorlib">Export Wegstr</sys:String>
+    <sys:String x:Key="InvalidWegstrSettings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr settings are invalid. Safe Z and feed rates must be positive, cutting depths negative, spindle speed 1-100000 RPM, and tool number 1-99.</sys:String>
+    <sys:String x:Key="WegstrMachine" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr machine</sys:String>
+    <sys:String x:Key="WegstrMachineHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Metric G-code matching the Wegstr samples. Y is negative from the top-left origin; copper isolation, drilling, and outline cutting are separate TXT programs.</sys:String>
+    <sys:String x:Key="WegstrSafeZ" xmlns:sys="clr-namespace:System;assembly=mscorlib">Safe Z (mm)</sys:String>
+    <sys:String x:Key="WegstrSpindleRpm" xmlns:sys="clr-namespace:System;assembly=mscorlib">Spindle speed (RPM)</sys:String>
+    <sys:String x:Key="WegstrMaterialThickness" xmlns:sys="clr-namespace:System;assembly=mscorlib">Material thickness (mm)</sys:String>
+    <sys:String x:Key="WegstrIsolationDepth" xmlns:sys="clr-namespace:System;assembly=mscorlib">Copper-isolation depth (mm)</sys:String>
+    <sys:String x:Key="WegstrIsolationOffset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Tool-centre offset from copper (mm)</sys:String>
+    <sys:String x:Key="WegstrOutlineDepth" xmlns:sys="clr-namespace:System;assembly=mscorlib">Outline cutting depth (mm)</sys:String>
+    <sys:String x:Key="WegstrOutlineToolDiameter" xmlns:sys="clr-namespace:System;assembly=mscorlib">Outline cutter diameter (mm)</sys:String>
+    <sys:String x:Key="WegstrDrillingDepth" xmlns:sys="clr-namespace:System;assembly=mscorlib">Drilling depth (mm)</sys:String>
+    <sys:String x:Key="WegstrMillingFeed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Milling feed (mm/min)</sys:String>
+    <sys:String x:Key="WegstrPlungeFeed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Plunge/drill feed (mm/min)</sys:String>
+    <sys:String x:Key="WegstrMillingTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Milling tool number</sys:String>
+    <sys:String x:Key="WegstrIncludeDrilling" xmlns:sys="clr-namespace:System;assembly=mscorlib">Include separate drilling program</sys:String>
+    <sys:String x:Key="WegstrIncludeOutline" xmlns:sys="clr-namespace:System;assembly=mscorlib">Include separate outline-cut program</sys:String>
+    <sys:String x:Key="StatusWegstrExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exported {0} Wegstr G-code file(s) to {1}. {2} warning(s).</sys:String>
+    <sys:String x:Key="StatusWegstrExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr export failed: {0}</sys:String>
+    <sys:String x:Key="WegstrExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">The Wegstr G-code ZIP was successfully exported to:&#10;{0}&#10;&#10;Run copper isolation first, then drilling, and cut the outline last. Verify every toolpath on the controller before starting the spindle.</sys:String>
 </ResourceDictionary>

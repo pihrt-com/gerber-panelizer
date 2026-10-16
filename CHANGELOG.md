@@ -1,5 +1,12 @@
 # Change log
 
+## 0.2.0 - 2026-10-16
+
+- Implemented Bottom Mirror X/Mirror Y and 90-degree board rotation consistently in preview, Gerber, Excellon, saved projects, and machine output.
+- Added legacy inch Excellon `M72` and `.drd` import, inch Gerber conversion, and explicit decimal metric drill coordinates for reliable TrackMaker import.
+- Added an editable Wegstr machine profile and sample-compatible TXT export with top-left origin and negative Y, united and offset copper-isolation paths, optional drilling, and optional cutter-compensated outline cutting.
+- Added regression coverage plus real-input smoke validation with `gerber-K.zip` and `gerber-KS.zip`.
+
 ## 0.1.9 — 2026-10-16
 
 - Added descriptive Czech and English application screenshots to `docs/images`, the bilingual READMEs, and the matching user guides.

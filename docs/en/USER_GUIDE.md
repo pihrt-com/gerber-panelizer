@@ -13,7 +13,7 @@ The export is one ZIP production package. The package contains one Gerber file f
 3. Use **Import files** to choose Fusion/EAGLE ZIP files, RAR files, or individual Gerber and Excellon files. You can repeat this later to add more boards.
 4. Confirm whether the panel is for Top, Bottom, or both sides.
 5. Review the imported boards beside the work area, then select **Panelize**.
-6. Check the result with the layer filters and preview, then select **Export** to create the production ZIP package.
+6. Check the result with the layer filters and preview, then select **Export ZIP** for Gerber/Excellon or **Export Wegstr** for the separate machine G-code package.
 
 Use **New project**, **Save project**, and **Open project** in the top bar to resume an unfinished panel. A project stores relative paths to its source archives or files, its chosen boards, and manual board positions; keep it beside the source manufacturing data when moving it to another computer.
 
@@ -31,13 +31,13 @@ If an archive contains an unfamiliar layer name, inspect the import summary befo
 
 The work area represents the usable machine area, not necessarily the physical dimensions of the spoilboard. Set a safety margin to keep toolpaths away from clamps and machine limits, then set a board-to-board gap appropriate for your milling cutter and separation process.
 
-Automatic panelization starts from the safe area and places boards with their complete outline, drills, and selected layers. The first release uses translation-only placement and validates that transformed geometry remains inside the configured work area before export. It rejects rotation rather than silently producing an unsafe manufacturing file.
+Automatic panelization starts from the safe area and places boards with their complete outline, drills, and selected layers. When automatic rotation is enabled, a board can be rotated by 90 degrees to fit. The same rotation is applied to preview, Gerber, Excellon, saved projects, and Wegstr output.
 
 After panelization, select a board in the work area and drag it to fine-tune its position. The mouse wheel zooms at the pointer; use the middle button or Space + drag to pan, and Home to fit the whole work area. Select a board in the imported-board list and use Duplicate or Delete, or press Delete. Re-run Panelize whenever automatic placement should replace manual positions.
 
 ## Top, Bottom, and mirroring
 
-Top and Bottom Gerber layers normally share the board's coordinate system. Selecting Bottom must therefore not silently mirror data. The dedicated Bottom mirror policy is retained as an explicit machine setting, but this first release blocks a mirrored export until exact Gerber and Excellon mirror transforms are implemented.
+Top and Bottom Gerber layers normally share the board's coordinate system. Selecting Bottom therefore mirrors data only when the dedicated policy is set to Mirror X or Mirror Y. The selected transformation is applied around each board centre consistently to the preview, Gerber coordinates, Excellon drill hits, saved project, and Wegstr G-code.
 
 Before producing an unfamiliar job, export a test panel and verify orientation with a sacrificial board. In particular, check text, connector footprints, and asymmetric drill patterns.
 
@@ -49,11 +49,17 @@ The preview is a planning aid. The manufacturing machine remains the final autho
 
 ## Settings and portability
 
-Settings include the work area, safety margins, spacing, layer colors, default export choices, language, and Bottom mirror policy. The application stores these values for the current Windows user.
+Settings include the work area, safety margins, spacing, automatic rotation, layer colors, language, Bottom mirror policy, and the Wegstr machine profile. The Wegstr profile contains safe Z, material thickness, isolation, drilling, and outline depths, isolation offset, outline-cutter diameter, feeds, spindle speed, tool number, and inclusion choices for drilling and outline cutting. The application stores these values for the current Windows user.
 
 Use **Export settings** to save a portable configuration file and **Import settings** to restore it on another computer. Treat imported settings as machine profiles: verify dimensions and the mirror policy before first use.
 
 ![English Settings dialog](../images/english-settings.png)
+
+## Wegstr machine export
+
+**Export Wegstr** creates a ZIP containing `01-copper-isolation.txt`, optional `02-drill.txt`, and optional `03-board-outline.txt`. Its metric command style follows the supplied Wegstr/Vectric samples: absolute coordinates, negative Y from the top-left origin, safe-Z rapid moves, a rapid to Z0 before plunging, spindle command, numbered lines, and a final return to the origin.
+
+The isolation program unions supported circular traces and circle, rectangle, or obround flashes before offsetting the copper boundary, so overlapping pads and traces are not cut apart. The outline program compensates closed profile contours by half of the configured cutter diameter and is disabled by default because it has no holding-tab generation. Gerber arcs and regions are rejected instead of being approximated silently; unsupported trace apertures are skipped with a warning. Run isolation first, drilling second, and outline cutting last, and inspect each program in the controller before machining.
 
 ## Printing
 
