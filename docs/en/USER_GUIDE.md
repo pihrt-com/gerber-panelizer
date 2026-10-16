@@ -17,6 +17,8 @@ The export is one ZIP production package. The package contains one Gerber file f
 
 Use **New project**, **Save project**, and **Open project** in the top bar to resume an unfinished panel. A project stores relative paths to its source archives or files, its chosen boards, and manual board positions; keep it beside the source manufacturing data when moving it to another computer.
 
+![English panel overview](../images/english-panel-overview.png)
+
 ## Importing production data
 
 Autodesk Fusion/EAGLE exports commonly contain `GerberFiles`, `DrillFiles`, and `Assembly` folders. The application uses Gerber and drill data for manufacturing. Assembly BOM and pick-and-place files are intentionally ignored.
@@ -50,6 +52,8 @@ The preview is a planning aid. The manufacturing machine remains the final autho
 Settings include the work area, safety margins, spacing, layer colors, default export choices, language, and Bottom mirror policy. The application stores these values for the current Windows user.
 
 Use **Export settings** to save a portable configuration file and **Import settings** to restore it on another computer. Treat imported settings as machine profiles: verify dimensions and the mirror policy before first use.
+
+![English Settings dialog](../images/english-settings.png)
 
 ## Printing
 

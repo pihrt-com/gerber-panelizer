@@ -1,5 +1,9 @@
 # Change log
 
+## 0.1.9 — 2026-10-16
+
+- Added descriptive Czech and English application screenshots to `docs/images`, the bilingual READMEs, and the matching user guides.
+
 ## 0.1.8 — 2026-10-16
 
 - Added the branded Setup EXE bootstrapper as the primary installer, with the PCB icon in its executable and Installed Apps entry.

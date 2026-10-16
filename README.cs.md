@@ -19,7 +19,19 @@ První funkční verze je hotová a lokálně publikovaná jako samostatné Wind
 
 ## Poslední úprava — 2026-10-16
 
-Změny ve složce `C:\Users\marti\OneDrive\Dokumenty\GitHub\gerber-panelizer`: přibyl značkový Setup EXE s kvalitní ikonou PCB, opravilo se vykreslení odstavců licence GPL-3.0 a z MSI byla odstraněna roztažená ikona zasahující do textu volby zástupců.
+Změny ve složce `C:\Users\marti\OneDrive\Dokumenty\GitHub\gerber-panelizer`: přibyla zdokumentovaná galerie českého a anglického rozhraní se zobrazením panelizované pracovní plochy a okna Nastavení. Zdrojové obrázky jsou uložené ve složce `docs/images` pod stabilními popisnými názvy.
+
+## Snímky aplikace
+
+### České rozhraní
+
+![Panelizovaná pracovní plocha DPS v češtině](docs/images/czech-panel-overview.png)
+
+Hlavní obrazovka zobrazuje načtené desky, viditelné výrobní vrstvy, pracovní plochu stroje, ovládání panelizace, náhled tisku, export ZIP a podrobnosti stavů.
+
+![Okno Nastavení v češtině](docs/images/czech-settings.png)
+
+V Nastavení lze zvolit jazyk, rozměry pracovní plochy, bezpečný okraj, mezery mezi deskami, pravidlo zrcadlení Bottom, automatické otočení, barvy vrstev a import či export nastavení.
 
 ## Klíčové vlastnosti
 

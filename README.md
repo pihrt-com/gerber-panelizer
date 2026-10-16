@@ -19,7 +19,19 @@ The first working release is implemented and published locally as a self-contain
 
 ## Latest update — 2026-10-16
 
-Changes in `C:\Users\marti\OneDrive\Dokumenty\GitHub\gerber-panelizer`: added the branded Setup EXE installer with a high-resolution PCB icon, corrected the GPL-3.0 RTF paragraph rendering, and removed the stretched icon that overlapped text on the MSI shortcut-options page.
+Changes in `C:\Users\marti\OneDrive\Dokumenty\GitHub\gerber-panelizer`: added a documented Czech and English screenshot gallery showing a panelized work area and the Settings dialog. The source images are kept in `docs/images` under stable descriptive names.
+
+## Screenshots
+
+### English interface
+
+![Panelized PCB work area in English](docs/images/english-panel-overview.png)
+
+The main screen shows imported boards, visible manufacturing layers, the machine work area, panelization controls, print preview, ZIP export, and status details.
+
+![Settings dialog in English](docs/images/english-settings.png)
+
+Settings provide the interface language, machine work-area dimensions, safety margin, board spacing, Bottom mirror policy, automatic rotation, individual layer colours, and settings import/export.
 
 ## Core capabilities
 

@@ -17,6 +17,8 @@ Výstupem je jedna výrobní ZIP sada. Obsahuje jeden Gerber soubor pro každou 
 
 V horní liště použijte **Nový projekt**, **Uložit projekt** a **Otevřít projekt**, chcete-li rozdělaný panel dokončit později. Projekt uloží relativní cesty ke zdrojovým archivům nebo souborům, zvolené desky i jejich ruční umístění; při přesunu na jiný počítač jej ponechte vedle zdrojových výrobních dat.
 
+![Přehled panelizované pracovní plochy](../images/czech-panel-overview.png)
+
 ## Import výrobních dat
 
 Export Autodesk Fusion/EAGLE obvykle obsahuje složky `GerberFiles`, `DrillFiles` a `Assembly`. Aplikace používá pro výrobu Gerber a vrtací data. Montážní BOM a pick-and-place soubory se záměrně ignorují.
@@ -51,6 +53,8 @@ Nastavení zahrnuje pracovní plochu, bezpečnostní okraje, mezery, barvy vrste
 
 Použijte **Exportovat nastavení** pro uložení přenosné konfigurace a **Importovat nastavení** pro její obnovu na jiném počítači. Importované nastavení považujte za profil stroje: před prvním použitím vždy ověřte rozměry a pravidlo zrcadlení.
 
+![Nastavení po uložení](../images/czech-settings-saved.png)
+
 ## Tisk
 
 V Náhledu tisku ověřte měřítko a viditelné vrstvy, potom tiskněte přes standardní dialog Windows. Náhled i tisková úloha obsahují pouze pracovní plochu DPS, nikoli okno programu. Před tiskem vyberte Přizpůsobit stránce, skutečnou velikost, 75 % nebo 50 %, vypněte škálování tiskárny a změřte známou referenční vzdálenost. Výtisk slouží pro kontrolu nebo ruční šablonu, není to export pro stroj.
@@ -58,6 +62,8 @@ V Náhledu tisku ověřte měřítko a viditelné vrstvy, potom tiskněte přes 
 ## Podrobnosti stavů
 
 Stavový řádek zobrazuje poslední operaci. Tlačítkem Podrobnosti přímo nad ním otevřete jednotlivá varování importu nebo exportu včetně názvu zdrojového souboru a zprávy parseru či exportu. Varování před odesláním výrobních dat do stroje zkontrolujte.
+
+![Panelizované desky a stavová informace](../images/czech-panelized-status.png)
 
 ## Řešení potíží
 
