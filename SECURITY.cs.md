@@ -5,6 +5,7 @@
 Soubory vydání Gerber Panelizeru zatím **nejsou podepsané veřejně důvěryhodným certifikátem pro podepisování kódu pro Windows**. Týká se to obou distribučních variant:
 
 - `GerberPanelizer.App.exe` — přenosná samostatná aplikace pro Windows x64.
+- `GerberPanelizer-<verze>-win-x64-setup.exe` — značkový instalační EXE obsahující MSI.
 - `GerberPanelizer-<verze>-win-x64.msi` — instalační balíček pro celý počítač.
 
 Windows SmartScreen nebo jiná ochrana Windows může před otevřením kteréhokoli z těchto souborů zobrazit upozornění. U současných nepodepsaných vydání je to očekávané; samotný instalátor MSI upozornění neodstraní.
@@ -26,7 +27,7 @@ Pokračujte jen tehdy, když kontrolní součet přesně souhlasí s poznámkami
 
 ## Chování MSI
 
-MSI nainstaluje Gerber Panelizer pro všechny uživatele do `Program Files\Martin Pihrt\Gerber Panelizer` a objeví se s ikonou PCB v seznamu Nainstalované aplikace, odkud jej lze opravit nebo odebrat. Stránka licence je vytvořena z úplného znění GPL-3.0 v souboru [LICENSE](LICENSE). Během instalace nabídne volbu zástupce na ploše a v nabídce Start; připnutí na hlavní panel řídí Windows, proto lze zástupce z nabídky Start připnout až po instalaci. Pokud nalezne starší verzi Gerber Panelizeru, nabídne její nahrazení a Windows Installer ji před instalací nové verze transakčně odebere. Obsahuje tutéž samostatnou aplikaci jako přenosné EXE; nepoužívá online instalátor ani cloudovou závislost.
+Pro běžnou instalaci použijte značkový Setup EXE: používá ikonu PCB v samotném souboru i záznamu Nainstalovaných aplikací a zobrazí úplné znění GPL-3.0 ze souboru [LICENSE](LICENSE). MSI nainstaluje Gerber Panelizer pro všechny uživatele do `Program Files\Martin Pihrt\Gerber Panelizer` a zůstává k dispozici pro spravované nasazení. Nabídne volbu zástupce na ploše a v nabídce Start; připnutí na hlavní panel řídí Windows, proto lze zástupce z nabídky Start připnout až po instalaci. Pokud nalezne starší verzi Gerber Panelizeru, nabídne její nahrazení a Windows Installer ji před instalací nové verze transakčně odebere. Obsahuje tutéž samostatnou aplikaci jako přenosné EXE; nepoužívá online instalátor ani cloudovou závislost.
 
 ## Nahlášení bezpečnostní chyby
 

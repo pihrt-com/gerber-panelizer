@@ -19,7 +19,7 @@ The first working release is implemented and published locally as a self-contain
 
 ## Latest update — 2026-10-16
 
-Changes in `C:\Users\marti\OneDrive\Dokumenty\GitHub\gerber-panelizer`: replaced the MSI license placeholder with the complete GPL-3.0 text from `LICENSE`, added the PCB icon to MSI metadata and installer pages, and made the installer explicitly offer transactional replacement of an already installed version.
+Changes in `C:\Users\marti\OneDrive\Dokumenty\GitHub\gerber-panelizer`: added the branded Setup EXE installer with a high-resolution PCB icon, corrected the GPL-3.0 RTF paragraph rendering, and removed the stretched icon that overlapped text on the MSI shortcut-options page.
 
 ## Core capabilities
 
@@ -48,7 +48,7 @@ dotnet publish .\src\GerberPanelizer.App\GerberPanelizer.App.csproj -c Release -
 .\installer\build-installer.ps1
 ```
 
-After publishing, run `GerberPanelizer.App.exe` from `publish\win-x64`. The installer script produces an x64 MSI in `artifacts\installer`; it first publishes the same self-contained EXE. The MSI shows the complete GPL-3.0 license from [LICENSE](LICENSE), exposes the PCB icon in Installed Apps and installer pages, offers Desktop/Start-menu shortcut choices, and offers transactional replacement of a previous Gerber Panelizer version.
+After publishing, run `GerberPanelizer.App.exe` from `publish\win-x64`. The installer script produces a branded Setup EXE and a matching MSI in `artifacts\installer`; it first publishes the same self-contained EXE. Use the Setup EXE for the branded installer experience with the high-resolution PCB icon and GPL-3.0 license. The MSI remains available for managed deployments and offers Desktop/Start-menu shortcut choices; both paths transactionally replace a previous Gerber Panelizer version.
 
 ## License
 

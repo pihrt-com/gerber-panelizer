@@ -1,0 +1,10 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal">
+  <Bundle Name="Gerber Panelizer Setup" Manufacturer="Martin Pihrt" Version="$(var.AppVersion)" UpgradeCode="{67D71369-E2F9-43B7-9A2B-56E3F8672EA4}" IconSourceFile="$(var.ProjectDir)..\src\GerberPanelizer.App\Assets\gerber-panelizer.ico">
+    <BootstrapperApplication>
+      <bal:WixStandardBootstrapperApplication Theme="rtfLargeLicense" LicenseFile="$(var.LicenseRtfPath)" LogoFile="$(var.ProjectDir)..\src\GerberPanelizer.App\Assets\gerber-panelizer-icon.png" ShowVersion="yes" SuppressOptionsUI="yes" />
+    </BootstrapperApplication>
+    <Chain>
+      <MsiPackage SourceFile="$(var.MsiPath)" />
+    </Chain>
+  </Bundle>
+</Wix>

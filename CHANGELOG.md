@@ -1,5 +1,11 @@
 # Change log
 
+## 0.1.8 — 2026-10-16
+
+- Added the branded Setup EXE bootstrapper as the primary installer, with the PCB icon in its executable and Installed Apps entry.
+- Corrected GPL-3.0 RTF escaping so the installer displays paragraphs as formatted text rather than literal RTF paragraph markup.
+- Removed the low-resolution stretched icon from the MSI shortcut-options page and widened its title so it cannot overlap installer text.
+
 ## 0.1.7 — 2026-10-16
 
 - Replaced the installer’s placeholder license screen with the complete GPL-3.0 text generated directly from the repository `LICENSE` file for every MSI build.

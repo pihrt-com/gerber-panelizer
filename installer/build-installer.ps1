@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [string]$Version = '0.1.7',
+    [string]$Version = '0.1.8',
     [string]$OutputDirectory = (Join-Path $PSScriptRoot '..\artifacts\installer'),
     [switch]$CleanPublish
 )
@@ -15,6 +15,7 @@ $repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $publishDirectory = Join-Path $repositoryRoot "publish\win-x64-v$Version-ready"
 $applicationProject = Join-Path $repositoryRoot 'src\GerberPanelizer.App\GerberPanelizer.App.csproj'
 $installerProject = Join-Path $PSScriptRoot 'GerberPanelizer.Installer.wixproj'
+$bootstrapperProject = Join-Path $PSScriptRoot 'GerberPanelizer.Bootstrapper.wixproj'
 $licenseSource = Join-Path $repositoryRoot 'LICENSE'
 $generatedDirectory = Join-Path $PSScriptRoot 'obj\generated'
 $licenseRtfPath = Join-Path $generatedDirectory 'GPL-3.0.rtf'
@@ -27,13 +28,13 @@ function ConvertTo-RtfText {
         $codePoint = [int][char]$character
         switch ($codePoint) {
             13 { continue }
-            10 { [void]$builder.Append('\\par').Append("`r`n"); continue }
-            92 { [void]$builder.Append('\\\\'); continue }
-            123 { [void]$builder.Append('\\{'); continue }
-            125 { [void]$builder.Append('\\}'); continue }
+            10 { [void]$builder.Append('\par').Append("`r`n"); continue }
+            92 { [void]$builder.Append('\\'); continue }
+            123 { [void]$builder.Append('\{'); continue }
+            125 { [void]$builder.Append('\}'); continue }
             default {
                 if ($codePoint -gt 127) {
-                    [void]$builder.Append('\\u').Append($codePoint).Append('?')
+                    [void]$builder.Append('\u').Append($codePoint).Append('?')
                 }
                 else {
                     [void]$builder.Append($character)
@@ -80,5 +81,16 @@ if (-not (Test-Path -LiteralPath $msi -PathType Leaf)) {
     throw "The installer was not created at '$msi'."
 }
 
+dotnet build $bootstrapperProject -t:Rebuild -c Release -p:Version=$Version -p:MsiPath=$msi -p:LicenseRtfPath=$licenseRtfPath -p:OutputPath=$outputDirectoryPath
+if ($LASTEXITCODE -ne 0) {
+    throw 'Building the setup bootstrapper failed.'
+}
+
+$setup = Join-Path $outputDirectoryPath "GerberPanelizer-$Version-win-x64-setup.exe"
+if (-not (Test-Path -LiteralPath $setup -PathType Leaf)) {
+    throw "The setup bootstrapper was not created at '$setup'."
+}
+
 Get-FileHash -Algorithm SHA256 -LiteralPath (Join-Path $publishDirectory 'GerberPanelizer.App.exe')
 Get-FileHash -Algorithm SHA256 -LiteralPath $msi
+Get-FileHash -Algorithm SHA256 -LiteralPath $setup

@@ -1,0 +1,16 @@
+<Project Sdk="WixToolset.Sdk/6.0.2">
+  <PropertyGroup>
+    <OutputType>Bundle</OutputType>
+    <InstallerPlatform>x64</InstallerPlatform>
+    <SkipBuildStamp>true</SkipBuildStamp>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <OutputName>GerberPanelizer-$(Version)-win-x64-setup</OutputName>
+    <MsiPath Condition="'$(MsiPath)' == ''">$(MSBuildProjectDirectory)\..\artifacts\installer\GerberPanelizer-$(Version)-win-x64.msi</MsiPath>
+    <LicenseRtfPath Condition="'$(LicenseRtfPath)' == ''">$(MSBuildProjectDirectory)\obj\generated\GPL-3.0.rtf</LicenseRtfPath>
+    <DefineConstants>AppVersion=$(Version);MsiPath=$(MsiPath);LicenseRtfPath=$(LicenseRtfPath)</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Bundle.wxs" />
+    <PackageReference Include="WixToolset.BootstrapperApplications.wixext" Version="6.0.2" />
+  </ItemGroup>
+</Project>

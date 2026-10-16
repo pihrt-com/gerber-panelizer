@@ -5,7 +5,6 @@
     <Property Id="CREATE_DESKTOP_SHORTCUT" Value="1" />
     <Property Id="CREATE_START_MENU_SHORTCUT" Value="1" />
     <Icon Id="GerberPanelizerIcon" SourceFile="$(var.ProjectDir)..\src\GerberPanelizer.App\Assets\gerber-panelizer.ico" />
-    <Binary Id="GerberPanelizerInstallerIcon" SourceFile="$(var.ProjectDir)..\src\GerberPanelizer.App\Assets\gerber-panelizer.ico" />
     <Property Id="ARPPRODUCTICON" Value="GerberPanelizerIcon" />
     <WixVariable Id="WixUILicenseRtf" Value="$(var.LicenseRtfPath)" />
 
@@ -43,8 +42,7 @@
     <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
     <UI>
       <Dialog Id="ShortcutOptionsDlg" Width="370" Height="270" Title="[ProductName] Setup">
-        <Control Id="AppIcon" Type="Icon" X="325" Y="5" Width="32" Height="32" Text="GerberPanelizerInstallerIcon" />
-        <Control Id="Title" Type="Text" X="15" Y="6" Width="300" Height="15" Transparent="yes" NoPrefix="yes" Text="Shortcut options / Volby zástupců" />
+        <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="Shortcut options / Volby zástupců" />
         <Control Id="Description" Type="Text" X="20" Y="25" Width="320" Height="35" Transparent="yes" NoPrefix="yes" Text="Choose where Gerber Panelizer shortcuts will be created. / Zvolte, kde budou vytvořeni zástupci." />
         <Control Id="DesktopShortcut" Type="CheckBox" X="20" Y="85" Width="320" Height="17" Property="CREATE_DESKTOP_SHORTCUT" CheckBoxValue="1" Text="Create a Desktop shortcut / Vytvořit zástupce na ploše" />
         <Control Id="StartMenuShortcut" Type="CheckBox" X="20" Y="112" Width="320" Height="17" Property="CREATE_START_MENU_SHORTCUT" CheckBoxValue="1" Text="Create a Start menu shortcut / Vytvořit zástupce v nabídce Start" />
@@ -61,8 +59,7 @@
         </Control>
       </Dialog>
       <Dialog Id="UpgradeDetectedDlg" Width="370" Height="270" Title="[ProductName] Setup">
-        <Control Id="AppIcon" Type="Icon" X="325" Y="5" Width="32" Height="32" Text="GerberPanelizerInstallerIcon" />
-        <Control Id="Title" Type="Text" X="15" Y="6" Width="300" Height="15" Transparent="yes" NoPrefix="yes" Text="Previous version found / Nalezena předchozí verze" />
+        <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="15" Transparent="yes" NoPrefix="yes" Text="Previous version found / Nalezena předchozí verze" />
         <Control Id="Description" Type="Text" X="20" Y="48" Width="320" Height="70" Transparent="yes" NoPrefix="yes" Text="Gerber Panelizer is already installed. Continue to remove the previous version and install this version. / Gerber Panelizer je již nainstalován. Pokračováním bude předchozí verze odebrána a nainstalována tato verze." />
         <Control Id="Action" Type="Text" X="20" Y="132" Width="320" Height="35" Transparent="yes" NoPrefix="yes" Text="The replacement is performed by Windows Installer and is rolled back if the new installation fails. / Nahrazení provede Windows Installer; pokud nová instalace selže, odebrání se vrátí zpět." />
         <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />

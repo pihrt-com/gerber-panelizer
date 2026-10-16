@@ -19,7 +19,7 @@ První funkční verze je hotová a lokálně publikovaná jako samostatné Wind
 
 ## Poslední úprava — 2026-10-16
 
-Změny ve složce `C:\Users\marti\OneDrive\Dokumenty\GitHub\gerber-panelizer`: v MSI byl ukázkový text licence nahrazen úplným zněním GPL-3.0 ze souboru `LICENSE`, ikona PCB byla přidána do metadat a stránek instalátoru a instalátor nyní výslovně nabídne transakční nahrazení již nainstalované verze.
+Změny ve složce `C:\Users\marti\OneDrive\Dokumenty\GitHub\gerber-panelizer`: přibyl značkový Setup EXE s kvalitní ikonou PCB, opravilo se vykreslení odstavců licence GPL-3.0 a z MSI byla odstraněna roztažená ikona zasahující do textu volby zástupců.
 
 ## Klíčové vlastnosti
 
@@ -48,7 +48,7 @@ dotnet publish .\src\GerberPanelizer.App\GerberPanelizer.App.csproj -c Release -
 .\installer\build-installer.ps1
 ```
 
-Po publikaci se spouští `GerberPanelizer.App.exe` ve složce `publish\win-x64`. Instalační skript vytvoří x64 MSI v `artifacts\installer`; nejdříve publikuje stejné samostatné EXE. MSI zobrazí úplné znění GPL-3.0 ze souboru [LICENSE](LICENSE), ukáže ikonu PCB v seznamu Nainstalované aplikace i na stránkách instalátoru, nabídne zástupce na ploše a v nabídce Start a nabídne transakční nahrazení starší instalace Gerber Panelizeru.
+Po publikaci se spouští `GerberPanelizer.App.exe` ve složce `publish\win-x64`. Instalační skript vytvoří značkový Setup EXE i odpovídající MSI v `artifacts\installer`; nejdříve publikuje stejné samostatné EXE. Pro běžnou instalaci použijte Setup EXE s kvalitní ikonou PCB a licencí GPL-3.0. MSI zůstává k dispozici pro spravované nasazení a nabídne volbu zástupce na ploše a v nabídce Start; obě cesty transakčně nahradí starší instalaci Gerber Panelizeru.
 
 ## Licence
 

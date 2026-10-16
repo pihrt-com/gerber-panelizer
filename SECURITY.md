@@ -5,6 +5,7 @@
 Gerber Panelizer release files are currently **not signed with a publicly trusted Windows code-signing certificate**. This applies to both distribution formats:
 
 - `GerberPanelizer.App.exe` — portable, self-contained Windows x64 application.
+- `GerberPanelizer-<version>-win-x64-setup.exe` — branded Windows setup executable containing the MSI.
 - `GerberPanelizer-<version>-win-x64.msi` — per-machine Windows installer.
 
 Windows SmartScreen or another Windows security control may show a warning before either file is opened. This is expected for the current unsigned releases; an MSI installer does not remove that warning.
@@ -26,7 +27,7 @@ Only continue if the checksum exactly matches the release notes for the version 
 
 ## MSI behaviour
 
-The MSI installs Gerber Panelizer for all users in `Program Files\Martin Pihrt\Gerber Panelizer` and appears in Windows Installed Apps with the PCB icon for repair or removal. Its license page is generated from the complete GPL-3.0 text in [LICENSE](LICENSE). During installation, it offers Desktop and Start-menu shortcut choices; Windows controls taskbar pinning, so users can pin the Start-menu shortcut after installation. If an earlier Gerber Panelizer version is detected, the installer offers to replace it and Windows Installer removes the old version transactionally before installing the new one. It contains the same self-contained program as the portable EXE; no online installer or cloud dependency is used.
+Use the branded Setup EXE for normal installations: it uses the PCB icon in its executable and Installed Apps record and shows the complete GPL-3.0 text from [LICENSE](LICENSE). The MSI installs Gerber Panelizer for all users in `Program Files\Martin Pihrt\Gerber Panelizer` and remains available for managed deployments. It offers Desktop and Start-menu shortcut choices; Windows controls taskbar pinning, so users can pin the Start-menu shortcut after installation. If an earlier Gerber Panelizer version is detected, the installer offers to replace it and Windows Installer removes the old version transactionally before installing the new one. It contains the same self-contained program as the portable EXE; no online installer or cloud dependency is used.
 
 ## Reporting security issues
 
