@@ -6,5 +6,9 @@
     <OutputName>GerberPanelizer-$(Version)-win-x64</OutputName>
     <PublishDirectory Condition="'$(PublishDirectory)' == ''">$(MSBuildProjectDirectory)\..\publish\win-x64-v$(Version)-ready</PublishDirectory>
     <DefineConstants>AppVersion=$(Version);PublishDirectory=$(PublishDirectory)</DefineConstants>
+    <SuppressIces>ICE43;ICE57;ICE64;ICE69</SuppressIces>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="WixToolset.UI.wixext" Version="6.0.2" />
+  </ItemGroup>
 </Project>

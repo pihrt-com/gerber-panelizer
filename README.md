@@ -19,7 +19,7 @@ The first working release is implemented and published locally as a self-contain
 
 ## Latest update — 2026-10-16
 
-Changes in `C:\Users\marti\OneDrive\Dokumenty\GitHub\gerber-panelizer`: added the x64 MSI packaging workflow, Shields.io badges, and explicit English/Czech documentation of unsigned builds, SmartScreen, and SHA-256 verification.
+Changes in `C:\Users\marti\OneDrive\Dokumenty\GitHub\gerber-panelizer`: added the x64 MSI packaging workflow, Shields.io badges, explicit English/Czech documentation of unsigned builds, SmartScreen, and SHA-256 verification; repaired the Windows application icon and added installer choices for Desktop and Start-menu shortcuts.
 
 ## Core capabilities
 

@@ -19,7 +19,7 @@ První funkční verze je hotová a lokálně publikovaná jako samostatné Wind
 
 ## Poslední úprava — 2026-10-16
 
-Změny ve složce `C:\Users\marti\OneDrive\Dokumenty\GitHub\gerber-panelizer`: přidán proces sestavení x64 MSI, Shields.io badge a jasná česká/anglická dokumentace nepodepsaných sestavení, SmartScreenu a ověření SHA-256.
+Změny ve složce `C:\Users\marti\OneDrive\Dokumenty\GitHub\gerber-panelizer`: přidán proces sestavení x64 MSI, Shields.io badge a jasná česká/anglická dokumentace nepodepsaných sestavení, SmartScreenu a ověření SHA-256; opravena ikona aplikace pro Windows a přidána volba zástupce na ploše a v nabídce Start do instalátoru.
 
 ## Klíčové vlastnosti
 

@@ -1,18 +1,27 @@
-<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
-  <Package Name="Gerber Panelizer" Manufacturer="Martin Pihrt" Version="$(var.AppVersion)" UpgradeCode="{AC167EAF-2293-4B67-9B3F-36B9B3C05AA7}" Scope="perMachine">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <Package Name="Gerber Panelizer" Manufacturer="Martin Pihrt" Version="$(var.AppVersion)" UpgradeCode="{AC167EAF-2293-4B67-9B3F-36B9B3C05AA7}" Scope="perMachine" Codepage="65001">
     <MajorUpgrade DowngradeErrorMessage="A newer version of Gerber Panelizer is already installed." />
     <MediaTemplate EmbedCab="yes" />
+    <Property Id="CREATE_DESKTOP_SHORTCUT" Value="1" />
+    <Property Id="CREATE_START_MENU_SHORTCUT" Value="1" />
+    <Icon Id="GerberPanelizerIcon" SourceFile="$(var.ProjectDir)..\src\GerberPanelizer.App\Assets\gerber-panelizer.ico" />
 
     <StandardDirectory Id="ProgramFiles6432Folder">
       <Directory Id="CompanyFolder" Name="Martin Pihrt">
         <Directory Id="INSTALLFOLDER" Name="Gerber Panelizer">
           <Component Id="ApplicationComponent" Guid="{CF116DCA-8383-4128-84CF-10E4E1B3896F}" Bitness="always64">
-            <File Id="GerberPanelizerAppExe" Source="$(var.PublishDirectory)\GerberPanelizer.App.exe" KeyPath="yes">
-              <Shortcut Id="StartMenuShortcut" Directory="ApplicationProgramsFolder" Name="Gerber Panelizer" Description="Gerber and Excellon PCB panelizer" WorkingDirectory="INSTALLFOLDER" Advertise="yes" />
-            </File>
+            <File Id="GerberPanelizerAppExe" Source="$(var.PublishDirectory)\GerberPanelizer.App.exe" KeyPath="yes" />
             <RegistryValue Root="HKLM" Key="Software\Martin Pihrt\Gerber Panelizer" Name="Installed" Type="integer" Value="1" KeyPath="no" />
             <RemoveFolder Id="RemoveInstallFolder" On="uninstall" />
+          </Component>
+          <Component Id="StartMenuShortcutComponent" Guid="{A5A4607D-5F0B-49B3-91E3-1AF42B8BF6DC}" Bitness="always64" Condition="CREATE_START_MENU_SHORTCUT">
+            <Shortcut Id="StartMenuShortcut" Directory="ApplicationProgramsFolder" Name="Gerber Panelizer" Description="Gerber and Excellon PCB panelizer" Target="[#GerberPanelizerAppExe]" WorkingDirectory="INSTALLFOLDER" Icon="GerberPanelizerIcon" IconIndex="0" />
+            <RegistryValue Root="HKLM" Key="Software\Martin Pihrt\Gerber Panelizer" Name="StartMenuShortcut" Type="integer" Value="1" KeyPath="yes" />
             <RemoveFolder Id="RemoveApplicationProgramsFolder" Directory="ApplicationProgramsFolder" On="uninstall" />
+          </Component>
+          <Component Id="DesktopShortcutComponent" Guid="{49DFF680-3FC8-4776-8B2A-A8035E06FC67}" Bitness="always64" Condition="CREATE_DESKTOP_SHORTCUT">
+            <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="Gerber Panelizer" Description="Gerber and Excellon PCB panelizer" Target="[#GerberPanelizerAppExe]" WorkingDirectory="INSTALLFOLDER" Icon="GerberPanelizerIcon" IconIndex="0" />
+            <RegistryValue Root="HKLM" Key="Software\Martin Pihrt\Gerber Panelizer" Name="DesktopShortcut" Type="integer" Value="1" KeyPath="yes" />
           </Component>
         </Directory>
       </Directory>
@@ -24,6 +33,30 @@
 
     <Feature Id="MainFeature" Title="Gerber Panelizer" Level="1">
       <ComponentRef Id="ApplicationComponent" />
+      <ComponentRef Id="StartMenuShortcutComponent" />
+      <ComponentRef Id="DesktopShortcutComponent" />
     </Feature>
+
+    <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+    <UI>
+      <Dialog Id="ShortcutOptionsDlg" Width="370" Height="270" Title="[ProductName] Setup">
+        <Control Id="Title" Type="Text" X="15" Y="6" Width="300" Height="15" Transparent="yes" NoPrefix="yes" Text="Shortcut options / Volby zástupců" />
+        <Control Id="Description" Type="Text" X="20" Y="25" Width="320" Height="35" Transparent="yes" NoPrefix="yes" Text="Choose where Gerber Panelizer shortcuts will be created. / Zvolte, kde budou vytvořeni zástupci." />
+        <Control Id="DesktopShortcut" Type="CheckBox" X="20" Y="85" Width="320" Height="17" Property="CREATE_DESKTOP_SHORTCUT" CheckBoxValue="1" Text="Create a Desktop shortcut / Vytvořit zástupce na ploše" />
+        <Control Id="StartMenuShortcut" Type="CheckBox" X="20" Y="112" Width="320" Height="17" Property="CREATE_START_MENU_SHORTCUT" CheckBoxValue="1" Text="Create a Start menu shortcut / Vytvořit zástupce v nabídce Start" />
+        <Control Id="TaskbarNote" Type="Text" X="20" Y="145" Width="320" Height="35" Transparent="yes" NoPrefix="yes" Text="Windows controls taskbar pinning. You can pin the Start menu shortcut to the taskbar after installation. / Připnutí na hlavní panel řídí Windows; zástupce z nabídky Start lze připnout po instalaci." />
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="&amp;Back / Zpět">
+          <Publish Event="NewDialog" Value="InstallDirDlg" Condition="1" />
+        </Control>
+        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="&amp;Next / Další">
+          <Publish Event="NewDialog" Value="VerifyReadyDlg" Condition="1" />
+        </Control>
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel / Zrušit">
+          <Publish Event="SpawnDialog" Value="CancelDlg" Condition="1" />
+        </Control>
+      </Dialog>
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="ShortcutOptionsDlg" Order="5" Condition="1" />
+    </UI>
   </Package>
 </Wix>

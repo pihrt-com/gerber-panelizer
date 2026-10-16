@@ -26,7 +26,7 @@ Only continue if the checksum exactly matches the release notes for the version 
 
 ## MSI behaviour
 
-The MSI installs Gerber Panelizer for all users in `Program Files\Martin Pihrt\Gerber Panelizer`, creates a Start-menu shortcut, and appears in Windows Installed Apps for repair or removal. It contains the same self-contained program as the portable EXE; no online installer or cloud dependency is used.
+The MSI installs Gerber Panelizer for all users in `Program Files\Martin Pihrt\Gerber Panelizer` and appears in Windows Installed Apps for repair or removal. During installation, it offers Desktop and Start-menu shortcut choices; Windows controls taskbar pinning, so users can pin the Start-menu shortcut after installation. It contains the same self-contained program as the portable EXE; no online installer or cloud dependency is used.
 
 ## Reporting security issues
 

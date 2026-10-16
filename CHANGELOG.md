@@ -1,5 +1,10 @@
 # Change log
 
+## 0.1.6 — 2026-10-16
+
+- Replaced the invalid executable icon with a valid multi-resolution Windows ICO, including explicit icon metadata for installer shortcuts.
+- Added installer choices for Desktop and Start-menu shortcuts; Windows taskbar pinning remains an explicit user action from the Start-menu shortcut.
+
 ## 0.1.5 — 2026-10-16
 
 - Added the reproducible Windows x64 MSI installer project and build script alongside the portable self-contained EXE.

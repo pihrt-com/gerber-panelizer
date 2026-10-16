@@ -26,7 +26,7 @@ Pokračujte jen tehdy, když kontrolní součet přesně souhlasí s poznámkami
 
 ## Chování MSI
 
-MSI nainstaluje Gerber Panelizer pro všechny uživatele do `Program Files\Martin Pihrt\Gerber Panelizer`, vytvoří zástupce v nabídce Start a objeví se v seznamu Nainstalované aplikace, odkud jej lze opravit nebo odebrat. Obsahuje tutéž samostatnou aplikaci jako přenosné EXE; nepoužívá online instalátor ani cloudovou závislost.
+MSI nainstaluje Gerber Panelizer pro všechny uživatele do `Program Files\Martin Pihrt\Gerber Panelizer` a objeví se v seznamu Nainstalované aplikace, odkud jej lze opravit nebo odebrat. Během instalace nabídne volbu zástupce na ploše a v nabídce Start; připnutí na hlavní panel řídí Windows, proto lze zástupce z nabídky Start připnout až po instalaci. Obsahuje tutéž samostatnou aplikaci jako přenosné EXE; nepoužívá online instalátor ani cloudovou závislost.
 
 ## Nahlášení bezpečnostní chyby
 
