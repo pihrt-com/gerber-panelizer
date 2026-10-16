@@ -1,0 +1,28 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="Gerber Panelizer" Manufacturer="Martin Pihrt" Version="$(var.AppVersion)" UpgradeCode="{AC167EAF-2293-4B67-9B3F-36B9B3C05AA7}" Scope="perMachine">
+    <MajorUpgrade DowngradeErrorMessage="A newer version of Gerber Panelizer is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <StandardDirectory Id="ProgramFiles6432Folder">
+      <Directory Id="CompanyFolder" Name="Martin Pihrt">
+        <Directory Id="INSTALLFOLDER" Name="Gerber Panelizer">
+          <Component Id="ApplicationComponent" Guid="{CF116DCA-8383-4128-84CF-10E4E1B3896F}" Bitness="always64">
+            <File Id="GerberPanelizerAppExe" Source="$(var.PublishDirectory)\GerberPanelizer.App.exe" KeyPath="yes">
+              <Shortcut Id="StartMenuShortcut" Directory="ApplicationProgramsFolder" Name="Gerber Panelizer" Description="Gerber and Excellon PCB panelizer" WorkingDirectory="INSTALLFOLDER" />
+            </File>
+            <RegistryValue Root="HKLM" Key="Software\Martin Pihrt\Gerber Panelizer" Name="Installed" Type="integer" Value="1" KeyPath="no" />
+            <RemoveFolder Id="RemoveInstallFolder" On="uninstall" />
+          </Component>
+        </Directory>
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ApplicationProgramsFolder" Name="Gerber Panelizer" />
+    </StandardDirectory>
+
+    <Feature Id="MainFeature" Title="Gerber Panelizer" Level="1">
+      <ComponentRef Id="ApplicationComponent" />
+    </Feature>
+  </Package>
+</Wix>

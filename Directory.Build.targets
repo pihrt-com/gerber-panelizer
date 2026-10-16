@@ -1,5 +1,5 @@
 <Project>
-  <Target Name="GenerateBuildStamp" BeforeTargets="CoreCompile">
+  <Target Name="GenerateBuildStamp" BeforeTargets="CoreCompile" Condition="'$(SkipBuildStamp)' != 'true'">
     <Exec Command="git rev-parse --short=12 HEAD" WorkingDirectory="$(MSBuildThisFileDirectory)" ConsoleToMSBuild="true" IgnoreExitCode="true">
       <Output TaskParameter="ConsoleOutput" PropertyName="_GitRevision" />
     </Exec>

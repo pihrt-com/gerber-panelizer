@@ -1,5 +1,11 @@
 # Change log
 
+## Unreleased
+
+- Added the reproducible Windows x64 MSI installer project and build script alongside the portable self-contained EXE.
+- Added prominent English and Czech GitHub documentation of the current unsigned-build and Windows SmartScreen notice, including published-checksum guidance.
+- Added release, platform, .NET, license, and unsigned-build Shields.io badges to both README variants.
+
 ## 2026-10-15
 
 - Added German and French interface selections with English fallback for uncommon technical diagnostics.
