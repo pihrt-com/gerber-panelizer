@@ -8,10 +8,11 @@
         <Directory Id="INSTALLFOLDER" Name="Gerber Panelizer">
           <Component Id="ApplicationComponent" Guid="{CF116DCA-8383-4128-84CF-10E4E1B3896F}" Bitness="always64">
             <File Id="GerberPanelizerAppExe" Source="$(var.PublishDirectory)\GerberPanelizer.App.exe" KeyPath="yes">
-              <Shortcut Id="StartMenuShortcut" Directory="ApplicationProgramsFolder" Name="Gerber Panelizer" Description="Gerber and Excellon PCB panelizer" WorkingDirectory="INSTALLFOLDER" />
+              <Shortcut Id="StartMenuShortcut" Directory="ApplicationProgramsFolder" Name="Gerber Panelizer" Description="Gerber and Excellon PCB panelizer" WorkingDirectory="INSTALLFOLDER" Advertise="yes" />
             </File>
             <RegistryValue Root="HKLM" Key="Software\Martin Pihrt\Gerber Panelizer" Name="Installed" Type="integer" Value="1" KeyPath="no" />
             <RemoveFolder Id="RemoveInstallFolder" On="uninstall" />
+            <RemoveFolder Id="RemoveApplicationProgramsFolder" Directory="ApplicationProgramsFolder" On="uninstall" />
           </Component>
         </Directory>
       </Directory>
