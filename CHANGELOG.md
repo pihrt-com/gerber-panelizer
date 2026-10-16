@@ -1,6 +1,6 @@
 # Change log
 
-## Unreleased
+## 0.1.5 — 2026-10-16
 
 - Added the reproducible Windows x64 MSI installer project and build script alongside the portable self-contained EXE.
 - Added prominent English and Czech GitHub documentation of the current unsigned-build and Windows SmartScreen notice, including published-checksum guidance.
