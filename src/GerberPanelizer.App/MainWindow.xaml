@@ -175,7 +175,7 @@
                         </StackPanel>
                         <Border Grid.Row="1" Background="White" BorderBrush="#0B766E" BorderThickness="2" Margin="0,14,0,0" ClipToBounds="True">
                             <Grid>
-                                <local:PanelPreviewControl Placements="{Binding RenderPlacements}" Layers="{Binding Layers}" PanelWidthMm="{Binding WorkAreaWidthMm}" PanelHeightMm="{Binding WorkAreaHeightMm}" MovePlacementCommand="{Binding MovePlacementCommand}" DeletePlacementCommand="{Binding DeletePlacementCommand}" />
+                                <local:PanelPreviewControl Placements="{Binding RenderPlacements}" Layers="{Binding Layers}" PanelWidthMm="{Binding WorkAreaWidthMm}" PanelHeightMm="{Binding WorkAreaHeightMm}" WorkspaceWidthMm="{Binding PreviewWorkspaceWidthMm}" WorkspaceHeightMm="{Binding PreviewWorkspaceHeightMm}" StagingAreaLabel="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[StagingArea]}" MovePlacementCommand="{Binding MovePlacementCommand}" DeletePlacementCommand="{Binding DeletePlacementCommand}" />
                                 <StackPanel Visibility="{Binding EmptyPreviewVisibility}" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False">
                                     <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[CanvasEmptyTitle]}" FontSize="18" FontWeight="SemiBold" Foreground="#42615E" HorizontalAlignment="Center" />
                                     <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[CanvasEmptyHint]}" Margin="0,6,0,0" Foreground="#71908D" HorizontalAlignment="Center" />

@@ -4,9 +4,10 @@
     <sys:String x:Key="ManufacturingSide" xmlns:sys="clr-namespace:System;assembly=mscorlib">Manufacturing side</sys:String>
     <sys:String x:Key="Layers" xmlns:sys="clr-namespace:System;assembly=mscorlib">Layers</sys:String>
     <sys:String x:Key="WorkArea" xmlns:sys="clr-namespace:System;assembly=mscorlib">Machine work area</sys:String>
+    <sys:String x:Key="StagingArea" xmlns:sys="clr-namespace:System;assembly=mscorlib">Staging area</sys:String>
     <sys:String x:Key="CanvasEmptyTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Add production data to begin</sys:String>
     <sys:String x:Key="CanvasEmptyHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">ZIP, RAR, Gerber or Excellon files</sys:String>
-    <sys:String x:Key="Tip" xmlns:sys="clr-namespace:System;assembly=mscorlib">Import boards, choose the production side, then panelize.</sys:String>
+    <sys:String x:Key="Tip" xmlns:sys="clr-namespace:System;assembly=mscorlib">Drag boards from the staging area manually, or use automatic panelization.</sys:String>
     <sys:String x:Key="Panelize" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panelize</sys:String>
     <sys:String x:Key="Print" xmlns:sys="clr-namespace:System;assembly=mscorlib">Print</sys:String>
     <sys:String x:Key="Export" xmlns:sys="clr-namespace:System;assembly=mscorlib">Export ZIP</sys:String>
@@ -56,10 +57,14 @@
     <sys:String x:Key="CloneBoard" xmlns:sys="clr-namespace:System;assembly=mscorlib">Duplicate board</sys:String>
     <sys:String x:Key="StatusLog" xmlns:sys="clr-namespace:System;assembly=mscorlib">Details</sys:String>
     <sys:String x:Key="StatusReady" xmlns:sys="clr-namespace:System;assembly=mscorlib">Ready.</sys:String>
+    <sys:String x:Key="DiagnosticsLogPath" xmlns:sys="clr-namespace:System;assembly=mscorlib">Diagnostic log: {0}</sys:String>
     <sys:String x:Key="StatusImportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Import failed: {0}</sys:String>
     <sys:String x:Key="StatusNoBoardImported" xmlns:sys="clr-namespace:System;assembly=mscorlib">No board imported; {0} error(s) need attention.</sys:String>
     <sys:String x:Key="StatusNoLayersRecognised" xmlns:sys="clr-namespace:System;assembly=mscorlib">No recognised production layers were found.</sys:String>
     <sys:String x:Key="StatusImported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Imported {0} board(s) with {1} manufacturing file(s). {2} error(s), {3} warning(s).</sys:String>
+    <sys:String x:Key="StatusBoardsStaged" xmlns:sys="clr-namespace:System;assembly=mscorlib">The {0} imported board(s) are visible in the staging area. Drag them onto the panel or select Panelize.</sys:String>
+    <sys:String x:Key="StatusNoBoardsOnPanel" xmlns:sys="clr-namespace:System;assembly=mscorlib">There is no complete board on the machine work area. Drag one inside or select Panelize.</sys:String>
+    <sys:String x:Key="StatusBoardsCrossPanelBoundary" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} board(s) cross the machine-work-area boundary. Move each one completely inside or outside before export or printing.</sys:String>
     <sys:String x:Key="NewProjectConfirm" xmlns:sys="clr-namespace:System;assembly=mscorlib">Start a new project and discard the current unsaved board list?</sys:String>
     <sys:String x:Key="StatusNewProject" xmlns:sys="clr-namespace:System;assembly=mscorlib">A new empty project was created.</sys:String>
     <sys:String x:Key="StatusProjectSaved" xmlns:sys="clr-namespace:System;assembly=mscorlib">Project saved to {0}.</sys:String>
@@ -71,7 +76,7 @@
     <sys:String x:Key="BoardCopyName" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} (copy)</sys:String>
     <sys:String x:Key="StatusBoardCloned" xmlns:sys="clr-namespace:System;assembly=mscorlib">Duplicated board {0}.</sys:String>
     <sys:String x:Key="StatusBoardMoved" xmlns:sys="clr-namespace:System;assembly=mscorlib">Moved board {0}.</sys:String>
-    <sys:String x:Key="StatusManufacturingSide" xmlns:sys="clr-namespace:System;assembly=mscorlib">Production side: {0}. Panelize again to apply the selected layers.</sys:String>
+    <sys:String x:Key="StatusManufacturingSide" xmlns:sys="clr-namespace:System;assembly=mscorlib">Production side: {0}. Boards are staged for manual placement or automatic panelization.</sys:String>
     <sys:String x:Key="StatusSelectBoard" xmlns:sys="clr-namespace:System;assembly=mscorlib">Select at least one imported board for panelization.</sys:String>
     <sys:String x:Key="StatusPanelized" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panelized {0} board(s) on {1}.</sys:String>
     <sys:String x:Key="StatusPanelizedUnplaced" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panelized {0} board(s); {1} board(s) do not fit on {2}.</sys:String>
@@ -82,7 +87,7 @@
     <sys:String x:Key="StatusPrintSent" xmlns:sys="clr-namespace:System;assembly=mscorlib">Preview sent to the selected printer.</sys:String>
     <sys:String x:Key="StatusPanelizeBeforePrint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panelize boards before opening the print preview.</sys:String>
     <sys:String x:Key="StatusPrintPreviewOpened" xmlns:sys="clr-namespace:System;assembly=mscorlib">Print preview opened.</sys:String>
-    <sys:String x:Key="StatusSettingsSaved" xmlns:sys="clr-namespace:System;assembly=mscorlib">Settings saved. Panelize again to apply the new work area.</sys:String>
+    <sys:String x:Key="StatusSettingsSaved" xmlns:sys="clr-namespace:System;assembly=mscorlib">Settings saved. Boards are staged again beside the new work area.</sys:String>
     <sys:String x:Key="SideTop" xmlns:sys="clr-namespace:System;assembly=mscorlib">top</sys:String>
     <sys:String x:Key="SideBottom" xmlns:sys="clr-namespace:System;assembly=mscorlib">bottom</sys:String>
     <sys:String x:Key="SideBoth" xmlns:sys="clr-namespace:System;assembly=mscorlib">both</sys:String>

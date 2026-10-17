@@ -4,9 +4,10 @@
     <sys:String x:Key="ManufacturingSide" xmlns:sys="clr-namespace:System;assembly=mscorlib">Strana výroby</sys:String>
     <sys:String x:Key="Layers" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vrstvy</sys:String>
     <sys:String x:Key="WorkArea" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pracovní plocha stroje</sys:String>
+    <sys:String x:Key="StagingArea" xmlns:sys="clr-namespace:System;assembly=mscorlib">Odkládací plocha</sys:String>
     <sys:String x:Key="CanvasEmptyTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pro začátek vložte výrobní data</sys:String>
     <sys:String x:Key="CanvasEmptyHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">ZIP, RAR, Gerber nebo Excellon soubory</sys:String>
-    <sys:String x:Key="Tip" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vložte desky, vyberte stranu výroby a spusťte panelizaci.</sys:String>
+    <sys:String x:Key="Tip" xmlns:sys="clr-namespace:System;assembly=mscorlib">Přetáhněte desky z odkládací plochy ručně, nebo použijte automatickou panelizaci.</sys:String>
     <sys:String x:Key="Panelize" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panelizovat</sys:String>
     <sys:String x:Key="Print" xmlns:sys="clr-namespace:System;assembly=mscorlib">Tisk</sys:String>
     <sys:String x:Key="Export" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exportovat ZIP</sys:String>
@@ -56,10 +57,14 @@
     <sys:String x:Key="CloneBoard" xmlns:sys="clr-namespace:System;assembly=mscorlib">Duplikovat desku</sys:String>
     <sys:String x:Key="StatusLog" xmlns:sys="clr-namespace:System;assembly=mscorlib">Podrobnosti</sys:String>
     <sys:String x:Key="StatusReady" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připraveno.</sys:String>
+    <sys:String x:Key="DiagnosticsLogPath" xmlns:sys="clr-namespace:System;assembly=mscorlib">Diagnostický log: {0}</sys:String>
     <sys:String x:Key="StatusImportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Import se nezdařil: {0}</sys:String>
     <sys:String x:Key="StatusNoBoardImported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nebyla načtena žádná deska; pozornost vyžaduje {0} chyb.</sys:String>
     <sys:String x:Key="StatusNoLayersRecognised" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nebyly nalezeny rozpoznané výrobní vrstvy.</sys:String>
     <sys:String x:Key="StatusImported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Načteno desek: {0}; výrobních souborů: {1}. Chyby: {2}, varování: {3}.</sys:String>
+    <sys:String x:Key="StatusBoardsStaged" xmlns:sys="clr-namespace:System;assembly=mscorlib">Importované desky ({0}) jsou zobrazené na odkládací ploše. Přetáhněte je dovnitř nebo použijte Panelizovat.</sys:String>
+    <sys:String x:Key="StatusNoBoardsOnPanel" xmlns:sys="clr-namespace:System;assembly=mscorlib">Na pracovní ploše není žádná celá deska. Přetáhněte desku dovnitř nebo použijte Panelizovat.</sys:String>
+    <sys:String x:Key="StatusBoardsCrossPanelBoundary" xmlns:sys="clr-namespace:System;assembly=mscorlib">Desek přesahujících hranici pracovní plochy: {0}. Před exportem nebo tiskem je přesuňte celé dovnitř nebo ven.</sys:String>
     <sys:String x:Key="NewProjectConfirm" xmlns:sys="clr-namespace:System;assembly=mscorlib">Založit nový projekt a zahodit aktuální neuložený seznam desek?</sys:String>
     <sys:String x:Key="StatusNewProject" xmlns:sys="clr-namespace:System;assembly=mscorlib">Byl vytvořen nový prázdný projekt.</sys:String>
     <sys:String x:Key="StatusProjectSaved" xmlns:sys="clr-namespace:System;assembly=mscorlib">Projekt byl uložen do {0}.</sys:String>
@@ -71,7 +76,7 @@
     <sys:String x:Key="BoardCopyName" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} (kopie)</sys:String>
     <sys:String x:Key="StatusBoardCloned" xmlns:sys="clr-namespace:System;assembly=mscorlib">Deska {0} byla duplikována.</sys:String>
     <sys:String x:Key="StatusBoardMoved" xmlns:sys="clr-namespace:System;assembly=mscorlib">Deska {0} byla přesunuta.</sys:String>
-    <sys:String x:Key="StatusManufacturingSide" xmlns:sys="clr-namespace:System;assembly=mscorlib">Strana výroby: {0}. Pro použití vybraných vrstev spusťte panelizaci znovu.</sys:String>
+    <sys:String x:Key="StatusManufacturingSide" xmlns:sys="clr-namespace:System;assembly=mscorlib">Strana výroby: {0}. Desky jsou připravené na odkládací ploše pro ruční nebo automatické umístění.</sys:String>
     <sys:String x:Key="StatusSelectBoard" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pro panelizaci vyberte alespoň jednu načtenou desku.</sys:String>
     <sys:String x:Key="StatusPanelized" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panelizováno desek: {0}, na ploše {1}.</sys:String>
     <sys:String x:Key="StatusPanelizedUnplaced" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panelizováno desek: {0}; desek, které se na plochu {2} nevejdou: {1}.</sys:String>
@@ -82,7 +87,7 @@
     <sys:String x:Key="StatusPrintSent" xmlns:sys="clr-namespace:System;assembly=mscorlib">Náhled byl odeslán na vybranou tiskárnu.</sys:String>
     <sys:String x:Key="StatusPanelizeBeforePrint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Před otevřením náhledu tisku desky panelizujte.</sys:String>
     <sys:String x:Key="StatusPrintPreviewOpened" xmlns:sys="clr-namespace:System;assembly=mscorlib">Náhled tisku byl otevřen.</sys:String>
-    <sys:String x:Key="StatusSettingsSaved" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nastavení bylo uloženo. Pro použití nové pracovní plochy spusťte panelizaci znovu.</sys:String>
+    <sys:String x:Key="StatusSettingsSaved" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nastavení bylo uloženo. Desky jsou znovu připravené vedle nové pracovní plochy.</sys:String>
     <sys:String x:Key="SideTop" xmlns:sys="clr-namespace:System;assembly=mscorlib">horní</sys:String>
     <sys:String x:Key="SideBottom" xmlns:sys="clr-namespace:System;assembly=mscorlib">spodní</sys:String>
     <sys:String x:Key="SideBoth" xmlns:sys="clr-namespace:System;assembly=mscorlib">obě</sys:String>

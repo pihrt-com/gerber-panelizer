@@ -1,9 +1,7 @@
 # Uživatelská příručka Gerber Panelizer
 
-## Novinky ve verzi 0.2.0
-Panelizace nyní podporuje automatickou rotaci desky po 90 stupních a volitelné zrcadlení spodní strany (Bottom) podle osy X nebo Y. Stejná transformace se používá v náhledu, Gerberu, vrtání Excellon, uloženém projektu i G-code. Import rozpozná také starší palcové vrtání `M72` v souborech `.drd` a výrobní export zapisuje jako jednoznačné desetinné souřadnice v milimetrech.
-Tlačítko **Export Wegstr** vytvoří ZIP se souborem `01-copper-isolation.txt`, volitelným `02-drill.txt` a volitelným `03-board-outline.txt`. Nastavení stroje Wegstr obsahuje bezpečné Z, tloušťku materiálu, hloubku a odsazení izolace mědi, hloubku vrtání a obrysu, průměr frézy obrysu, posuvy, otáčky, číslo nástroje a volby jednotlivých operací. Výstup používá zápornou osu Y od levého horního počátku stejně jako dodané vzorky Wegstr. Před obráběním vždy nejprve zkontrolujte dráhy v řídicím systému a proveďte zkušební chod.
-Přesný seznam generovaných příkazů, ukázky programů a známá omezení jsou v dokumentu [G-code pro Wegstr](WEGSTR_GCODE.md).
+## Novinky ve verzi 0.2.1
+Importované desky se ihned vykreslí na odkládací ploše vedle pracovní plochy stroje. Desku lze přetáhnout dovnitř panelu, ručně ji umístit nebo ji vrátit ven; automatické rozmístění tlačítkem **Panelizovat** zůstává k dispozici. Export a tisk zahrnou jen celé desky uvnitř pracovní plochy a upozorní na desku přesahující její hranici. Po spuštění se automaticky zkontroluje nové vydání, přičemž ruční tlačítko kontroly zůstává zachováno. Aktualizovaný instalátor před vytvořením vybraného zástupce uklidí jeho starou variantu. Chyby a pády se zapisují do místního diagnostického logu včetně stack trace.
 
 ## Proč Gerber Panelizer
 Gerber Panelizer spojí více výrobních zakázek DPS do jednoho panelu pro CNC frézku nebo jiný kompatibilní výrobní postup. Pracuje lokálně na počítači s Windows. Zdrojové soubory se nikam neodesílají. Výstupem je jedna výrobní ZIP sada. Obsahuje jeden Gerber soubor pro každou vybranou výrobní vrstvu a jeden Excellon soubor pro vrtání.
@@ -13,7 +11,7 @@ Gerber Panelizer spojí více výrobních zakázek DPS do jednoho panelu pro CNC
 2. V Nastavení otevřeném ikonou ozubeného kola nastavte šířku a výšku pracovní plochy frézky, například 200 × 130 mm.
 3. Tlačítkem **Vložit soubory** vyberte ZIP z Fusionu/EAGLE, RAR nebo samostatné Gerber a Excellon soubory. Později jej můžete použít znovu pro přidání dalších desek.
 4. Potvrďte, zda je panel určený pro Top, Bottom, nebo obě strany.
-5. Zkontrolujte importované desky vedle pracovní plochy a zvolte **Panelizovat**.
+5. Importované desky se ihned zobrazí na odkládací ploše vedle pracovní plochy. Přetáhněte je ručně dovnitř, nebo zvolte **Panelizovat** pro automatické rozmístění.
 6. Výsledek ověřte filtry vrstev a náhledem, potom tlačítkem **Export** vytvořte výrobní ZIP sadu.
 
 V horní liště použijte **Nový projekt**, **Uložit projekt** a **Otevřít projekt**, chcete-li rozdělaný panel dokončit později. Projekt uloží relativní cesty ke zdrojovým archivům nebo souborům, zvolené desky i jejich ruční umístění; při přesunu na jiný počítač jej ponechte vedle zdrojových výrobních dat.
@@ -26,8 +24,12 @@ Importer rozpoznává běžné názvy vrstev z Fusionu, například `copper_top`
 
 ## Pracovní plocha a panelizace
 Pracovní plocha představuje využitelnou oblast stroje, ne nutně fyzický rozměr podkladové desky. Nastavte bezpečný okraj vůči upínkám a limitům stroje a poté mezeru mezi deskami podle průměru frézy a způsobu oddělení.
-Automatická panelizace začíná v bezpečné oblasti a umístí desky včetně úplného obrysu, vrtání a zvolených vrstev. Pokud je povolená automatická rotace, může desku otočit o 90 stupňů, aby se vešla. Stejná rotace se použije v náhledu, Gerberu, Excellonu, uloženém projektu i výstupu Wegstr.
-Po panelizaci klikněte na desku v pracovní ploše a přetáhněte ji pro jemné doladění polohy. Kolečko myši přibližuje v místě ukazatele. Prostřední tlačítko nebo mezerník + tažení posouvá náhled a Home zobrazí celou pracovní plochu. V seznamu načtených desek použijte Duplikovat nebo Smazat, případně stiskněte Delete. Pokud chcete ruční umístění nahradit automatickým, spusťte Panelizovat znovu.
+Po importu jsou všechny desky viditelné na šedé odkládací ploše napravo. Kliknutím a tažením je můžete přemístit na pracovní plochu, uvnitř ní i zpět ven. Export a tisk zpracují jen desky, které jsou uvnitř celé; deska protínající hranici export zablokuje, aby nevznikla neúplná výrobní data.
+Automatická panelizace začíná v bezpečné oblasti a umístí desky včetně úplného obrysu, vrtání a zvolených vrstev. Pokud je povolená automatická rotace, může desku otočit o 90 stupňů, aby se vešla. Desky, které se nevejdou, zůstanou viditelné na odkládací ploše. Stejná rotace se použije v náhledu, Gerberu, Excellonu, uloženém projektu i výstupu Wegstr.
+Kolečko myši přibližuje v místě ukazatele. Prostřední tlačítko nebo mezerník + tažení posouvá náhled a Home zobrazí pracovní i odkládací plochu. V seznamu načtených desek použijte Duplikovat nebo Smazat, případně stiskněte Delete. Pokud chcete ruční umístění nahradit automatickým, spusťte Panelizovat znovu.
+
+## Aktualizace programu
+Po zobrazení hlavního okna aplikace automaticky zkontroluje nejnovější vydání na GitHubu. Pokud je dostupná novější verze, nabídne otevření stránky pro stažení. Když je verze aktuální nebo se kontrola kvůli síti nezdaří, automatická kontrola neotevírá rušivé dialogové okno; výsledek zůstane ve stavovém řádku. Tlačítko ruční kontroly vedle Nastavení zůstává dostupné a zobrazuje i potvrzení aktuální verze nebo chybu spojení.
 
 ## Top, Bottom a zrcadlení
 Gerberové vrstvy Top a Bottom obvykle používají stejný souřadnicový systém desky. Samotná volba Bottom proto data nezrcadlí; zrcadlení se provede jen při nastavení Mirror X nebo Mirror Y. Zvolená transformace kolem středu každé desky se shodně použije v náhledu, Gerberu, vrtání Excellon, uloženém projektu i G-code Wegstr.
@@ -49,6 +51,8 @@ V Náhledu tisku ověřte měřítko a viditelné vrstvy, potom tiskněte přes 
 
 ## Podrobnosti stavů
 Stavový řádek zobrazuje poslední operaci. Tlačítkem Podrobnosti přímo nad ním otevřete jednotlivá varování importu nebo exportu včetně názvu zdrojového souboru a zprávy parseru či exportu. Varování před odesláním výrobních dat do stroje zkontrolujte.
+
+Varování, zachycené chyby, chyby úloh na pozadí a neočekávané pády se zapisují do `gerber-panelizer.log`. Přenosná verze jej vytváří vedle spuštěného EXE. Pokud Windows nedovolí zápis do instalační složky, například v `Program Files`, použije aplikace `%LOCALAPPDATA%\GerberPanelizer\logs`. Po dosažení 2 MB se předchozí obsah přesune do `gerber-panelizer.previous.log`. Log může obsahovat místní cesty k souborům a podrobnosti výjimek; před jeho předáním tyto údaje zkontrolujte.
 
 ![Panelizované desky a stavová informace](../images/czech-panelized-status.png)
 

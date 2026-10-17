@@ -24,6 +24,7 @@ public sealed class MainViewModel : ObservableObject
     private readonly Window owner;
     private readonly ManufacturingImporter importer = new();
     private readonly ShelfPanelizer panelizer = new();
+    private readonly BoardStagingLayout stagingLayout = new();
     private readonly PanelExportService exporter = new();
     private readonly WegstrGCodeExportService wegstrExporter = new();
     private static readonly HttpClient UpdateClient = new() { Timeout = TimeSpan.FromSeconds(10) };
@@ -35,11 +36,15 @@ public sealed class MainViewModel : ObservableObject
     private ImportedBoardItemViewModel? selectedBoard;
     private bool isStatusLogExpanded;
     private bool isCheckingForUpdates;
+    private double previewWorkspaceWidthMm;
+    private double previewWorkspaceHeightMm;
 
     public MainViewModel(Window owner)
     {
         this.owner = owner;
         settings = AppSettingsService.Load();
+        previewWorkspaceWidthMm = settings.WorkAreaWidthMm;
+        previewWorkspaceHeightMm = settings.WorkAreaHeightMm;
         statusText = L("StatusReady");
         Layers = new([new("Drill", "LayerDrill", settings.DrillColor), new("Top", "LayerTop", settings.TopLayerColor), new("Bottom", "LayerBottom", settings.BottomLayerColor), new("Outline", "LayerOutline", settings.OutlineColor), new("Silkscreen", "LayerSilkscreen", settings.SilkscreenColor)]);
         ImportCommand = new(_ => ImportFiles());
@@ -57,8 +62,9 @@ public sealed class MainViewModel : ObservableObject
         ExportWegstrCommand = new(_ => ExportWegstr(), _ => panelization is { Placements.Count: > 0 });
         PrintCommand = new(_ => Print());
         OpenSettingsCommand = new(_ => OpenSettings());
-        CheckForUpdatesCommand = new(_ => CheckForUpdates(), _ => !IsCheckingForUpdates);
-        AddStatus(StatusSeverity.Information, statusText);
+        CheckForUpdatesCommand = new(_ => CheckForUpdates(showCurrentResult: true), _ => !IsCheckingForUpdates);
+        owner.Loaded += OnOwnerLoaded;
+        AddStatus(StatusSeverity.Information, statusText, [L("DiagnosticsLogPath", AppLog.LogFilePath)]);
     }
 
     public ObservableCollection<LayerItemViewModel> Layers { get; }
@@ -86,6 +92,8 @@ public sealed class MainViewModel : ObservableObject
     public string WorkAreaCaption => $"{settings.WorkAreaWidthMm:0.##} × {settings.WorkAreaHeightMm:0.##} mm";
     public double WorkAreaWidthMm => settings.WorkAreaWidthMm;
     public double WorkAreaHeightMm => settings.WorkAreaHeightMm;
+    public double PreviewWorkspaceWidthMm => previewWorkspaceWidthMm;
+    public double PreviewWorkspaceHeightMm => previewWorkspaceHeightMm;
     public IReadOnlyList<BoardPlacement> RenderPlacements => panelization?.Placements ?? Array.Empty<BoardPlacement>();
     public string ManufacturingSide { get => manufacturingSide; private set => SetProperty(ref manufacturingSide, value); }
     public string StatusText { get => statusText; private set => SetProperty(ref statusText, value); }
@@ -120,13 +128,14 @@ public sealed class MainViewModel : ObservableObject
             if (looseFiles.Length > 0) results.Add(importer.ImportFiles(looseFiles));
             var boards = results.SelectMany(result => result.Boards).ToList();
             foreach (var board in boards) AddBoard(board);
-            ClearPanelization();
+            if (boards.Count > 0) StageBoards(boards, preserveExisting: true);
             var issues = results.SelectMany(result => result.Issues).ToList();
             AddImportStatus(boards, issues);
+            if (boards.Count > 0) AddStatus(StatusSeverity.Information, L("StatusBoardsStaged", boards.Count));
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidDataException)
         {
-            AddStatus(StatusSeverity.Error, L("StatusImportFailed", exception.Message));
+            AddStatus(StatusSeverity.Error, L("StatusImportFailed", exception.Message), exception: exception);
         }
     }
 
@@ -165,7 +174,7 @@ public sealed class MainViewModel : ObservableObject
             projectPath = dialog.FileName;
         }
         try { PanelProjectStore.Save(projectPath, BuildProject(projectPath)); AddStatus(StatusSeverity.Success, L("StatusProjectSaved", Path.GetFileName(projectPath))); }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException) { AddStatus(StatusSeverity.Error, L("StatusProjectSaveFailed", exception.Message)); }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or ArgumentException) { AddStatus(StatusSeverity.Error, L("StatusProjectSaveFailed", exception.Message), exception: exception); }
     }
 
     private PanelProject BuildProject(string path)
@@ -194,7 +203,7 @@ public sealed class MainViewModel : ObservableObject
             ManufacturingSide = project.ManufacturingSide is "Top" or "Bottom" or "Both" ? project.ManufacturingSide : "Both";
             RestorePlacements(project.Placements);
         }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidDataException or JsonException) { AddStatus(StatusSeverity.Error, L("StatusProjectLoadFailed", exception.Message)); }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidDataException or JsonException) { AddStatus(StatusSeverity.Error, L("StatusProjectLoadFailed", exception.Message), exception: exception); }
     }
 
     private void LoadProjectBoards(PanelProject project, string directory)
@@ -225,8 +234,8 @@ public sealed class MainViewModel : ObservableObject
     private void RestorePlacements(IEnumerable<PanelProjectPlacement> saved)
     {
         var boards = Boards.ToDictionary(item => item.InstanceId, StringComparer.OrdinalIgnoreCase);
-        var placements = saved.Where(item => boards.ContainsKey(item.BoardInstanceId)).Select(item => new BoardPlacement(boards[item.BoardInstanceId].Board, new PcbPoint(item.OffsetX, item.OffsetY), item.RotationDegrees, Enum.TryParse<BoardMirrorMode>(item.MirrorMode, true, out var mirrorMode) ? mirrorMode : BoardMirrorMode.None)).ToList();
-        if (placements.Count == 0) return;
+        var placements = saved.Where(item => boards.ContainsKey(item.BoardInstanceId)).Select(item => new BoardPlacement(FilterBoardForManufacturingSide(boards[item.BoardInstanceId].Board), new PcbPoint(item.OffsetX, item.OffsetY), item.RotationDegrees, Enum.TryParse<BoardMirrorMode>(item.MirrorMode, true, out var mirrorMode) ? mirrorMode : BoardMirrorMode.None)).ToList();
+        if (placements.Count == 0) { StageAllBoards(); return; }
         panelization = new(placements, [], GetUsedBounds(placements)); RebuildPlacementPreviews(); OnPropertyChanged(nameof(RenderPlacements)); ExportCommand.RaiseCanExecuteChanged(); ExportWegstrCommand.RaiseCanExecuteChanged();
     }
 
@@ -244,14 +253,15 @@ public sealed class MainViewModel : ObservableObject
     {
         if (board is null) return;
         DeletePlacementForBoard(board.Board); Boards.Remove(board); if (ReferenceEquals(SelectedBoard, board)) SelectedBoard = null;
-        RefreshBoardCommands(); AddStatus(StatusSeverity.Information, L("StatusBoardDeleted", board.Name));
+        RebuildPlacementPreviews(); RefreshBoardCommands(); AddStatus(StatusSeverity.Information, L("StatusBoardDeleted", board.Name));
     }
 
     private void CloneBoard(ImportedBoardItemViewModel? board)
     {
         if (board is null) return;
-        AddBoard(board.Board with { Id = Guid.NewGuid().ToString("N"), DisplayName = L("BoardCopyName", board.Name) }, board.IsIncluded);
-        SelectedBoard = Boards.Last(); ClearPanelization(); AddStatus(StatusSeverity.Success, L("StatusBoardCloned", board.Name));
+        var clone = board.Board with { Id = Guid.NewGuid().ToString("N"), DisplayName = L("BoardCopyName", board.Name) };
+        AddBoard(clone, board.IsIncluded);
+        SelectedBoard = Boards.Last(); StageBoards([clone], preserveExisting: true); AddStatus(StatusSeverity.Success, L("StatusBoardCloned", board.Name));
     }
 
     private void DeletePlacement(object? parameter) { if (parameter is BoardPlacement placement) DeletePlacementForBoard(placement.Board); }
@@ -274,7 +284,7 @@ public sealed class MainViewModel : ObservableObject
     private void SelectSide(string? side)
     {
         ManufacturingSide = side ?? "Both";
-        ClearPanelization();
+        StageAllBoards();
         AddStatus(StatusSeverity.Information, L("StatusManufacturingSide", L($"Side{ManufacturingSide}")));
     }
     private void Panelize()
@@ -283,20 +293,57 @@ public sealed class MainViewModel : ObservableObject
         if (selected.Count == 0) { AddStatus(StatusSeverity.Warning, L("StatusSelectBoard")); return; }
         try
         {
-            panelization = panelizer.Arrange(selected, new(new(settings.WorkAreaWidthMm, settings.WorkAreaHeightMm), settings.SafetyMarginMm, settings.BoardSpacingMm), settings.AllowRotation);
-            if (ManufacturingSide == "Bottom" && Enum.TryParse<BoardMirrorMode>(settings.BottomMirrorPolicy, true, out var mirrorMode) && mirrorMode != BoardMirrorMode.None)
-            {
-                panelization = panelization with { Placements = panelization.Placements.Select(placement => placement with { MirrorMode = mirrorMode }).ToList() };
-            }
+            var panelSize = new PcbSize(settings.WorkAreaWidthMm, settings.WorkAreaHeightMm);
+            var arranged = panelizer.Arrange(selected, new(panelSize, settings.SafetyMarginMm, settings.BoardSpacingMm), settings.AllowRotation);
+            var mirrorMode = GetCurrentMirrorMode();
+            var placed = arranged.Placements.Select(placement => placement with { MirrorMode = mirrorMode }).ToList();
+            var staged = stagingLayout.Arrange(arranged.UnplacedBoards, panelSize, settings.BoardSpacingMm, mirrorMode);
+            var visiblePlacements = placed.Concat(staged.Placements).ToList();
+            panelization = new(visiblePlacements, arranged.UnplacedBoards, GetUsedBounds(visiblePlacements));
             RebuildPlacementPreviews(); OnPropertyChanged(nameof(RenderPlacements)); ExportCommand.RaiseCanExecuteChanged(); ExportWegstrCommand.RaiseCanExecuteChanged();
-            AddStatus(panelization.UnplacedBoards.Count == 0 ? StatusSeverity.Success : StatusSeverity.Warning, panelization.UnplacedBoards.Count == 0 ? L("StatusPanelized", panelization.Placements.Count, WorkAreaCaption) : L("StatusPanelizedUnplaced", panelization.Placements.Count, panelization.UnplacedBoards.Count, WorkAreaCaption));
+            AddStatus(arranged.UnplacedBoards.Count == 0 ? StatusSeverity.Success : StatusSeverity.Warning, arranged.UnplacedBoards.Count == 0 ? L("StatusPanelized", placed.Count, WorkAreaCaption) : L("StatusPanelizedUnplaced", placed.Count, arranged.UnplacedBoards.Count, WorkAreaCaption));
         }
-        catch (ArgumentException exception) { AddStatus(StatusSeverity.Error, L("StatusPanelSettingsInvalid", exception.Message)); }
+        catch (ArgumentException exception) { AddStatus(StatusSeverity.Error, L("StatusPanelSettingsInvalid", exception.Message), exception: exception); }
     }
+
+    private void StageAllBoards() => StageBoards(Boards.Select(board => board.Board), preserveExisting: false);
+
+    private void StageBoards(IEnumerable<ImportedBoard> boards, bool preserveExisting)
+    {
+        var existing = preserveExisting ? panelization?.Placements.ToList() ?? [] : [];
+        var panelSize = new PcbSize(settings.WorkAreaWidthMm, settings.WorkAreaHeightMm);
+        var gap = Math.Max(5, settings.BoardSpacingMm);
+        var stagedToRight = existing.Where(placement => !placement.Bounds.IsEmpty && placement.Bounds.MinX >= settings.WorkAreaWidthMm).ToList();
+        var firstColumnX = stagedToRight.Count == 0 ? settings.WorkAreaWidthMm + gap : stagedToRight.Max(placement => placement.Bounds.MaxX) + gap;
+        var filtered = boards.Select(FilterBoardForManufacturingSide).ToList();
+        var staged = stagingLayout.Arrange(filtered, panelSize, settings.BoardSpacingMm, GetCurrentMirrorMode(), firstColumnX);
+        var placements = existing.Concat(staged.Placements).ToList();
+        panelization = new(placements, [], GetUsedBounds(placements));
+        RebuildPlacementPreviews();
+        OnPropertyChanged(nameof(RenderPlacements));
+        ExportCommand.RaiseCanExecuteChanged();
+        ExportWegstrCommand.RaiseCanExecuteChanged();
+    }
+
+    private BoardMirrorMode GetCurrentMirrorMode() => ManufacturingSide == "Bottom" && Enum.TryParse<BoardMirrorMode>(settings.BottomMirrorPolicy, true, out var mirrorMode) ? mirrorMode : BoardMirrorMode.None;
+
     private void RebuildPlacementPreviews()
     {
         PlacementPreviews.Clear(); foreach (var placement in panelization?.Placements ?? []) PlacementPreviews.Add(CreatePreview(placement));
+        UpdatePreviewWorkspaceSize();
         OnPropertyChanged(nameof(BoardPreviewVisibility)); OnPropertyChanged(nameof(EmptyPreviewVisibility));
+    }
+
+    private void UpdatePreviewWorkspaceSize()
+    {
+        var panelSize = new PcbSize(settings.WorkAreaWidthMm, settings.WorkAreaHeightMm);
+        var reserve = stagingLayout.Arrange(Boards.Select(board => FilterBoardForManufacturingSide(board.Board)), panelSize, settings.BoardSpacingMm, GetCurrentMirrorMode());
+        var used = GetUsedBounds(panelization?.Placements ?? []);
+        var gap = Math.Max(5, settings.BoardSpacingMm);
+        var width = Math.Max(reserve.WorkspaceSize.Width, used.IsEmpty ? panelSize.Width : used.MaxX + gap);
+        var height = Math.Max(reserve.WorkspaceSize.Height, used.IsEmpty ? panelSize.Height : used.MaxY + gap);
+        if (Math.Abs(previewWorkspaceWidthMm - width) > .000001) { previewWorkspaceWidthMm = width; OnPropertyChanged(nameof(PreviewWorkspaceWidthMm)); }
+        if (Math.Abs(previewWorkspaceHeightMm - height) > .000001) { previewWorkspaceHeightMm = height; OnPropertyChanged(nameof(PreviewWorkspaceHeightMm)); }
     }
     private PlacementPreviewItemViewModel CreatePreview(BoardPlacement placement)
     {
@@ -305,9 +352,22 @@ public sealed class MainViewModel : ObservableObject
     }
     private ImportedBoard FilterBoardForManufacturingSide(ImportedBoard board) => ManufacturingSide == "Both" ? board : board with { Files = board.Files.Where(file => file.Layer is ManufacturingLayerKind.Profile or ManufacturingLayerKind.Drill || IsSelectedSideLayer(file.Layer)).ToList() };
     private bool IsSelectedSideLayer(ManufacturingLayerKind layer) => ManufacturingSide switch { "Top" => layer is ManufacturingLayerKind.CopperTop or ManufacturingLayerKind.SolderMaskTop or ManufacturingLayerKind.SilkScreenTop or ManufacturingLayerKind.PasteTop, "Bottom" => layer is ManufacturingLayerKind.CopperBottom or ManufacturingLayerKind.SolderMaskBottom or ManufacturingLayerKind.SilkScreenBottom or ManufacturingLayerKind.PasteBottom, _ => true };
+
+    private bool TryGetPanelPlacements(out IReadOnlyList<BoardPlacement> placements)
+    {
+        placements = [];
+        if (panelization is not { Placements.Count: > 0 }) { AddStatus(StatusSeverity.Warning, L("StatusNoBoardsOnPanel")); return false; }
+        var panelSize = new PcbSize(settings.WorkAreaWidthMm, settings.WorkAreaHeightMm);
+        var crossing = panelization.Placements.Count(placement => PanelPlacementRules.Classify(placement, panelSize) == PanelPlacementState.CrossingBoundary);
+        if (crossing > 0) { AddStatus(StatusSeverity.Warning, L("StatusBoardsCrossPanelBoundary", crossing)); return false; }
+        placements = panelization.Placements.Where(placement => PanelPlacementRules.Classify(placement, panelSize) == PanelPlacementState.Inside).ToList();
+        if (placements.Count == 0) { AddStatus(StatusSeverity.Warning, L("StatusNoBoardsOnPanel")); return false; }
+        return true;
+    }
+
     private void Export()
     {
-        if (panelization is not { Placements.Count: > 0 }) { AddStatus(StatusSeverity.Warning, L("StatusPanelizeBeforeExport")); return; }
+        if (!TryGetPanelPlacements(out var panelPlacements)) return;
         var dialog = new SaveFileDialog { Filter = $"{L("FilterZipArchive")}|*.zip", DefaultExt = ".zip", FileName = "panelized-production-data.zip", Title = LocalizationService.Instance["Export"], OverwritePrompt = false };
         if (dialog.ShowDialog(owner) != true) return;
         if (Directory.Exists(dialog.FileName)) { AddStatus(StatusSeverity.Error, L("StatusExportFailed", L("ExportTargetIsDirectory"))); return; }
@@ -316,12 +376,12 @@ public sealed class MainViewModel : ObservableObject
         var temporaryArchivePath = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(dialog.FileName))!, $".{Path.GetFileNameWithoutExtension(dialog.FileName)}-{Guid.NewGuid():N}.tmp");
         try
         {
-            var result = exporter.Export(temporaryArchivePath, panelization.Placements);
+            var result = exporter.Export(temporaryArchivePath, panelPlacements);
             File.Move(temporaryArchivePath, dialog.FileName, overwrite: true);
             AddStatus(result.Warnings.Count == 0 ? StatusSeverity.Success : StatusSeverity.Warning, L("StatusExported", result.Entries.Count, Path.GetFileName(dialog.FileName), result.Warnings.Count), result.Warnings);
             MessageBox.Show(owner, L("ExportSuccessText", dialog.FileName), L("ExportSuccessTitle"), MessageBoxButton.OK, MessageBoxImage.Information);
         }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException or NotSupportedException) { AddStatus(StatusSeverity.Error, L("StatusExportFailed", exception.Message)); }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException or NotSupportedException) { AddStatus(StatusSeverity.Error, L("StatusExportFailed", exception.Message), exception: exception); }
         finally
         {
             if (File.Exists(temporaryArchivePath)) File.Delete(temporaryArchivePath);
@@ -330,7 +390,7 @@ public sealed class MainViewModel : ObservableObject
 
     private void ExportWegstr()
     {
-        if (panelization is not { Placements.Count: > 0 }) { AddStatus(StatusSeverity.Warning, L("StatusPanelizeBeforeExport")); return; }
+        if (!TryGetPanelPlacements(out var panelPlacements)) return;
         var dialog = new SaveFileDialog { Filter = $"{L("FilterZipArchive")}|*.zip", DefaultExt = ".zip", FileName = "wegstr-machine.zip", Title = LocalizationService.Instance["ExportWegstr"], OverwritePrompt = false };
         if (dialog.ShowDialog(owner) != true) return;
         if (Directory.Exists(dialog.FileName)) { AddStatus(StatusSeverity.Error, L("StatusWegstrExportFailed", L("ExportTargetIsDirectory"))); return; }
@@ -356,19 +416,25 @@ public sealed class MainViewModel : ObservableObject
                 IncludeDrilling = settings.WegstrIncludeDrilling,
                 IncludeOutline = settings.WegstrIncludeOutline,
             };
-            var result = wegstrExporter.Export(temporaryArchivePath, panelization.Placements, profile);
+            var result = wegstrExporter.Export(temporaryArchivePath, panelPlacements, profile);
             File.Move(temporaryArchivePath, dialog.FileName, overwrite: true);
             AddStatus(result.Warnings.Count == 0 ? StatusSeverity.Success : StatusSeverity.Warning, L("StatusWegstrExported", result.Entries.Count, Path.GetFileName(dialog.FileName), result.Warnings.Count), result.Warnings);
             MessageBox.Show(owner, L("WegstrExportSuccessText", dialog.FileName), L("ExportSuccessTitle"), MessageBoxButton.OK, MessageBoxImage.Information);
         }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException or NotSupportedException or ArgumentOutOfRangeException) { AddStatus(StatusSeverity.Error, L("StatusWegstrExportFailed", exception.Message)); }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException or NotSupportedException or ArgumentOutOfRangeException) { AddStatus(StatusSeverity.Error, L("StatusWegstrExportFailed", exception.Message), exception: exception); }
         finally
         {
             if (File.Exists(temporaryArchivePath)) File.Delete(temporaryArchivePath);
         }
     }
 
-    private async void CheckForUpdates()
+    private void OnOwnerLoaded(object sender, RoutedEventArgs eventArgs)
+    {
+        owner.Loaded -= OnOwnerLoaded;
+        CheckForUpdates(showCurrentResult: false);
+    }
+
+    private async void CheckForUpdates(bool showCurrentResult)
     {
         IsCheckingForUpdates = true;
         try
@@ -393,13 +459,13 @@ public sealed class MainViewModel : ObservableObject
             else
             {
                 AddStatus(StatusSeverity.Success, L("StatusUpdateCurrent", currentVersion));
-                MessageBox.Show(owner, L("UpdateCurrent", currentVersion), L("UpdateCheck"), MessageBoxButton.OK, MessageBoxImage.Information);
+                if (showCurrentResult) MessageBox.Show(owner, L("UpdateCurrent", currentVersion), L("UpdateCheck"), MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
         catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException or JsonException or InvalidDataException)
         {
-            AddStatus(StatusSeverity.Warning, L("StatusUpdateFailed", exception.Message));
-            MessageBox.Show(owner, L("UpdateFailed", exception.Message), L("UpdateCheck"), MessageBoxButton.OK, MessageBoxImage.Warning);
+            AddStatus(StatusSeverity.Warning, L("StatusUpdateFailed", exception.Message), exception: exception);
+            if (showCurrentResult) MessageBox.Show(owner, L("UpdateFailed", exception.Message), L("UpdateCheck"), MessageBoxButton.OK, MessageBoxImage.Warning);
         }
         finally
         {
@@ -408,8 +474,8 @@ public sealed class MainViewModel : ObservableObject
     }
     private void Print()
     {
-        if (panelization is not { Placements.Count: > 0 }) { AddStatus(StatusSeverity.Warning, L("StatusPanelizeBeforePrint")); return; }
-        new PanelPrintPreviewWindow(owner, RenderPlacements, Layers, WorkAreaWidthMm, WorkAreaHeightMm).ShowDialog();
+        if (!TryGetPanelPlacements(out var panelPlacements)) return;
+        new PanelPrintPreviewWindow(owner, panelPlacements, Layers, WorkAreaWidthMm, WorkAreaHeightMm).ShowDialog();
         AddStatus(StatusSeverity.Information, L("StatusPrintPreviewOpened"));
     }
     private void OpenSettings()
@@ -421,7 +487,7 @@ public sealed class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(WorkAreaCaption));
         OnPropertyChanged(nameof(WorkAreaWidthMm));
         OnPropertyChanged(nameof(WorkAreaHeightMm));
-        ClearPanelization();
+        if (Boards.Count == 0) ClearPanelization(); else StageAllBoards();
         AddStatus(StatusSeverity.Information, L("StatusSettingsSaved"));
     }
 
@@ -433,12 +499,16 @@ public sealed class MainViewModel : ObservableObject
         Layers[3].SetColor(settings.OutlineColor);
         Layers[4].SetColor(settings.SilkscreenColor);
     }
-    private void AddStatus(StatusSeverity severity, string message, IEnumerable<string>? details = null)
+    private void AddStatus(StatusSeverity severity, string message, IEnumerable<string>? details = null, Exception? exception = null)
     {
-        StatusText = message; StatusEntries.Insert(0, new(DateTimeOffset.Now, severity, message, details?.Where(detail => !string.IsNullOrWhiteSpace(detail)).ToArray() ?? []));
+        var detailItems = details?.Where(detail => !string.IsNullOrWhiteSpace(detail)).ToArray() ?? [];
+        StatusText = message; StatusEntries.Insert(0, new(DateTimeOffset.Now, severity, message, detailItems));
+        var logMessage = detailItems.Length == 0 ? message : $"{message}{Environment.NewLine}{string.Join(Environment.NewLine, detailItems)}";
+        if (severity == StatusSeverity.Warning) AppLog.Warning(logMessage, exception);
+        if (severity == StatusSeverity.Error) AppLog.Error(logMessage, exception);
         while (StatusEntries.Count > 100) StatusEntries.RemoveAt(StatusEntries.Count - 1);
     }
-    private void ClearPanelization() { panelization = null; PlacementPreviews.Clear(); OnPropertyChanged(nameof(BoardPreviewVisibility)); OnPropertyChanged(nameof(EmptyPreviewVisibility)); OnPropertyChanged(nameof(RenderPlacements)); ExportCommand.RaiseCanExecuteChanged(); ExportWegstrCommand.RaiseCanExecuteChanged(); }
+    private void ClearPanelization() { panelization = null; PlacementPreviews.Clear(); previewWorkspaceWidthMm = settings.WorkAreaWidthMm; previewWorkspaceHeightMm = settings.WorkAreaHeightMm; OnPropertyChanged(nameof(PreviewWorkspaceWidthMm)); OnPropertyChanged(nameof(PreviewWorkspaceHeightMm)); OnPropertyChanged(nameof(BoardPreviewVisibility)); OnPropertyChanged(nameof(EmptyPreviewVisibility)); OnPropertyChanged(nameof(RenderPlacements)); ExportCommand.RaiseCanExecuteChanged(); ExportWegstrCommand.RaiseCanExecuteChanged(); }
     private void RefreshBoardCommands() { PanelizeCommand.RaiseCanExecuteChanged(); DeleteBoardCommand.RaiseCanExecuteChanged(); CloneBoardCommand.RaiseCanExecuteChanged(); }
     private static PcbBounds GetUsedBounds(IEnumerable<BoardPlacement> placements) => placements.Aggregate(PcbBounds.Empty, (bounds, placement) => bounds.Include(placement.Bounds));
 }

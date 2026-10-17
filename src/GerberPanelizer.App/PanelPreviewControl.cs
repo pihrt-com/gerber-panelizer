@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -17,6 +18,9 @@ public sealed class PanelPreviewControl : FrameworkElement
     public static readonly DependencyProperty LayersProperty = DependencyProperty.Register(nameof(Layers), typeof(IEnumerable<LayerItemViewModel>), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(null, OnLayersChanged));
     public static readonly DependencyProperty PanelWidthMmProperty = DependencyProperty.Register(nameof(PanelWidthMm), typeof(double), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(200d, FrameworkPropertyMetadataOptions.AffectsRender));
     public static readonly DependencyProperty PanelHeightMmProperty = DependencyProperty.Register(nameof(PanelHeightMm), typeof(double), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(130d, FrameworkPropertyMetadataOptions.AffectsRender));
+    public static readonly DependencyProperty WorkspaceWidthMmProperty = DependencyProperty.Register(nameof(WorkspaceWidthMm), typeof(double), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(200d, FrameworkPropertyMetadataOptions.AffectsRender));
+    public static readonly DependencyProperty WorkspaceHeightMmProperty = DependencyProperty.Register(nameof(WorkspaceHeightMm), typeof(double), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(130d, FrameworkPropertyMetadataOptions.AffectsRender));
+    public static readonly DependencyProperty StagingAreaLabelProperty = DependencyProperty.Register(nameof(StagingAreaLabel), typeof(string), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.AffectsRender));
     public static readonly DependencyProperty MovePlacementCommandProperty = DependencyProperty.Register(nameof(MovePlacementCommand), typeof(ICommand), typeof(PanelPreviewControl));
     public static readonly DependencyProperty DeletePlacementCommandProperty = DependencyProperty.Register(nameof(DeletePlacementCommand), typeof(ICommand), typeof(PanelPreviewControl));
     public static readonly DependencyProperty SelectedPlacementProperty = DependencyProperty.Register(nameof(SelectedPlacement), typeof(BoardPlacement), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
@@ -41,6 +45,9 @@ public sealed class PanelPreviewControl : FrameworkElement
     public IEnumerable<LayerItemViewModel>? Layers { get => (IEnumerable<LayerItemViewModel>?)GetValue(LayersProperty); set => SetValue(LayersProperty, value); }
     public double PanelWidthMm { get => (double)GetValue(PanelWidthMmProperty); set => SetValue(PanelWidthMmProperty, value); }
     public double PanelHeightMm { get => (double)GetValue(PanelHeightMmProperty); set => SetValue(PanelHeightMmProperty, value); }
+    public double WorkspaceWidthMm { get => (double)GetValue(WorkspaceWidthMmProperty); set => SetValue(WorkspaceWidthMmProperty, value); }
+    public double WorkspaceHeightMm { get => (double)GetValue(WorkspaceHeightMmProperty); set => SetValue(WorkspaceHeightMmProperty, value); }
+    public string StagingAreaLabel { get => (string)GetValue(StagingAreaLabelProperty); set => SetValue(StagingAreaLabelProperty, value); }
     public ICommand? MovePlacementCommand { get => (ICommand?)GetValue(MovePlacementCommandProperty); set => SetValue(MovePlacementCommandProperty, value); }
     public ICommand? DeletePlacementCommand { get => (ICommand?)GetValue(DeletePlacementCommandProperty); set => SetValue(DeletePlacementCommandProperty, value); }
     public BoardPlacement? SelectedPlacement { get => (BoardPlacement?)GetValue(SelectedPlacementProperty); set => SetValue(SelectedPlacementProperty, value); }
@@ -96,11 +103,12 @@ public sealed class PanelPreviewControl : FrameworkElement
     protected override void OnRender(DrawingContext drawingContext)
     {
         base.OnRender(drawingContext);
-        if (ActualWidth <= 0 || ActualHeight <= 0 || PanelWidthMm <= 0 || PanelHeightMm <= 0) return;
+        if (ActualWidth <= 0 || ActualHeight <= 0 || PanelWidthMm <= 0 || PanelHeightMm <= 0 || WorkspaceWidthMm <= 0 || WorkspaceHeightMm <= 0) return;
         // An explicit transparent surface makes wheel/pan input available over every point of the work area,
         // including empty grid cells where no Gerber geometry is drawn.
         drawingContext.DrawRectangle(Brushes.Transparent, null, new Rect(RenderSize));
         drawingContext.PushClip(new RectangleGeometry(new Rect(RenderSize)));
+        DrawStagingArea(drawingContext);
         DrawPanelSubstrate(drawingContext);
         foreach (var placement in Placements ?? Enumerable.Empty<BoardPlacement>()) DrawBoard(drawingContext, GetEffectivePlacement(placement));
         if (SelectedPlacement is { } selected) DrawSelection(drawingContext, GetEffectivePlacement(selected).Bounds);
@@ -169,7 +177,7 @@ public sealed class PanelPreviewControl : FrameworkElement
         var from = ScreenToPanel(pointerOrigin);
         var to = ScreenToPanel(pointer);
         var requested = new PcbPoint(dragOriginOffset.X + to.X - from.X, dragOriginOffset.Y + to.Y - from.Y);
-        transientOffsets[placement] = ClampOffsetToPanel(placement, requested);
+        transientOffsets[placement] = ClampOffsetToWorkspace(placement, requested);
         InvalidateVisual();
         eventArgs.Handled = true;
     }
@@ -247,14 +255,14 @@ public sealed class PanelPreviewControl : FrameworkElement
 
     private BoardPlacement GetEffectivePlacement(BoardPlacement placement) => transientOffsets.TryGetValue(placement, out var offset) ? placement with { Offset = offset } : placement;
 
-    private PcbPoint ClampOffsetToPanel(BoardPlacement placement, PcbPoint requested)
+    private PcbPoint ClampOffsetToWorkspace(BoardPlacement placement, PcbPoint requested)
     {
         var bounds = (placement with { Offset = new PcbPoint(0, 0) }).Bounds;
         if (bounds.IsEmpty) return requested;
         var minimumX = -bounds.MinX;
-        var maximumX = PanelWidthMm - bounds.MaxX;
+        var maximumX = WorkspaceWidthMm - bounds.MaxX;
         var minimumY = -bounds.MinY;
-        var maximumY = PanelHeightMm - bounds.MaxY;
+        var maximumY = WorkspaceHeightMm - bounds.MaxY;
         return new PcbPoint(Clamp(requested.X, minimumX, maximumX), Clamp(requested.Y, minimumY, maximumY));
     }
 
@@ -354,6 +362,17 @@ public sealed class PanelPreviewControl : FrameworkElement
         context.DrawRectangle(null, new Pen(new SolidColorBrush(Color.FromRgb(11, 118, 110)), Math.Max(1, PixelsPerMillimetre * .08)), panelBounds);
     }
 
+    private void DrawStagingArea(DrawingContext context)
+    {
+        if (WorkspaceWidthMm <= PanelWidthMm + .001) return;
+        var stagingBounds = new Rect(ToScreen(new PcbPoint(PanelWidthMm, WorkspaceHeightMm)), ToScreen(new PcbPoint(WorkspaceWidthMm, 0)));
+        var border = new Pen(new SolidColorBrush(Color.FromRgb(160, 181, 178)), Math.Max(.75, PixelsPerMillimetre * .04)) { DashStyle = DashStyles.Dash };
+        context.DrawRectangle(new SolidColorBrush(Color.FromRgb(231, 238, 237)), border, stagingBounds);
+        if (string.IsNullOrWhiteSpace(StagingAreaLabel)) return;
+        var text = new FormattedText(StagingAreaLabel, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("Segoe UI"), 12, new SolidColorBrush(Color.FromRgb(72, 103, 99)), VisualTreeHelper.GetDpi(this).PixelsPerDip);
+        context.DrawText(text, new Point(stagingBounds.Left + 8, stagingBounds.Top + 6));
+    }
+
     private static bool IsMajorGridLine(double value) => Math.Abs(value % 25) < .001 || Math.Abs(value % 25 - 25) < .001;
 
     private void DrawExcellon(DrawingContext context, string content, BoardPlacement placement, Brush brush)
@@ -369,7 +388,7 @@ public sealed class PanelPreviewControl : FrameworkElement
         }
     }
 
-    private double PixelsPerMillimetre => Math.Min(ActualWidth / PanelWidthMm, ActualHeight / PanelHeightMm) * zoom;
+    private double PixelsPerMillimetre => Math.Min(ActualWidth / WorkspaceWidthMm, ActualHeight / WorkspaceHeightMm) * zoom;
 
     private Point ToScreen(PcbPoint point)
     {
@@ -380,20 +399,20 @@ public sealed class PanelPreviewControl : FrameworkElement
 
     private Point PanelToUnzoomedScreen(PcbPoint point)
     {
-        var scale = Math.Min(ActualWidth / PanelWidthMm, ActualHeight / PanelHeightMm);
-        var width = PanelWidthMm * scale;
-        var height = PanelHeightMm * scale;
-        return new Point((ActualWidth - width) / 2 + point.X * scale, (ActualHeight - height) / 2 + (PanelHeightMm - point.Y) * scale);
+        var scale = Math.Min(ActualWidth / WorkspaceWidthMm, ActualHeight / WorkspaceHeightMm);
+        var width = WorkspaceWidthMm * scale;
+        var height = WorkspaceHeightMm * scale;
+        return new Point((ActualWidth - width) / 2 + point.X * scale, (ActualHeight - height) / 2 + (WorkspaceHeightMm - point.Y) * scale);
     }
 
     private PcbPoint ScreenToPanel(Point point)
     {
         var center = GetViewportCenter();
         var unzoomed = center + (point - center - pan) / zoom;
-        var scale = Math.Min(ActualWidth / PanelWidthMm, ActualHeight / PanelHeightMm);
-        var width = PanelWidthMm * scale;
-        var height = PanelHeightMm * scale;
-        return new PcbPoint((unzoomed.X - (ActualWidth - width) / 2) / scale, PanelHeightMm - (unzoomed.Y - (ActualHeight - height) / 2) / scale);
+        var scale = Math.Min(ActualWidth / WorkspaceWidthMm, ActualHeight / WorkspaceHeightMm);
+        var width = WorkspaceWidthMm * scale;
+        var height = WorkspaceHeightMm * scale;
+        return new PcbPoint((unzoomed.X - (ActualWidth - width) / 2) / scale, WorkspaceHeightMm - (unzoomed.Y - (ActualHeight - height) / 2) / scale);
     }
 
     private Point GetViewportCenter() => new(ActualWidth / 2, ActualHeight / 2);

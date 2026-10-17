@@ -12,7 +12,7 @@ The export is one ZIP production package. The package contains one Gerber file f
 2. Open Settings with the gear icon and set the milling work-area width and height, for example 200 × 130 mm.
 3. Use **Import files** to choose Fusion/EAGLE ZIP files, RAR files, or individual Gerber and Excellon files. You can repeat this later to add more boards.
 4. Confirm whether the panel is for Top, Bottom, or both sides.
-5. Review the imported boards beside the work area, then select **Panelize**.
+5. Imported boards appear immediately in the staging area beside the work area. Drag them inside manually or select **Panelize** for automatic arrangement.
 6. Check the result with the layer filters and preview, then select **Export ZIP** for Gerber/Excellon or **Export Wegstr** for the separate machine G-code package.
 
 Use **New project**, **Save project**, and **Open project** in the top bar to resume an unfinished panel. A project stores relative paths to its source archives or files, its chosen boards, and manual board positions; keep it beside the source manufacturing data when moving it to another computer.
@@ -31,9 +31,15 @@ If an archive contains an unfamiliar layer name, inspect the import summary befo
 
 The work area represents the usable machine area, not necessarily the physical dimensions of the spoilboard. Set a safety margin to keep toolpaths away from clamps and machine limits, then set a board-to-board gap appropriate for your milling cutter and separation process.
 
-Automatic panelization starts from the safe area and places boards with their complete outline, drills, and selected layers. When automatic rotation is enabled, a board can be rotated by 90 degrees to fit. The same rotation is applied to preview, Gerber, Excellon, saved projects, and Wegstr output.
+After import, every board is visible on the grey staging area to the right. Drag a board into the machine work area, reposition it inside, or move it back out. Export and printing include only boards that are completely inside; a board crossing the boundary blocks export so incomplete manufacturing data cannot be created.
 
-After panelization, select a board in the work area and drag it to fine-tune its position. The mouse wheel zooms at the pointer; use the middle button or Space + drag to pan, and Home to fit the whole work area. Select a board in the imported-board list and use Duplicate or Delete, or press Delete. Re-run Panelize whenever automatic placement should replace manual positions.
+Automatic panelization starts from the safe area and places boards with their complete outline, drills, and selected layers. When automatic rotation is enabled, a board can be rotated by 90 degrees to fit. Boards that do not fit remain visible in the staging area. The same rotation is applied to preview, Gerber, Excellon, saved projects, and Wegstr output.
+
+The mouse wheel zooms at the pointer; use the middle button or Space + drag to pan, and Home to fit the work and staging areas. Select a board in the imported-board list and use Duplicate or Delete, or press Delete. Re-run Panelize whenever automatic placement should replace manual positions.
+
+## Application updates
+
+After the main window appears, the application automatically checks the latest GitHub Release. When a newer version is available, it offers to open the download page. An up-to-date result or a network failure stays in the status bar without interrupting startup. The manual update-check button beside Settings remains available and also displays confirmation of the current version or a connection error.
 
 ## Top, Bottom, and mirroring
 
@@ -70,6 +76,8 @@ Use Print Preview to verify scale and visible layers, then print through the sta
 ## Status details
 
 The status bar reports the latest operation. Open Details directly above it to inspect individual import or export warnings, including the source filename and parser/export message. Review warnings before sending production data to a machine.
+
+Warnings, handled errors, background-task failures, and unexpected crashes are written to `gerber-panelizer.log` with stack traces. A portable copy creates it beside the launched executable. If Windows prevents writing to the installation directory, such as under `Program Files`, the application uses `%LOCALAPPDATA%\GerberPanelizer\logs`. At 2 MB, the previous contents rotate to `gerber-panelizer.previous.log`. The log can contain local file paths and exception details; review it before sharing.
 
 ## Troubleshooting
 

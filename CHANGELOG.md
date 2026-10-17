@@ -1,5 +1,14 @@
 # Change log
 
+## 0.2.1 - 2026-10-17
+
+- Display imported boards immediately in a staging area beside the machine work area and allow dragging them into, within, or back out of the panel before export.
+- Keep automatic panelization available for arranging all selected boards while leaving boards that do not fit visible in the staging area.
+- Limit export and print output to complete boards inside the machine work area and warn when a board crosses its boundary.
+- Check GitHub Releases automatically after startup, offer the newer release when available, and retain the manual update-check button.
+- Remove current and legacy desktop shortcuts during installer upgrades before creating the selected shortcut again.
+- Record warnings, handled errors, unobserved background failures, and fatal exceptions with stack traces in a rotating local log beside the executable when writable, with a per-user fallback for protected installations.
+
 ## 0.2.0 - 2026-10-17
 
 - Implemented Bottom Mirror X/Mirror Y and 90-degree board rotation consistently in preview, Gerber, Excellon, saved projects, and machine output.

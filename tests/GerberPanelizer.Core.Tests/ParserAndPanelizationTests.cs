@@ -113,6 +113,36 @@ public sealed class ParserAndPanelizationTests
     }
 
     [Fact]
+    public void BoardStagingLayout_PlacesImportedBoardsToTheRightOfThePanel()
+    {
+        var boards = new[]
+        {
+            CreateBoard("first", new PcbBounds(10, 20, 50, 50)),
+            CreateBoard("second", new PcbBounds(-5, -5, 25, 20)),
+        };
+
+        var result = new BoardStagingLayout().Arrange(boards, new PcbSize(200, 130), 3);
+
+        Assert.Equal(2, result.Placements.Count);
+        Assert.All(result.Placements, placement => Assert.True(placement.Bounds.MinX >= 205));
+        Assert.All(result.Placements, placement => Assert.True(placement.Bounds.MinY >= 0 && placement.Bounds.MaxY <= result.WorkspaceSize.Height));
+        Assert.All(result.Placements, placement => Assert.True(placement.Bounds.MaxY <= result.WorkspaceSize.Height - 15));
+        Assert.True(result.WorkspaceSize.Width > 200);
+        Assert.Equal(130, result.WorkspaceSize.Height, 6);
+    }
+
+    [Fact]
+    public void PanelPlacementRules_DistinguishesInsideStagedAndBoundaryCrossingBoards()
+    {
+        var board = CreateBoard("board", new PcbBounds(0, 0, 20, 10));
+        var panel = new PcbSize(100, 60);
+
+        Assert.Equal(PanelPlacementState.Inside, PanelPlacementRules.Classify(new BoardPlacement(board, new PcbPoint(5, 5)), panel));
+        Assert.Equal(PanelPlacementState.Outside, PanelPlacementRules.Classify(new BoardPlacement(board, new PcbPoint(105, 5)), panel));
+        Assert.Equal(PanelPlacementState.CrossingBoundary, PanelPlacementRules.Classify(new BoardPlacement(board, new PcbPoint(95, 5)), panel));
+    }
+
+    [Fact]
     public void PanelExport_RetainsApertureMacroWithoutEmittingItsBodyAsCommands()
     {
         const string gerber = "%MOMM*%\n%FSLAX34Y34*%\n%AMOC8*\n5,1,8,0,0,1.0X$1,22.5*%\n%ADD10OC8,0.100*%\nD10*\nX0Y0D03*\nM02*";

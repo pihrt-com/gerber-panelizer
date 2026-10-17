@@ -4,9 +4,10 @@
     <sys:String x:Key="ManufacturingSide" xmlns:sys="clr-namespace:System;assembly=mscorlib">Face de fabrication</sys:String>
     <sys:String x:Key="Layers" xmlns:sys="clr-namespace:System;assembly=mscorlib">Couches</sys:String>
     <sys:String x:Key="WorkArea" xmlns:sys="clr-namespace:System;assembly=mscorlib">Zone de travail de la machine</sys:String>
+    <sys:String x:Key="StagingArea" xmlns:sys="clr-namespace:System;assembly=mscorlib">Zone d’attente</sys:String>
     <sys:String x:Key="CanvasEmptyTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Ajoutez des données de fabrication pour commencer</sys:String>
     <sys:String x:Key="CanvasEmptyHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Fichiers ZIP, RAR, Gerber ou Excellon</sys:String>
-    <sys:String x:Key="Tip" xmlns:sys="clr-namespace:System;assembly=mscorlib">Importez les cartes, choisissez la face, puis lancez la panélisation.</sys:String>
+    <sys:String x:Key="Tip" xmlns:sys="clr-namespace:System;assembly=mscorlib">Déplacez les cartes depuis la zone d’attente ou utilisez la panélisation automatique.</sys:String>
     <sys:String x:Key="Panelize" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panéliser</sys:String>
     <sys:String x:Key="Print" xmlns:sys="clr-namespace:System;assembly=mscorlib">Imprimer</sys:String>
     <sys:String x:Key="Export" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exporter le ZIP</sys:String>

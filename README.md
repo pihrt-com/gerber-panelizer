@@ -19,7 +19,7 @@ The application is implemented as a self-contained Windows x64 executable. It pr
 
 ## Latest update — 2026-10-17
 
-Implemented exact Bottom mirroring and 90-degree panel rotation across preview, Gerber, Excellon, saved projects, and machine output. Corrected legacy inch `M72`/`.drd` drill import and exported unambiguous decimal metric Excellon coordinates for TrackMaker. Added a configurable Wegstr machine profile with separate TXT programs for copper isolation, drilling, and optional compensated outline cutting.
+Version 0.2.1 displays imported boards immediately in a staging area beside the machine work area. They can be dragged into the panel, repositioned, or moved back out; **Panelize** remains available for automatic arrangement. Export and printing use only complete boards inside the work area. The application checks for a newer release after startup, installer upgrades clean up old desktop shortcuts, and errors or crashes are recorded with stack traces in a local log.
 
 ## Screenshots
 
@@ -36,14 +36,15 @@ Settings provide the interface language, machine work-area dimensions, safety ma
 ## Core capabilities
 
 - Import ZIP, RAR, and individual Gerber/Excellon files.
-- Interactive layer preview with visibility filtering, work-area mouse-wheel zoom, manual board dragging, continuous 45-degree trace rendering, circular, rectangular, and obround SMT pad flashes, and configurable HEX colours with a click-to-select palette.
+- Interactive layer preview with an immediate post-import staging area, visibility filtering, mouse-wheel zoom, manual dragging into or out of the panel, continuous 45-degree trace rendering, circular, rectangular, and obround SMT pad flashes, and configurable HEX colours with a click-to-select palette.
 - Configurable milling work area, margins, spacing, and automatic 90-degree placement rotation.
 - Top, Bottom, or both-side production selection; optional Bottom Mirror X or Mirror Y is applied consistently to preview, Gerber, Excellon, project data, and G-code.
 - Panel export as one production ZIP package containing per-layer Gerbers and merged Excellon drilling data, with safe confirmation before replacing an existing ZIP and a success dialog showing its final location.
 - Legacy inch `M72`/`.drd` drilling support and explicit decimal metric Excellon output for reliable TrackMaker import.
 - Separate Wegstr ZIP export with `01-copper-isolation.txt`, optional `02-drill.txt`, and optional `03-board-outline.txt`; it uses negative Y from the top-left origin as in the supplied Wegstr samples and exposes depths, isolation offset, outline-cutter diameter, feeds, spindle speed, and tool number in Settings.
 - Incremental import, board duplication/deletion, portable saved projects, detailed status diagnostics, Czech, English, German, and French UI, panel-only print preview, and printing.
-- Custom PCB application icon embedded in the executable, title bar, and taskbar, a localized confirmation before exit, and a one-click GitHub Release update check beside Settings.
+- Custom PCB application icon embedded in the executable, title bar, and taskbar, a localized confirmation before exit, automatic GitHub Release checking after startup, and a retained manual update-check button beside Settings.
+- Rotating `gerber-panelizer.log` diagnostics beside the launched executable; when the installation folder is not writable, the log falls back to `%LOCALAPPDATA%\GerberPanelizer\logs`.
 
 ## Documentation
 
@@ -67,7 +68,7 @@ dotnet publish .\src\GerberPanelizer.App\GerberPanelizer.App.csproj -c Release -
 .\installer\build-installer.ps1
 ```
 
-After publishing, run `GerberPanelizer.App.exe` from `publish\win-x64`. The installer script produces a branded Setup EXE and a matching MSI in `artifacts\installer`; it first publishes the same self-contained EXE. Use the Setup EXE for the branded installer experience with the high-resolution PCB icon and GPL-3.0 license. The MSI remains available for managed deployments and offers Desktop/Start-menu shortcut choices; both paths transactionally replace a previous Gerber Panelizer version.
+After publishing, run `GerberPanelizer.App.exe` from `publish\win-x64`. The installer script produces a branded Setup EXE and a matching MSI in `artifacts\installer`; it first publishes the same self-contained EXE. Use the Setup EXE for the branded installer experience with the high-resolution PCB icon and GPL-3.0 license. The MSI remains available for managed deployments and offers Desktop/Start-menu shortcut choices; both paths transactionally replace a previous Gerber Panelizer version and remove the old shortcut variant before creating the selected one.
 
 ## License
 

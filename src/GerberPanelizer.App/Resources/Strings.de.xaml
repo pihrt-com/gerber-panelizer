@@ -4,9 +4,10 @@
     <sys:String x:Key="ManufacturingSide" xmlns:sys="clr-namespace:System;assembly=mscorlib">Fertigungsseite</sys:String>
     <sys:String x:Key="Layers" xmlns:sys="clr-namespace:System;assembly=mscorlib">Ebenen</sys:String>
     <sys:String x:Key="WorkArea" xmlns:sys="clr-namespace:System;assembly=mscorlib">Maschinenarbeitsfläche</sys:String>
+    <sys:String x:Key="StagingArea" xmlns:sys="clr-namespace:System;assembly=mscorlib">Ablagebereich</sys:String>
     <sys:String x:Key="CanvasEmptyTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Fertigungsdaten zum Start hinzufügen</sys:String>
     <sys:String x:Key="CanvasEmptyHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">ZIP-, RAR-, Gerber- oder Excellon-Dateien</sys:String>
-    <sys:String x:Key="Tip" xmlns:sys="clr-namespace:System;assembly=mscorlib">Platinen importieren, Fertigungsseite wählen und anschließend panelisieren.</sys:String>
+    <sys:String x:Key="Tip" xmlns:sys="clr-namespace:System;assembly=mscorlib">Platinen manuell aus dem Ablagebereich ziehen oder automatisch panelisieren.</sys:String>
     <sys:String x:Key="Panelize" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panelisieren</sys:String>
     <sys:String x:Key="Print" xmlns:sys="clr-namespace:System;assembly=mscorlib">Drucken</sys:String>
     <sys:String x:Key="Export" xmlns:sys="clr-namespace:System;assembly=mscorlib">ZIP exportieren</sys:String>

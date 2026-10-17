@@ -195,8 +195,8 @@ public sealed class SettingsViewModel : ObservableObject
             WegstrIncludeDrilling = imported.WegstrIncludeDrilling;
             WegstrIncludeOutline = imported.WegstrIncludeOutline;
         }
-        catch (IOException) { MessageBox.Show(LocalizationService.Instance["SettingsReadFailed"], "Gerber Panelizer", MessageBoxButton.OK, MessageBoxImage.Warning); }
-        catch (JsonException) { MessageBox.Show(LocalizationService.Instance["SettingsInvalid"], "Gerber Panelizer", MessageBoxButton.OK, MessageBoxImage.Warning); }
+        catch (IOException exception) { AppLog.Warning("Settings import failed because the file could not be read.", exception); MessageBox.Show(LocalizationService.Instance["SettingsReadFailed"], "Gerber Panelizer", MessageBoxButton.OK, MessageBoxImage.Warning); }
+        catch (JsonException exception) { AppLog.Warning("Settings import failed because the file contains invalid JSON.", exception); MessageBox.Show(LocalizationService.Instance["SettingsInvalid"], "Gerber Panelizer", MessageBoxButton.OK, MessageBoxImage.Warning); }
     }
 }
 

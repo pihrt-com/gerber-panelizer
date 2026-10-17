@@ -14,6 +14,9 @@
           <Component Id="ApplicationComponent" Guid="{CF116DCA-8383-4128-84CF-10E4E1B3896F}" Bitness="always64">
             <File Id="GerberPanelizerAppExe" Source="$(var.PublishDirectory)\GerberPanelizer.App.exe" KeyPath="yes" />
             <RegistryValue Root="HKLM" Key="Software\Martin Pihrt\Gerber Panelizer" Name="Installed" Type="integer" Value="1" KeyPath="no" />
+            <RemoveFile Id="RemoveExistingDesktopShortcut" Directory="DesktopFolder" Name="Gerber Panelizer.lnk" On="install" />
+            <RemoveFile Id="RemoveLegacyDesktopShortcut" Directory="DesktopFolder" Name="GerberPanelizer.lnk" On="install" />
+            <RemoveFile Id="RemoveExistingStartMenuShortcut" Directory="ApplicationProgramsFolder" Name="Gerber Panelizer.lnk" On="install" />
             <RemoveFolder Id="RemoveInstallFolder" On="uninstall" />
           </Component>
           <Component Id="StartMenuShortcutComponent" Guid="{A5A4607D-5F0B-49B3-91E3-1AF42B8BF6DC}" Bitness="always64" Condition="CREATE_START_MENU_SHORTCUT">

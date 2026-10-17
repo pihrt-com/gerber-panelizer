@@ -1,8 +1,8 @@
 # Gerber Panelizer
 
-## Verze 0.2.0 - 2026-10-17
+## Verze 0.2.1 - 2026-10-17
 
-Bylo implementováno přesné zrcadlení spodní strany a automatická rotace panelizace po 90 stupních v náhledu, Gerberu, Excellonu, uložených projektech i strojovém výstupu. Byl opraven import staršího palcového vrtání `M72`/`.drd` a export jednoznačných desetinných metrických souřadnic Excellon pro TrackMaker. Přibyl konfigurovatelný profil stroje Wegstr a oddělené TXT programy pro izolaci mědi, vrtání a volitelné vyříznutí obrysu.
+Importované desky se nyní ihned zobrazí na odkládací ploše vedle pracovní plochy stroje. Lze je ručně přetáhnout dovnitř, posouvat po panelu i vrátit ven; tlačítko **Panelizovat** zůstává pro automatické rozmístění. Export a tisk používají jen celé desky uvnitř pracovní plochy. Aplikace po spuštění automaticky zkontroluje nové vydání, instalátor při aktualizaci uklidí staré zástupce na ploše a chyby i pády se zapisují se stack trace do místního logu.
 
 Export Wegstr sjednotí podporované kruhové spoje a kruhové, obdélníkové nebo oválné pady vybrané měděné vrstvy a kolem výsledné mědi vypočte nastavené odsazení středu nástroje. Nesnaží se tiše převádět nepodporované Gerber oblouky, regiony, makra ani nekruhové apertury spojů. Před obráběním zkontrolujte všechny G-code programy v řídicím systému, počátek, průměry nástrojů, posuvy, otáčky i hloubky a proveďte zkušební chod nad obětovaným materiálem.
 
@@ -38,14 +38,15 @@ V Nastavení lze zvolit jazyk, rozměry pracovní plochy, bezpečný okraj, meze
 ## Klíčové vlastnosti
 
 - Import ZIP, RAR a samostatných souborů Gerber/Excellon.
-- Interaktivní náhled vrstev s filtrováním, přiblížením celé pracovní plochy kolečkem myši, ručním přesouváním desek, souvislým vykreslením spojů pod 45°, kruhovými, obdélníkovými i oválnými SMT pady a nastavitelnými HEX barvami s klikací paletou.
+- Interaktivní náhled vrstev s odkládací plochou zobrazenou ihned po importu, filtrováním, přiblížením kolečkem myši, ručním přesouváním desek dovnitř i ven, souvislým vykreslením spojů pod 45°, kruhovými, obdélníkovými i oválnými SMT pady a nastavitelnými HEX barvami s klikací paletou.
 - Nastavitelná pracovní plocha frézky, okraje, mezery a automatická rotace rozmístění po 90 stupních.
 - Volba Top, Bottom nebo obou stran; volitelné zrcadlení Bottom podle osy X nebo Y se shodně aplikuje na náhled, Gerber, Excellon, projekt i G-code.
 - Export panelu do jedné výrobní ZIP sady s Gerbery jednotlivých vrstev a sloučeným Excellon vrtáním, včetně bezpečného potvrzení před přepsáním existujícího ZIPu a okna s cílovou cestou po úspěšném exportu.
 - Podpora staršího palcového vrtání `M72`/`.drd` a jednoznačný desetinný metrický výstup Excellon pro spolehlivý import do TrackMakeru.
 - Samostatný ZIP export Wegstr se soubory `01-copper-isolation.txt`, volitelným `02-drill.txt` a volitelným `03-board-outline.txt`; používá zápornou osu Y od levého horního počátku podle vzorků Wegstr a v Nastavení nabízí hloubky, odsazení izolace, průměr frézy obrysu, posuvy, otáčky a číslo nástroje.
 - Postupný import, duplikování a mazání desek, přenositelné uložené projekty, podrobná diagnostika stavů, české, anglické, německé a francouzské rozhraní, náhled tisku samotného panelu a tisk.
-- Vlastní ikona PCB vložená do EXE, titulku a hlavního panelu aplikace, včetně lokalizovaného potvrzení před ukončením a kontroly vydání na GitHubu jedním tlačítkem vedle Nastavení.
+- Vlastní ikona PCB vložená do EXE, titulku a hlavního panelu aplikace, včetně lokalizovaného potvrzení před ukončením, automatické kontroly vydání po spuštění a ruční kontroly jedním tlačítkem vedle Nastavení.
+- Rotovaný diagnostický log `gerber-panelizer.log` vedle spuštěného EXE; pokud je instalační složka chráněná proti zápisu, použije se `%LOCALAPPDATA%\GerberPanelizer\logs`.
 
 ## Dokumentace
 
@@ -65,7 +66,7 @@ dotnet publish .\src\GerberPanelizer.App\GerberPanelizer.App.csproj -c Release -
 .\installer\build-installer.ps1
 ```
 
-Po publikaci se spouští `GerberPanelizer.App.exe` ve složce `publish\win-x64`. Instalační skript vytvoří značkový Setup EXE i odpovídající MSI v `artifacts\installer`; nejdříve publikuje stejné samostatné EXE. Pro běžnou instalaci použijte Setup EXE s kvalitní ikonou PCB a licencí GPL-3.0. MSI zůstává k dispozici pro spravované nasazení a nabídne volbu zástupce na ploše a v nabídce Start; obě cesty transakčně nahradí starší instalaci Gerber Panelizeru.
+Po publikaci se spouští `GerberPanelizer.App.exe` ve složce `publish\win-x64`. Instalační skript vytvoří značkový Setup EXE i odpovídající MSI v `artifacts\installer`; nejdříve publikuje stejné samostatné EXE. Pro běžnou instalaci použijte Setup EXE s kvalitní ikonou PCB a licencí GPL-3.0. MSI zůstává k dispozici pro spravované nasazení a nabídne volbu zástupce na ploše a v nabídce Start; obě cesty transakčně nahradí starší instalaci Gerber Panelizeru a před vytvořením nového zástupce odstraní jeho starou variantu.
 
 ## Licence
 

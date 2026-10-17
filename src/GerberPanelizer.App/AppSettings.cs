@@ -44,12 +44,14 @@ public static class AppSettingsService
                 ? JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(settingsPath)) ?? new AppSettings()
                 : new AppSettings();
         }
-        catch (JsonException)
+        catch (JsonException exception)
         {
+            AppLog.Warning("The settings file contains invalid JSON. Default settings will be used.", exception);
             return new AppSettings();
         }
-        catch (IOException)
+        catch (IOException exception)
         {
+            AppLog.Warning("The settings file could not be read. Default settings will be used.", exception);
             return new AppSettings();
         }
     }
