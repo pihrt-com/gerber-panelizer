@@ -6,6 +6,8 @@ Panelizace nyní podporuje automatickou rotaci desky po 90 stupních a voliteln�
 
 Tlačítko **Export Wegstr** vytvoří ZIP se souborem `01-copper-isolation.txt`, volitelným `02-drill.txt` a volitelným `03-board-outline.txt`. Nastavení stroje Wegstr obsahuje bezpečné Z, tloušťku materiálu, hloubku a odsazení izolace mědi, hloubku vrtání a obrysu, průměr frézy obrysu, posuvy, otáčky, číslo nástroje a volby jednotlivých operací. Výstup používá zápornou osu Y od levého horního počátku stejně jako dodané vzorky Wegstr. Před obráběním vždy zkontrolujte dráhy v řídicím systému a proveďte zkušební chod.
 
+Přesný seznam generovaných příkazů, ukázky programů a známá omezení jsou v dokumentu [G-code pro Wegstr](WEGSTR_GCODE.md).
+
 ## Účel
 
 Gerber Panelizer spojí více výrobních zakázek DPS do jednoho panelu pro CNC frézku nebo jiný kompatibilní výrobní postup. Pracuje lokálně na počítači s Windows; zdrojové soubory se nikam neodesílají.

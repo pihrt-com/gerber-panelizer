@@ -1,8 +1,8 @@
 # Gerber Panelizer
 
-## Kandidát verze 0.2.0 - 2026-10-16
+## Verze 0.2.0 - 2026-10-17
 
-Změny ve složce `C:\GitHub\gerber-panelizer`: bylo implementováno přesné zrcadlení Bottom a automatická rotace panelizace po 90 stupních v náhledu, Gerberu, Excellonu, uložených projektech i strojovém výstupu; byl opraven import staršího palcového vrtání `M72`/`.drd` a export jednoznačných desetinných metrických souřadnic Excellon pro TrackMaker; přibyl konfigurovatelný profil stroje Wegstr a oddělené TXT programy pro izolaci mědi, vrtání a volitelné vyříznutí obrysu.
+Bylo implementováno přesné zrcadlení spodní strany a automatická rotace panelizace po 90 stupních v náhledu, Gerberu, Excellonu, uložených projektech i strojovém výstupu. Byl opraven import staršího palcového vrtání `M72`/`.drd` a export jednoznačných desetinných metrických souřadnic Excellon pro TrackMaker. Přibyl konfigurovatelný profil stroje Wegstr a oddělené TXT programy pro izolaci mědi, vrtání a volitelné vyříznutí obrysu.
 
 Export Wegstr sjednotí podporované kruhové spoje a kruhové, obdélníkové nebo oválné pady vybrané měděné vrstvy a kolem výsledné mědi vypočte nastavené odsazení středu nástroje. Nesnaží se tiše převádět nepodporované Gerber oblouky, regiony, makra ani nekruhové apertury spojů. Před obráběním zkontrolujte všechny G-code programy v řídicím systému, počátek, průměry nástrojů, posuvy, otáčky i hloubky a proveďte zkušební chod nad obětovaným materiálem.
 
@@ -22,10 +22,6 @@ Gerber Panelizer je odlehčená aplikace pro Windows pro přípravu výrobních 
 ## Stav projektu
 
 Aplikace je připravená jako samostatné Windows x64 EXE. Bez závislosti na cloudové službě lokálně zpracovává běžné metrické i palcové vstupy RS-274X Gerber a Excellon.
-
-## Poslední úprava — 2026-10-16
-
-Změny ve složce `C:\Users\marti\OneDrive\Dokumenty\GitHub\gerber-panelizer`: přibyla zdokumentovaná galerie českého a anglického rozhraní se zobrazením panelizované pracovní plochy a okna Nastavení. Zdrojové obrázky jsou uložené ve složce `docs/images` pod stabilními popisnými názvy.
 
 ## Snímky aplikace
 
@@ -54,6 +50,7 @@ V Nastavení lze zvolit jazyk, rozměry pracovní plochy, bezpečný okraj, meze
 ## Dokumentace
 
 - [Uživatelská příručka](docs/cs/PRIRUCKA_UZIVATELE.md)
+- [G-code pro Wegstr: příkazy, příklady a omezení](docs/cs/WEGSTR_GCODE.md)
 - [User guide](docs/en/USER_GUIDE.md)
 - [Technická architektura](docs/cs/ARCHITEKTURA.md)
 - [Technical architecture](docs/en/ARCHITECTURE.md)

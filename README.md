@@ -17,9 +17,9 @@ Gerber Panelizer is a lightweight Windows desktop application for preparing prin
 
 The application is implemented as a self-contained Windows x64 executable. It processes common metric and inch RS-274X Gerber and Excellon input locally without requiring a cloud service.
 
-## Latest update — 2026-10-16
+## Latest update — 2026-10-17
 
-Changes in `C:\GitHub\gerber-panelizer`: implemented exact Bottom mirroring and 90-degree panel rotation across preview, Gerber, Excellon, saved projects, and machine output; corrected legacy inch `M72`/`.drd` drill import and exported unambiguous decimal metric Excellon coordinates for TrackMaker; added a configurable Wegstr machine profile with separate TXT programs for copper isolation, drilling, and optional compensated outline cutting.
+Implemented exact Bottom mirroring and 90-degree panel rotation across preview, Gerber, Excellon, saved projects, and machine output. Corrected legacy inch `M72`/`.drd` drill import and exported unambiguous decimal metric Excellon coordinates for TrackMaker. Added a configurable Wegstr machine profile with separate TXT programs for copper isolation, drilling, and optional compensated outline cutting.
 
 ## Screenshots
 
@@ -48,6 +48,7 @@ Settings provide the interface language, machine work-area dimensions, safety ma
 ## Documentation
 
 - [User guide](docs/en/USER_GUIDE.md)
+- [Wegstr G-code commands, examples, and limitations](docs/en/WEGSTR_GCODE.md)
 - [Uživatelská příručka](docs/cs/PRIRUCKA_UZIVATELE.md)
 - [Technical architecture](docs/en/ARCHITECTURE.md)
 - [Technická architektura](docs/cs/ARCHITEKTURA.md)

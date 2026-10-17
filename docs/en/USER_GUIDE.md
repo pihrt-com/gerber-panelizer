@@ -61,6 +61,8 @@ Use **Export settings** to save a portable configuration file and **Import setti
 
 The isolation program unions supported circular traces and circle, rectangle, or obround flashes before offsetting the copper boundary, so overlapping pads and traces are not cut apart. The outline program compensates closed profile contours by half of the configured cutter diameter and is disabled by default because it has no holding-tab generation. Gerber arcs and regions are rejected instead of being approximated silently; unsupported trace apertures are skipped with a warning. Run isolation first, drilling second, and outline cutting last, and inspect each program in the controller before machining.
 
+See [Wegstr G-code](WEGSTR_GCODE.md) for the exact generated command subset, sample programs, and known limitations.
+
 ## Printing
 
 Use Print Preview to verify scale and visible layers, then print through the standard Windows printer dialog. The preview and print job contain only the PCB work area, never the application window. Select Fit to page, actual size, 75 %, or 50 % before printing; disable printer scaling and confirm that a known reference distance measures correctly. A printout is for review or a manual template; it is not the machine export.
