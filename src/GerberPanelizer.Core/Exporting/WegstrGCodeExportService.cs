@@ -58,6 +58,17 @@ public sealed class WegstrGCodeExportService
                     machinePaths.Add(CloseAndTransform(path, placement, profile));
                 }
             }
+
+            if (!profile.IncludeOutlineInCopper) continue;
+            foreach (var file in placement.Board.Files.Where(file => file.Format == FileFormat.Gerber && file.Layer == ManufacturingLayerKind.Profile))
+            {
+                EnsureLinearGerber(file);
+                var document = new GerberParser().Parse(file.Content);
+                foreach (var path in BuildClosedProfilePaths(document, file.Name, warnings).Where(path => path.Count >= 3))
+                {
+                    machinePaths.Add(CloseAndTransform(path, placement, profile));
+                }
+            }
         }
         if (machinePaths.Count == 0)
         {

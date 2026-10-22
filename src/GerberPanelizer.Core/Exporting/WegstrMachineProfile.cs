@@ -17,6 +17,7 @@ public sealed record WegstrMachineProfile
     public int MillingToolNumber { get; init; } = 1;
     public bool IncludeDrilling { get; init; } = true;
     public bool IncludeOutline { get; init; }
+    public bool IncludeOutlineInCopper { get; init; } = true;
 
     public void Validate()
     {

@@ -22,10 +22,19 @@
     <sys:String x:Key="Cancel" xmlns:sys="clr-namespace:System;assembly=mscorlib">Abbrechen</sys:String>
     <sys:String x:Key="UpdateCheck" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nach Updates suchen</sys:String>
     <sys:String x:Key="UpdateCurrent" xmlns:sys="clr-namespace:System;assembly=mscorlib">Sie verwenden die aktuelle Version {0}.</sys:String>
-    <sys:String x:Key="UpdateAvailable" xmlns:sys="clr-namespace:System;assembly=mscorlib">Eine neuere Version {0} ist verfügbar. Möchten Sie die GitHub-Downloadseite öffnen?</sys:String>
+    <sys:String x:Key="UpdateAvailable" xmlns:sys="clr-namespace:System;assembly=mscorlib">Eine neuere Version {0} ist verfügbar. Wählen Sie, wie Sie das Update erhalten möchten.</sys:String>
+    <sys:String x:Key="UpdateDownload" xmlns:sys="clr-namespace:System;assembly=mscorlib">Herunterladen</sys:String>
+    <sys:String x:Key="UpdateDownloadAndInstall" xmlns:sys="clr-namespace:System;assembly=mscorlib">Herunterladen und installieren</sys:String>
+    <sys:String x:Key="UpdateOpenReleasePage" xmlns:sys="clr-namespace:System;assembly=mscorlib">GitHub Releases öffnen</sys:String>
+    <sys:String x:Key="UpdateInstallerMissing" xmlns:sys="clr-namespace:System;assembly=mscorlib">Dieses Release enthält keine Setup-EXE. Sie können stattdessen seine GitHub-Release-Seite öffnen.</sys:String>
+    <sys:String x:Key="UpdateDownloaded" xmlns:sys="clr-namespace:System;assembly=mscorlib">Das Installationsprogramm wurde heruntergeladen nach:&#10;{0}</sys:String>
+    <sys:String x:Key="UpdateDownloadFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Das Installationsprogramm konnte nicht heruntergeladen werden: {0}</sys:String>
+    <sys:String x:Key="UpdateInstallerStartFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Das Installationsprogramm konnte nicht gestartet werden: {0}</sys:String>
     <sys:String x:Key="UpdateFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Updates konnten nicht geprüft werden: {0}</sys:String>
     <sys:String x:Key="StatusUpdateCurrent" xmlns:sys="clr-namespace:System;assembly=mscorlib">Sie verwenden die aktuelle Version {0}.</sys:String>
     <sys:String x:Key="StatusUpdateAvailable" xmlns:sys="clr-namespace:System;assembly=mscorlib">Eine neuere Version {0} ist verfügbar.</sys:String>
+    <sys:String x:Key="StatusUpdateDownloaded" xmlns:sys="clr-namespace:System;assembly=mscorlib">Das Update-Installationsprogramm wurde heruntergeladen nach {0}.</sys:String>
+    <sys:String x:Key="StatusUpdateInstallerStarted" xmlns:sys="clr-namespace:System;assembly=mscorlib">Das Update-Installationsprogramm {0} wurde gestartet.</sys:String>
     <sys:String x:Key="StatusUpdateFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Updates konnten nicht geprüft werden: {0}</sys:String>
     <sys:String x:Key="ExportOverwriteTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Export überschreiben?</sys:String>
     <sys:String x:Key="ExportOverwriteText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Die Datei existiert bereits: {0}&#10;&#10;Möchten Sie sie durch den neuen Export ersetzen?</sys:String>
@@ -87,6 +96,7 @@
     <sys:String x:Key="WegstrMillingTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Fräswerkzeugnummer</sys:String>
     <sys:String x:Key="WegstrIncludeDrilling" xmlns:sys="clr-namespace:System;assembly=mscorlib">Separates Bohrprogramm hinzufügen</sys:String>
     <sys:String x:Key="WegstrIncludeOutline" xmlns:sys="clr-namespace:System;assembly=mscorlib">Separaten Konturschnitt hinzufügen</sys:String>
+    <sys:String x:Key="WegstrIncludeOutlineInCopper" xmlns:sys="clr-namespace:System;assembly=mscorlib">Kontur zur Kupferschicht hinzufügen</sys:String>
     <sys:String x:Key="StatusWegstrExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} Wegstr-G-Code-Datei(en) nach {1} exportiert. {2} Warnung(en).</sys:String>
     <sys:String x:Key="StatusWegstrExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr-Export fehlgeschlagen: {0}</sys:String>
     <sys:String x:Key="WegstrExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Das Wegstr-G-Code-ZIP wurde erfolgreich exportiert nach:&#10;{0}&#10;&#10;Führen Sie zuerst die Kupferisolation, dann das Bohren und zuletzt den Konturschnitt aus. Prüfen Sie jeden Werkzeugweg vor dem Spindelstart.</sys:String>

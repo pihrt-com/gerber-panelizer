@@ -415,6 +415,7 @@ public sealed class MainViewModel : ObservableObject
                 MillingToolNumber = settings.WegstrMillingToolNumber,
                 IncludeDrilling = settings.WegstrIncludeDrilling,
                 IncludeOutline = settings.WegstrIncludeOutline,
+                IncludeOutlineInCopper = settings.WegstrIncludeOutlineInCopper,
             };
             var result = wegstrExporter.Export(temporaryArchivePath, panelPlacements, profile);
             File.Move(temporaryArchivePath, dialog.FileName, overwrite: true);
@@ -451,9 +452,20 @@ public sealed class MainViewModel : ObservableObject
             if (latestVersion > currentVersion)
             {
                 AddStatus(StatusSeverity.Information, L("StatusUpdateAvailable", latestVersion));
-                if (MessageBox.Show(owner, L("UpdateAvailable", latestVersion), L("UpdateCheck"), MessageBoxButton.YesNo, MessageBoxImage.Information, MessageBoxResult.Yes) == MessageBoxResult.Yes)
+                var setupAsset = FindSetupInstaller(document.RootElement);
+                var dialog = new UpdateAvailableWindow(latestVersion, setupAsset is not null) { Owner = owner };
+                dialog.ShowDialog();
+                switch (dialog.Action)
                 {
-                    Process.Start(new ProcessStartInfo(releaseUrl) { UseShellExecute = true });
+                    case UpdateAction.Download when setupAsset is not null:
+                        await DownloadSetupInstallerAsync(setupAsset, installAfterDownload: false);
+                        break;
+                    case UpdateAction.DownloadAndInstall when setupAsset is not null:
+                        await DownloadSetupInstallerAsync(setupAsset, installAfterDownload: true);
+                        break;
+                    case UpdateAction.OpenReleasePage:
+                        Process.Start(new ProcessStartInfo(releaseUrl) { UseShellExecute = true });
+                        break;
                 }
             }
             else
@@ -471,6 +483,77 @@ public sealed class MainViewModel : ObservableObject
         {
             IsCheckingForUpdates = false;
         }
+    }
+
+    private async Task DownloadSetupInstallerAsync(GitHubReleaseAsset asset, bool installAfterDownload)
+    {
+        if (!Uri.TryCreate(asset.DownloadUrl, UriKind.Absolute, out var downloadUri) || downloadUri.Scheme != Uri.UriSchemeHttps || !downloadUri.Host.EndsWith("github.com", StringComparison.OrdinalIgnoreCase)) throw new InvalidDataException("GitHub release setup asset does not have a trusted HTTPS download URL.");
+        var safeFileName = Path.GetFileName(asset.Name);
+        if (string.IsNullOrWhiteSpace(safeFileName) || !safeFileName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)) throw new InvalidDataException("GitHub release setup asset has an invalid filename.");
+
+        string destination;
+        if (installAfterDownload)
+        {
+            var updateDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GerberPanelizer", "updates");
+            Directory.CreateDirectory(updateDirectory);
+            destination = Path.Combine(updateDirectory, $"{Path.GetFileNameWithoutExtension(safeFileName)}-{Guid.NewGuid():N}.exe");
+        }
+        else
+        {
+            var dialog = new SaveFileDialog { FileName = safeFileName, DefaultExt = ".exe", Filter = "Windows installer (*.exe)|*.exe", Title = LocalizationService.Instance["UpdateDownload"] };
+            if (dialog.ShowDialog(owner) != true) return;
+            destination = dialog.FileName;
+        }
+
+        var temporaryPath = destination + ".partial";
+        try
+        {
+            using var response = await UpdateClient.GetAsync(downloadUri, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+            await using var source = await response.Content.ReadAsStreamAsync();
+            await using var target = new FileStream(temporaryPath, FileMode.Create, FileAccess.Write, FileShare.None, 81920, useAsync: true);
+            await source.CopyToAsync(target);
+            await target.FlushAsync();
+            File.Move(temporaryPath, destination, overwrite: true);
+        }
+        catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException or IOException or UnauthorizedAccessException)
+        {
+            if (File.Exists(temporaryPath)) File.Delete(temporaryPath);
+            AddStatus(StatusSeverity.Error, L("UpdateDownloadFailed", exception.Message), exception: exception);
+            MessageBox.Show(owner, L("UpdateDownloadFailed", exception.Message), L("UpdateCheck"), MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        if (!installAfterDownload)
+        {
+            AddStatus(StatusSeverity.Success, L("StatusUpdateDownloaded", destination));
+            MessageBox.Show(owner, L("UpdateDownloaded", destination), L("UpdateCheck"), MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        try
+        {
+            Process.Start(new ProcessStartInfo(destination) { UseShellExecute = true });
+            AddStatus(StatusSeverity.Success, L("StatusUpdateInstallerStarted", Path.GetFileName(destination)));
+            ((App)Application.Current).StartUpdateInstallerShutdown();
+        }
+        catch (Exception exception) when (exception is System.ComponentModel.Win32Exception or InvalidOperationException)
+        {
+            AddStatus(StatusSeverity.Error, L("UpdateInstallerStartFailed", exception.Message), exception: exception);
+            MessageBox.Show(owner, L("UpdateInstallerStartFailed", exception.Message), L("UpdateCheck"), MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
+
+    private static GitHubReleaseAsset? FindSetupInstaller(JsonElement release)
+    {
+        if (!release.TryGetProperty("assets", out var assets) || assets.ValueKind != JsonValueKind.Array) return null;
+        foreach (var asset in assets.EnumerateArray())
+        {
+            var name = asset.TryGetProperty("name", out var nameElement) ? nameElement.GetString() : null;
+            var url = asset.TryGetProperty("browser_download_url", out var urlElement) ? urlElement.GetString() : null;
+            if (name is not null && url is not null && name.EndsWith("-setup.exe", StringComparison.OrdinalIgnoreCase)) return new GitHubReleaseAsset(name, url);
+        }
+        return null;
     }
     private void Print()
     {
@@ -511,6 +594,7 @@ public sealed class MainViewModel : ObservableObject
     private void ClearPanelization() { panelization = null; PlacementPreviews.Clear(); previewWorkspaceWidthMm = settings.WorkAreaWidthMm; previewWorkspaceHeightMm = settings.WorkAreaHeightMm; OnPropertyChanged(nameof(PreviewWorkspaceWidthMm)); OnPropertyChanged(nameof(PreviewWorkspaceHeightMm)); OnPropertyChanged(nameof(BoardPreviewVisibility)); OnPropertyChanged(nameof(EmptyPreviewVisibility)); OnPropertyChanged(nameof(RenderPlacements)); ExportCommand.RaiseCanExecuteChanged(); ExportWegstrCommand.RaiseCanExecuteChanged(); }
     private void RefreshBoardCommands() { PanelizeCommand.RaiseCanExecuteChanged(); DeleteBoardCommand.RaiseCanExecuteChanged(); CloneBoardCommand.RaiseCanExecuteChanged(); }
     private static PcbBounds GetUsedBounds(IEnumerable<BoardPlacement> placements) => placements.Aggregate(PcbBounds.Empty, (bounds, placement) => bounds.Include(placement.Bounds));
+    private sealed record GitHubReleaseAsset(string Name, string DownloadUrl);
 }
 
 public sealed class LayerItemViewModel : ObservableObject

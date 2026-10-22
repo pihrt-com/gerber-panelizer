@@ -30,6 +30,7 @@ public sealed class SettingsViewModel : ObservableObject
     private int wegstrMillingToolNumber;
     private bool wegstrIncludeDrilling;
     private bool wegstrIncludeOutline;
+    private bool wegstrIncludeOutlineInCopper;
 
     public SettingsViewModel(AppSettings settings, Window window)
     {
@@ -62,6 +63,7 @@ public sealed class SettingsViewModel : ObservableObject
         wegstrMillingToolNumber = settings.WegstrMillingToolNumber;
         wegstrIncludeDrilling = settings.WegstrIncludeDrilling;
         wegstrIncludeOutline = settings.WegstrIncludeOutline;
+        wegstrIncludeOutlineInCopper = settings.WegstrIncludeOutlineInCopper;
         SaveCommand = new RelayCommand(_ => Save());
         PickColorCommand = new RelayCommand(color => PickColor(color as LayerColorSettingViewModel));
         ExportSettingsCommand = new RelayCommand(_ => ExportSettings());
@@ -88,6 +90,7 @@ public sealed class SettingsViewModel : ObservableObject
     public int WegstrMillingToolNumber { get => wegstrMillingToolNumber; set => SetProperty(ref wegstrMillingToolNumber, value); }
     public bool WegstrIncludeDrilling { get => wegstrIncludeDrilling; set => SetProperty(ref wegstrIncludeDrilling, value); }
     public bool WegstrIncludeOutline { get => wegstrIncludeOutline; set => SetProperty(ref wegstrIncludeOutline, value); }
+    public bool WegstrIncludeOutlineInCopper { get => wegstrIncludeOutlineInCopper; set => SetProperty(ref wegstrIncludeOutlineInCopper, value); }
     public ObservableCollection<LayerColorSettingViewModel> LayerColors { get; }
     public RelayCommand SaveCommand { get; }
     public RelayCommand PickColorCommand { get; }
@@ -153,6 +156,7 @@ public sealed class SettingsViewModel : ObservableObject
         WegstrMillingToolNumber = WegstrMillingToolNumber,
         WegstrIncludeDrilling = WegstrIncludeDrilling,
         WegstrIncludeOutline = WegstrIncludeOutline,
+        WegstrIncludeOutlineInCopper = WegstrIncludeOutlineInCopper,
     };
 
     private void ExportSettings()
@@ -194,6 +198,7 @@ public sealed class SettingsViewModel : ObservableObject
             WegstrMillingToolNumber = imported.WegstrMillingToolNumber;
             WegstrIncludeDrilling = imported.WegstrIncludeDrilling;
             WegstrIncludeOutline = imported.WegstrIncludeOutline;
+            WegstrIncludeOutlineInCopper = imported.WegstrIncludeOutlineInCopper;
         }
         catch (IOException exception) { AppLog.Warning("Settings import failed because the file could not be read.", exception); MessageBox.Show(LocalizationService.Instance["SettingsReadFailed"], "Gerber Panelizer", MessageBoxButton.OK, MessageBoxImage.Warning); }
         catch (JsonException exception) { AppLog.Warning("Settings import failed because the file contains invalid JSON.", exception); MessageBox.Show(LocalizationService.Instance["SettingsInvalid"], "Gerber Panelizer", MessageBoxButton.OK, MessageBoxImage.Warning); }

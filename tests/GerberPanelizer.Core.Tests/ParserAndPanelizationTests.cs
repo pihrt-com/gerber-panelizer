@@ -227,7 +227,7 @@ public sealed class ParserAndPanelizationTests
 
         try
         {
-            var result = new WegstrGCodeExportService().Export(archivePath, [new BoardPlacement(board, new PcbPoint(2, 3), 0, BoardMirrorMode.MirrorX)], new WegstrMachineProfile { IncludeOutline = true });
+            var result = new WegstrGCodeExportService().Export(archivePath, [new BoardPlacement(board, new PcbPoint(2, 3), 0, BoardMirrorMode.MirrorX)], new WegstrMachineProfile { IncludeOutline = true, IncludeOutlineInCopper = false });
             var isolation = ReadEntry(archivePath, "01-copper-isolation.txt");
             var drillProgram = ReadEntry(archivePath, "02-drill.txt");
             var outline = ReadEntry(archivePath, "03-board-outline.txt");
@@ -245,6 +245,32 @@ public sealed class ParserAndPanelizationTests
             Assert.Contains("G1Z-1.800F170.0", drillProgram);
             Assert.Contains("G1Z-1.700F170.0", outline);
             Assert.EndsWith("M30\r\n%\r\n", drillProgram);
+        }
+        finally
+        {
+            if (File.Exists(archivePath)) File.Delete(archivePath);
+        }
+    }
+
+    [Fact]
+    public void WegstrExport_AddsEachBoardProfileToCopperIsolationByDefault()
+    {
+        const string profile = "%MOMM*%\n%FSLAX34Y34*%\n%ADD10C,0.200*%\nD10*\nX0Y0D02*\nX100000Y0D01*\nX100000Y50000D01*\nX0Y50000D01*\nX0Y0D01*\nM02*";
+        const string copper = "%MOMM*%\n%FSLAX34Y34*%\n%ADD10C,0.400*%\nD10*\nX20000Y25000D02*\nX80000Y25000D01*\nM02*";
+        var board = new ImportedBoard("marked-outline", "marked-outline", [
+            new ManufacturingFile("profile.gbr", "profile.gbr", ManufacturingLayerKind.Profile, FileFormat.Gerber, profile, new PcbBounds(0, 0, 10, 5), []),
+            new ManufacturingFile("copper.gbr", "copper.gbr", ManufacturingLayerKind.CopperTop, FileFormat.Gerber, copper, new PcbBounds(1.8, 2.3, 8.2, 2.7), []),
+        ], new PcbBounds(0, 0, 10, 5));
+        var archivePath = Path.Combine(Path.GetTempPath(), $"gerber-panelizer-{Guid.NewGuid():N}.zip");
+
+        try
+        {
+            new WegstrGCodeExportService().Export(archivePath, [new BoardPlacement(board, new PcbPoint(2, 3))], new WegstrMachineProfile());
+            var isolation = ReadEntry(archivePath, "01-copper-isolation.txt");
+
+            Assert.Equal(2, Regex.Matches(isolation, "G1Z-0\\.080").Count);
+            Assert.Contains("G1X2.000Y-127.000", isolation);
+            Assert.Contains("G1X12.000Y-127.000", isolation);
         }
         finally
         {

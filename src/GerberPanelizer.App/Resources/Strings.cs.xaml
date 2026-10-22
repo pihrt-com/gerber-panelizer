@@ -22,10 +22,19 @@
     <sys:String x:Key="Cancel" xmlns:sys="clr-namespace:System;assembly=mscorlib">Zrušit</sys:String>
     <sys:String x:Key="UpdateCheck" xmlns:sys="clr-namespace:System;assembly=mscorlib">Kontrola aktualizací</sys:String>
     <sys:String x:Key="UpdateCurrent" xmlns:sys="clr-namespace:System;assembly=mscorlib">Používáte aktuální verzi {0}.</sys:String>
-    <sys:String x:Key="UpdateAvailable" xmlns:sys="clr-namespace:System;assembly=mscorlib">Je dostupná novější verze {0}. Chcete otevřít stránku pro stažení na GitHubu?</sys:String>
+    <sys:String x:Key="UpdateAvailable" xmlns:sys="clr-namespace:System;assembly=mscorlib">Je dostupná novější verze {0}. Vyberte způsob získání aktualizace.</sys:String>
+    <sys:String x:Key="UpdateDownload" xmlns:sys="clr-namespace:System;assembly=mscorlib">Stáhnout</sys:String>
+    <sys:String x:Key="UpdateDownloadAndInstall" xmlns:sys="clr-namespace:System;assembly=mscorlib">Stáhnout a nainstalovat</sys:String>
+    <sys:String x:Key="UpdateOpenReleasePage" xmlns:sys="clr-namespace:System;assembly=mscorlib">Otevřít GitHub Releases</sys:String>
+    <sys:String x:Key="UpdateInstallerMissing" xmlns:sys="clr-namespace:System;assembly=mscorlib">Toto vydání neobsahuje instalační EXE. Můžete otevřít jeho stránku na GitHubu.</sys:String>
+    <sys:String x:Key="UpdateDownloaded" xmlns:sys="clr-namespace:System;assembly=mscorlib">Instalátor byl stažen do:&#10;{0}</sys:String>
+    <sys:String x:Key="UpdateDownloadFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Instalátor se nepodařilo stáhnout: {0}</sys:String>
+    <sys:String x:Key="UpdateInstallerStartFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Instalátor se nepodařilo spustit: {0}</sys:String>
     <sys:String x:Key="UpdateFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Aktualizace se nepodařilo ověřit: {0}</sys:String>
     <sys:String x:Key="StatusUpdateCurrent" xmlns:sys="clr-namespace:System;assembly=mscorlib">Používáte aktuální verzi {0}.</sys:String>
     <sys:String x:Key="StatusUpdateAvailable" xmlns:sys="clr-namespace:System;assembly=mscorlib">Je dostupná novější verze {0}.</sys:String>
+    <sys:String x:Key="StatusUpdateDownloaded" xmlns:sys="clr-namespace:System;assembly=mscorlib">Instalátor aktualizace byl stažen do {0}.</sys:String>
+    <sys:String x:Key="StatusUpdateInstallerStarted" xmlns:sys="clr-namespace:System;assembly=mscorlib">Byl spuštěn instalátor aktualizace {0}.</sys:String>
     <sys:String x:Key="StatusUpdateFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Aktualizace se nepodařilo ověřit: {0}</sys:String>
     <sys:String x:Key="ExportOverwriteTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Přepsat export?</sys:String>
     <sys:String x:Key="ExportOverwriteText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Soubor již existuje: {0}&#10;&#10;Chcete jej nahradit novým exportem?</sys:String>
@@ -128,6 +137,7 @@
     <sys:String x:Key="WegstrMillingTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Číslo frézovacího nástroje</sys:String>
     <sys:String x:Key="WegstrIncludeDrilling" xmlns:sys="clr-namespace:System;assembly=mscorlib">Přidat samostatné vrtání</sys:String>
     <sys:String x:Key="WegstrIncludeOutline" xmlns:sys="clr-namespace:System;assembly=mscorlib">Přidat samostatné vyříznutí obrysu</sys:String>
+    <sys:String x:Key="WegstrIncludeOutlineInCopper" xmlns:sys="clr-namespace:System;assembly=mscorlib">Přidat obrys do vrstvy mědi</sys:String>
     <sys:String x:Key="StatusWegstrExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exportováno {0} souborů G-code Wegstr do {1}. Varování: {2}.</sys:String>
     <sys:String x:Key="StatusWegstrExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Export Wegstr se nezdařil: {0}</sys:String>
     <sys:String x:Key="WegstrExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">ZIP s G-code pro Wegstr byl úspěšně exportován do:&#10;{0}&#10;&#10;Pořadí je izolace mědi, vrtání a nakonec vyříznutí obrysu. Před zapnutím vřetena ověřte všechny dráhy na řídicím systému.</sys:String>

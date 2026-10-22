@@ -1,5 +1,11 @@
 # Change log
 
+## 0.2.2 - 2026-10-22
+
+- Prevent a second installed or portable instance for the same Windows user from loading settings, rotating logs, checking updates, or starting work; instead, it restores and focuses the existing main window.
+- Offer a newer GitHub Release as either a user-selected Setup EXE download or a download that immediately launches the published Setup EXE and closes the application for upgrade.
+- Add the default-enabled Wegstr option to trace each closed board profile in `01-copper-isolation.txt` at isolation depth, so a board outline can be marked before it is cut manually without generating a separate outline-cut program.
+
 ## 0.2.1 - 2026-10-17
 
 - Display imported boards immediately in a staging area beside the machine work area and allow dragging them into, within, or back out of the panel before export.

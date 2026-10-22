@@ -22,10 +22,19 @@
     <sys:String x:Key="Cancel" xmlns:sys="clr-namespace:System;assembly=mscorlib">Cancel</sys:String>
     <sys:String x:Key="UpdateCheck" xmlns:sys="clr-namespace:System;assembly=mscorlib">Check for updates</sys:String>
     <sys:String x:Key="UpdateCurrent" xmlns:sys="clr-namespace:System;assembly=mscorlib">You are using the current version {0}.</sys:String>
-    <sys:String x:Key="UpdateAvailable" xmlns:sys="clr-namespace:System;assembly=mscorlib">A newer version {0} is available. Do you want to open the GitHub download page?</sys:String>
+    <sys:String x:Key="UpdateAvailable" xmlns:sys="clr-namespace:System;assembly=mscorlib">A newer version {0} is available. Choose how you want to get the update.</sys:String>
+    <sys:String x:Key="UpdateDownload" xmlns:sys="clr-namespace:System;assembly=mscorlib">Download</sys:String>
+    <sys:String x:Key="UpdateDownloadAndInstall" xmlns:sys="clr-namespace:System;assembly=mscorlib">Download and install</sys:String>
+    <sys:String x:Key="UpdateOpenReleasePage" xmlns:sys="clr-namespace:System;assembly=mscorlib">Open GitHub Releases</sys:String>
+    <sys:String x:Key="UpdateInstallerMissing" xmlns:sys="clr-namespace:System;assembly=mscorlib">This release has no setup EXE. You can open its GitHub release page instead.</sys:String>
+    <sys:String x:Key="UpdateDownloaded" xmlns:sys="clr-namespace:System;assembly=mscorlib">The installer was downloaded to:&#10;{0}</sys:String>
+    <sys:String x:Key="UpdateDownloadFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">The installer could not be downloaded: {0}</sys:String>
+    <sys:String x:Key="UpdateInstallerStartFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">The installer could not be started: {0}</sys:String>
     <sys:String x:Key="UpdateFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Updates could not be checked: {0}</sys:String>
     <sys:String x:Key="StatusUpdateCurrent" xmlns:sys="clr-namespace:System;assembly=mscorlib">You are using the current version {0}.</sys:String>
     <sys:String x:Key="StatusUpdateAvailable" xmlns:sys="clr-namespace:System;assembly=mscorlib">A newer version {0} is available.</sys:String>
+    <sys:String x:Key="StatusUpdateDownloaded" xmlns:sys="clr-namespace:System;assembly=mscorlib">The update installer was downloaded to {0}.</sys:String>
+    <sys:String x:Key="StatusUpdateInstallerStarted" xmlns:sys="clr-namespace:System;assembly=mscorlib">The update installer {0} was started.</sys:String>
     <sys:String x:Key="StatusUpdateFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Updates could not be checked: {0}</sys:String>
     <sys:String x:Key="ExportOverwriteTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Overwrite export?</sys:String>
     <sys:String x:Key="ExportOverwriteText" xmlns:sys="clr-namespace:System;assembly=mscorlib">The file already exists: {0}&#10;&#10;Do you want to replace it with the new export?</sys:String>
@@ -128,6 +137,7 @@
     <sys:String x:Key="WegstrMillingTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Milling tool number</sys:String>
     <sys:String x:Key="WegstrIncludeDrilling" xmlns:sys="clr-namespace:System;assembly=mscorlib">Include separate drilling program</sys:String>
     <sys:String x:Key="WegstrIncludeOutline" xmlns:sys="clr-namespace:System;assembly=mscorlib">Include separate outline-cut program</sys:String>
+    <sys:String x:Key="WegstrIncludeOutlineInCopper" xmlns:sys="clr-namespace:System;assembly=mscorlib">Add outline to the copper layer</sys:String>
     <sys:String x:Key="StatusWegstrExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exported {0} Wegstr G-code file(s) to {1}. {2} warning(s).</sys:String>
     <sys:String x:Key="StatusWegstrExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr export failed: {0}</sys:String>
     <sys:String x:Key="WegstrExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">The Wegstr G-code ZIP was successfully exported to:&#10;{0}&#10;&#10;Run copper isolation first, then drilling, and cut the outline last. Verify every toolpath on the controller before starting the spindle.</sys:String>

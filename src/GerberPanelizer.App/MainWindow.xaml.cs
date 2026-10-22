@@ -38,6 +38,11 @@ public partial class MainWindow : Window
             return;
         }
 
+        if (((App)Application.Current).IsUpdateInstallerStarting)
+        {
+            return;
+        }
+
         var localization = LocalizationService.Instance;
         var confirmation = MessageBox.Show(
             this,

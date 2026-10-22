@@ -10,20 +10,31 @@ namespace GerberPanelizer.App;
 /// </summary>
 public partial class App : Application
 {
+    private SingleInstanceCoordinator? singleInstance;
+    internal bool IsUpdateInstallerStarting { get; private set; }
+
     protected override void OnStartup(StartupEventArgs e)
     {
-        AppLog.Initialize(BuildStamp.Version, BuildStamp.Revision, BuildStamp.DateUtc);
-        DispatcherUnhandledException += OnDispatcherUnhandledException;
-        AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
-        TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
+        if (!SingleInstanceCoordinator.TryAcquire(this, out singleInstance))
+        {
+            Shutdown(0);
+            return;
+        }
+
         try
         {
+            AppLog.Initialize(BuildStamp.Version, BuildStamp.Revision, BuildStamp.DateUtc);
+            DispatcherUnhandledException += OnDispatcherUnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+            TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
             base.OnStartup(e);
             LocalizationService.Instance.SetLanguage(AppSettingsService.Load().Language);
         }
         catch (Exception exception)
         {
             AppLog.Critical("Application startup failed.", exception);
+            singleInstance?.Dispose();
+            singleInstance = null;
             throw;
         }
     }
@@ -31,7 +42,18 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs e)
     {
         AppLog.Information($"Application exited. ExitCode={e.ApplicationExitCode}");
-        base.OnExit(e);
+        try { base.OnExit(e); }
+        finally
+        {
+            singleInstance?.Dispose();
+            singleInstance = null;
+        }
+    }
+
+    internal void StartUpdateInstallerShutdown()
+    {
+        IsUpdateInstallerStarting = true;
+        Shutdown(0);
     }
 
     private static void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs eventArgs) =>

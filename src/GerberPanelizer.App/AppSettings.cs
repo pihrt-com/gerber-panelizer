@@ -30,6 +30,7 @@ public sealed class AppSettings
     public int WegstrMillingToolNumber { get; set; } = 1;
     public bool WegstrIncludeDrilling { get; set; } = true;
     public bool WegstrIncludeOutline { get; set; }
+    public bool WegstrIncludeOutlineInCopper { get; set; } = true;
 }
 
 public static class AppSettingsService
