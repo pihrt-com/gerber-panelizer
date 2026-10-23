@@ -1,7 +1,9 @@
 using System.IO.Compression;
+using System.Text;
 using System.Text.RegularExpressions;
 using GerberPanelizer.Core.Exporting;
 using GerberPanelizer.Core.Geometry;
+using GerberPanelizer.Core.IO;
 using GerberPanelizer.Core.Models;
 using GerberPanelizer.Core.Panelization;
 using GerberPanelizer.Core.Parsing;
@@ -11,6 +13,29 @@ namespace GerberPanelizer.Core.Tests;
 
 public sealed class ParserAndPanelizationTests
 {
+    [Fact]
+    public async Task AtomicFileWriter_ClosesPartialFileBeforeReplacingDestination()
+    {
+        var temporaryPath = Path.Combine(Path.GetTempPath(), $"gerber-panelizer-{Guid.NewGuid():N}.partial");
+        var destinationPath = Path.Combine(Path.GetTempPath(), $"gerber-panelizer-{Guid.NewGuid():N}.exe");
+
+        try
+        {
+            await File.WriteAllTextAsync(destinationPath, "previous installer");
+            await using var source = new MemoryStream(Encoding.UTF8.GetBytes("new installer"));
+
+            await AtomicFileWriter.CopyAndMoveAsync(source, temporaryPath, destinationPath);
+
+            Assert.False(File.Exists(temporaryPath));
+            Assert.Equal("new installer", await File.ReadAllTextAsync(destinationPath));
+        }
+        finally
+        {
+            if (File.Exists(temporaryPath)) File.Delete(temporaryPath);
+            if (File.Exists(destinationPath)) File.Delete(destinationPath);
+        }
+    }
+
     [Fact]
     public void GerberParser_ReadsFusionMetricFormatAndProfileBounds()
     {

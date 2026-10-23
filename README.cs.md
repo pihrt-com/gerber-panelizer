@@ -1,8 +1,10 @@
 # Gerber Panelizer
 
-## Verze 0.2.3 - 2026-10-23
+## Verze 0.2.4 - 2026-10-23
 
 ## Aktuální změny — 2026-10-23
+
+Verze 0.2.4 opravuje aktualizátor Setup EXE: dočasně stažený soubor se nyní před atomickým nahrazením cílového souboru uzavře. Stáhnout i Stáhnout a nainstalovat proto ve Windows neskončí chybou zamknutého souboru.
 
 Nastavení nyní ukládá pojmenované předvolby pracovních ploch pro více strojů. Aktivní plochu lze přepnout v rozbalovacím seznamu přímo v panelu vrstev; okamžitě se použije pro náhled, panelizaci, tisk i všechny exporty. Filtry vrstev mají podobu barevných tlačítek, která při vypnutí zešednou. Přibylo také tlačítko Export TrackMaker: vytvoří plochý ZIP se standardními Gerber a Excellon soubory s běžnými příponami vrstev pro import celé desky v TrackMakeru.
 

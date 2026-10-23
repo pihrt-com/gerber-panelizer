@@ -1,5 +1,9 @@
 # Change log
 
+## 0.2.4 - 2026-10-23
+
+- Fix the Setup EXE updater: it now closes the `*.partial` download file before replacing the selected destination, so both Download and Download and install work on Windows without a file-lock error.
+
 ## 0.2.3 - 2026-10-23
 
 - Add named work-area presets with X/Y dimensions, persistent active selection, and a layer-panel drop-down that applies the selected machine area to preview, panelization, printing, and all exports.

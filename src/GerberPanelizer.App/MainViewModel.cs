@@ -10,6 +10,7 @@ using GerberPanelizer.Build;
 using GerberPanelizer.Core.Exporting;
 using GerberPanelizer.Core.Geometry;
 using GerberPanelizer.Core.Importing;
+using GerberPanelizer.Core.IO;
 using GerberPanelizer.Core.Models;
 using GerberPanelizer.Core.Panelization;
 using GerberPanelizer.Core.Projects;
@@ -560,10 +561,7 @@ public sealed class MainViewModel : ObservableObject
             using var response = await UpdateClient.GetAsync(downloadUri, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
             await using var source = await response.Content.ReadAsStreamAsync();
-            await using var target = new FileStream(temporaryPath, FileMode.Create, FileAccess.Write, FileShare.None, 81920, useAsync: true);
-            await source.CopyToAsync(target);
-            await target.FlushAsync();
-            File.Move(temporaryPath, destination, overwrite: true);
+            await AtomicFileWriter.CopyAndMoveAsync(source, temporaryPath, destination);
         }
         catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException or IOException or UnauthorizedAccessException)
         {
