@@ -141,4 +141,18 @@
     <sys:String x:Key="StatusWegstrExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exported {0} Wegstr G-code file(s) to {1}. {2} warning(s).</sys:String>
     <sys:String x:Key="StatusWegstrExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr export failed: {0}</sys:String>
     <sys:String x:Key="WegstrExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">The Wegstr G-code ZIP was successfully exported to:&#10;{0}&#10;&#10;Run copper isolation first, then drilling, and cut the outline last. Verify every toolpath on the controller before starting the spindle.</sys:String>
+    <sys:String x:Key="WorkAreaPresets" xmlns:sys="clr-namespace:System;assembly=mscorlib">Work-area presets</sys:String>
+    <sys:String x:Key="WorkAreaPresetsHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Name the work areas for individual machines. The selected preset can be switched directly above the panel.</sys:String>
+    <sys:String x:Key="WorkAreaPresetName" xmlns:sys="clr-namespace:System;assembly=mscorlib">Name</sys:String>
+    <sys:String x:Key="WorkAreaWidthShort" xmlns:sys="clr-namespace:System;assembly=mscorlib">Width mm</sys:String>
+    <sys:String x:Key="WorkAreaHeightShort" xmlns:sys="clr-namespace:System;assembly=mscorlib">Height mm</sys:String>
+    <sys:String x:Key="AddWorkAreaPreset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Add work area</sys:String>
+    <sys:String x:Key="RemoveWorkAreaPreset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Remove work-area preset</sys:String>
+    <sys:String x:Key="NewWorkAreaPreset" xmlns:sys="clr-namespace:System;assembly=mscorlib">New work area</sys:String>
+    <sys:String x:Key="InvalidWorkAreaPresets" xmlns:sys="clr-namespace:System;assembly=mscorlib">Every preset needs a unique name and a positive width and height.</sys:String>
+    <sys:String x:Key="StatusWorkAreaPresetSelected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Work-area preset “{0}” ({1}) is active. Boards are staged again for this work area.</sys:String>
+    <sys:String x:Key="ExportTrackMaker" xmlns:sys="clr-namespace:System;assembly=mscorlib">Export TrackMaker</sys:String>
+    <sys:String x:Key="StatusTrackMakerExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exported {0} TrackMaker file(s) to {1}. {2} warning(s).</sys:String>
+    <sys:String x:Key="StatusTrackMakerExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">TrackMaker export failed: {0}</sys:String>
+    <sys:String x:Key="TrackMakerExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">The TrackMaker ZIP was successfully exported to:&#10;{0}&#10;&#10;It contains flat standard Gerber and Excellon files for importing the complete board. Verify the layers and toolpaths in TrackMaker before milling.</sys:String>
 </ResourceDictionary>

@@ -38,6 +38,7 @@ public sealed class MainViewModel : ObservableObject
     private bool isCheckingForUpdates;
     private double previewWorkspaceWidthMm;
     private double previewWorkspaceHeightMm;
+    private WorkAreaPresetChoice? selectedWorkAreaPreset;
 
     public MainViewModel(Window owner)
     {
@@ -47,6 +48,8 @@ public sealed class MainViewModel : ObservableObject
         previewWorkspaceHeightMm = settings.WorkAreaHeightMm;
         statusText = L("StatusReady");
         Layers = new([new("Drill", "LayerDrill", settings.DrillColor), new("Top", "LayerTop", settings.TopLayerColor), new("Bottom", "LayerBottom", settings.BottomLayerColor), new("Outline", "LayerOutline", settings.OutlineColor), new("Silkscreen", "LayerSilkscreen", settings.SilkscreenColor)]);
+        WorkAreaPresets = [];
+        ReloadWorkAreaPresets();
         ImportCommand = new(_ => ImportFiles());
         NewProjectCommand = new(_ => NewProject());
         SaveProjectCommand = new(_ => SaveProject());
@@ -60,6 +63,7 @@ public sealed class MainViewModel : ObservableObject
         PanelizeCommand = new(_ => Panelize(), _ => Boards.Any(board => board.IsIncluded));
         ExportCommand = new(_ => Export(), _ => panelization is { Placements.Count: > 0 });
         ExportWegstrCommand = new(_ => ExportWegstr(), _ => panelization is { Placements.Count: > 0 });
+        ExportTrackMakerCommand = new(_ => ExportTrackMaker(), _ => panelization is { Placements.Count: > 0 });
         PrintCommand = new(_ => Print());
         OpenSettingsCommand = new(_ => OpenSettings());
         CheckForUpdatesCommand = new(_ => CheckForUpdates(showCurrentResult: true), _ => !IsCheckingForUpdates);
@@ -68,6 +72,7 @@ public sealed class MainViewModel : ObservableObject
     }
 
     public ObservableCollection<LayerItemViewModel> Layers { get; }
+    public ObservableCollection<WorkAreaPresetChoice> WorkAreaPresets { get; }
     public ObservableCollection<ImportedBoardItemViewModel> Boards { get; } = [];
     public ObservableCollection<PlacementPreviewItemViewModel> PlacementPreviews { get; } = [];
     public ObservableCollection<StatusEntryViewModel> StatusEntries { get; } = [];
@@ -84,6 +89,7 @@ public sealed class MainViewModel : ObservableObject
     public RelayCommand PanelizeCommand { get; }
     public RelayCommand ExportCommand { get; }
     public RelayCommand ExportWegstrCommand { get; }
+    public RelayCommand ExportTrackMakerCommand { get; }
     public RelayCommand PrintCommand { get; }
     public RelayCommand OpenSettingsCommand { get; }
     public RelayCommand CheckForUpdatesCommand { get; }
@@ -92,6 +98,23 @@ public sealed class MainViewModel : ObservableObject
     public string WorkAreaCaption => $"{settings.WorkAreaWidthMm:0.##} × {settings.WorkAreaHeightMm:0.##} mm";
     public double WorkAreaWidthMm => settings.WorkAreaWidthMm;
     public double WorkAreaHeightMm => settings.WorkAreaHeightMm;
+    public WorkAreaPresetChoice? SelectedWorkAreaPreset
+    {
+        get => selectedWorkAreaPreset;
+        set
+        {
+            if (!SetProperty(ref selectedWorkAreaPreset, value) || value is null) return;
+            settings.ActiveWorkAreaPresetName = value.Name;
+            settings.WorkAreaWidthMm = value.WidthMm;
+            settings.WorkAreaHeightMm = value.HeightMm;
+            AppSettingsService.Save(settings);
+            OnPropertyChanged(nameof(WorkAreaCaption));
+            OnPropertyChanged(nameof(WorkAreaWidthMm));
+            OnPropertyChanged(nameof(WorkAreaHeightMm));
+            if (Boards.Count == 0) ClearPanelization(); else StageAllBoards();
+            AddStatus(StatusSeverity.Information, L("StatusWorkAreaPresetSelected", value.Name, WorkAreaCaption));
+        }
+    }
     public double PreviewWorkspaceWidthMm => previewWorkspaceWidthMm;
     public double PreviewWorkspaceHeightMm => previewWorkspaceHeightMm;
     public IReadOnlyList<BoardPlacement> RenderPlacements => panelization?.Placements ?? Array.Empty<BoardPlacement>();
@@ -236,7 +259,7 @@ public sealed class MainViewModel : ObservableObject
         var boards = Boards.ToDictionary(item => item.InstanceId, StringComparer.OrdinalIgnoreCase);
         var placements = saved.Where(item => boards.ContainsKey(item.BoardInstanceId)).Select(item => new BoardPlacement(FilterBoardForManufacturingSide(boards[item.BoardInstanceId].Board), new PcbPoint(item.OffsetX, item.OffsetY), item.RotationDegrees, Enum.TryParse<BoardMirrorMode>(item.MirrorMode, true, out var mirrorMode) ? mirrorMode : BoardMirrorMode.None)).ToList();
         if (placements.Count == 0) { StageAllBoards(); return; }
-        panelization = new(placements, [], GetUsedBounds(placements)); RebuildPlacementPreviews(); OnPropertyChanged(nameof(RenderPlacements)); ExportCommand.RaiseCanExecuteChanged(); ExportWegstrCommand.RaiseCanExecuteChanged();
+        panelization = new(placements, [], GetUsedBounds(placements)); RebuildPlacementPreviews(); OnPropertyChanged(nameof(RenderPlacements)); RefreshExportCommands();
     }
 
     private void ApplyProjectWorkArea(PanelProject project)
@@ -244,6 +267,10 @@ public sealed class MainViewModel : ObservableObject
         if (project.WorkAreaWidthMm <= 0 || project.WorkAreaHeightMm <= 0) return;
         settings.WorkAreaWidthMm = project.WorkAreaWidthMm;
         settings.WorkAreaHeightMm = project.WorkAreaHeightMm;
+        var matchingPreset = settings.WorkAreaPresets.FirstOrDefault(preset => Math.Abs(preset.WidthMm - project.WorkAreaWidthMm) < .000001 && Math.Abs(preset.HeightMm - project.WorkAreaHeightMm) < .000001);
+        settings.ActiveWorkAreaPresetName = matchingPreset?.Name;
+        selectedWorkAreaPreset = matchingPreset is null ? null : WorkAreaPresets.FirstOrDefault(preset => string.Equals(preset.Name, matchingPreset.Name, StringComparison.OrdinalIgnoreCase));
+        OnPropertyChanged(nameof(SelectedWorkAreaPreset));
         OnPropertyChanged(nameof(WorkAreaCaption));
         OnPropertyChanged(nameof(WorkAreaWidthMm));
         OnPropertyChanged(nameof(WorkAreaHeightMm));
@@ -270,7 +297,7 @@ public sealed class MainViewModel : ObservableObject
         if (panelization is null) return;
         var remaining = panelization.Placements.Where(placement => !string.Equals(placement.Board.Id, board.Id, StringComparison.OrdinalIgnoreCase)).ToList();
         if (remaining.Count == panelization.Placements.Count) return;
-        panelization = new(remaining, panelization.UnplacedBoards, GetUsedBounds(remaining)); RebuildPlacementPreviews(); OnPropertyChanged(nameof(RenderPlacements)); ExportCommand.RaiseCanExecuteChanged(); ExportWegstrCommand.RaiseCanExecuteChanged();
+        panelization = new(remaining, panelization.UnplacedBoards, GetUsedBounds(remaining)); RebuildPlacementPreviews(); OnPropertyChanged(nameof(RenderPlacements)); RefreshExportCommands();
     }
     private void MovePlacement(object? request)
     {
@@ -300,7 +327,7 @@ public sealed class MainViewModel : ObservableObject
             var staged = stagingLayout.Arrange(arranged.UnplacedBoards, panelSize, settings.BoardSpacingMm, mirrorMode);
             var visiblePlacements = placed.Concat(staged.Placements).ToList();
             panelization = new(visiblePlacements, arranged.UnplacedBoards, GetUsedBounds(visiblePlacements));
-            RebuildPlacementPreviews(); OnPropertyChanged(nameof(RenderPlacements)); ExportCommand.RaiseCanExecuteChanged(); ExportWegstrCommand.RaiseCanExecuteChanged();
+            RebuildPlacementPreviews(); OnPropertyChanged(nameof(RenderPlacements)); RefreshExportCommands();
             AddStatus(arranged.UnplacedBoards.Count == 0 ? StatusSeverity.Success : StatusSeverity.Warning, arranged.UnplacedBoards.Count == 0 ? L("StatusPanelized", placed.Count, WorkAreaCaption) : L("StatusPanelizedUnplaced", placed.Count, arranged.UnplacedBoards.Count, WorkAreaCaption));
         }
         catch (ArgumentException exception) { AddStatus(StatusSeverity.Error, L("StatusPanelSettingsInvalid", exception.Message), exception: exception); }
@@ -321,8 +348,7 @@ public sealed class MainViewModel : ObservableObject
         panelization = new(placements, [], GetUsedBounds(placements));
         RebuildPlacementPreviews();
         OnPropertyChanged(nameof(RenderPlacements));
-        ExportCommand.RaiseCanExecuteChanged();
-        ExportWegstrCommand.RaiseCanExecuteChanged();
+        RefreshExportCommands();
     }
 
     private BoardMirrorMode GetCurrentMirrorMode() => ManufacturingSide == "Bottom" && Enum.TryParse<BoardMirrorMode>(settings.BottomMirrorPolicy, true, out var mirrorMode) ? mirrorMode : BoardMirrorMode.None;
@@ -423,6 +449,29 @@ public sealed class MainViewModel : ObservableObject
             MessageBox.Show(owner, L("WegstrExportSuccessText", dialog.FileName), L("ExportSuccessTitle"), MessageBoxButton.OK, MessageBoxImage.Information);
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException or NotSupportedException or ArgumentOutOfRangeException) { AddStatus(StatusSeverity.Error, L("StatusWegstrExportFailed", exception.Message), exception: exception); }
+        finally
+        {
+            if (File.Exists(temporaryArchivePath)) File.Delete(temporaryArchivePath);
+        }
+    }
+
+    private void ExportTrackMaker()
+    {
+        if (!TryGetPanelPlacements(out var panelPlacements)) return;
+        var dialog = new SaveFileDialog { Filter = $"{L("FilterZipArchive")}|*.zip", DefaultExt = ".zip", FileName = "panelized-trackmaker-board.zip", Title = LocalizationService.Instance["ExportTrackMaker"], OverwritePrompt = false };
+        if (dialog.ShowDialog(owner) != true) return;
+        if (Directory.Exists(dialog.FileName)) { AddStatus(StatusSeverity.Error, L("StatusTrackMakerExportFailed", L("ExportTargetIsDirectory"))); return; }
+        if (File.Exists(dialog.FileName) && MessageBox.Show(owner, L("ExportOverwriteText", dialog.FileName), L("ExportOverwriteTitle"), MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return;
+
+        var temporaryArchivePath = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(dialog.FileName))!, $".{Path.GetFileNameWithoutExtension(dialog.FileName)}-{Guid.NewGuid():N}.tmp");
+        try
+        {
+            var result = exporter.Export(temporaryArchivePath, panelPlacements, PanelExportLayout.TrackMaker);
+            File.Move(temporaryArchivePath, dialog.FileName, overwrite: true);
+            AddStatus(result.Warnings.Count == 0 ? StatusSeverity.Success : StatusSeverity.Warning, L("StatusTrackMakerExported", result.Entries.Count, Path.GetFileName(dialog.FileName), result.Warnings.Count), result.Warnings);
+            MessageBox.Show(owner, L("TrackMakerExportSuccessText", dialog.FileName), L("ExportSuccessTitle"), MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException or NotSupportedException) { AddStatus(StatusSeverity.Error, L("StatusTrackMakerExportFailed", exception.Message), exception: exception); }
         finally
         {
             if (File.Exists(temporaryArchivePath)) File.Delete(temporaryArchivePath);
@@ -570,8 +619,18 @@ public sealed class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(WorkAreaCaption));
         OnPropertyChanged(nameof(WorkAreaWidthMm));
         OnPropertyChanged(nameof(WorkAreaHeightMm));
+        ReloadWorkAreaPresets();
         if (Boards.Count == 0) ClearPanelization(); else StageAllBoards();
         AddStatus(StatusSeverity.Information, L("StatusSettingsSaved"));
+    }
+
+    private void ReloadWorkAreaPresets()
+    {
+        AppSettingsService.NormalizeWorkAreaPresets(settings);
+        WorkAreaPresets.Clear();
+        foreach (var preset in settings.WorkAreaPresets) WorkAreaPresets.Add(new WorkAreaPresetChoice(preset.Name, preset.WidthMm, preset.HeightMm));
+        selectedWorkAreaPreset = WorkAreaPresets.FirstOrDefault(preset => string.Equals(preset.Name, settings.ActiveWorkAreaPresetName, StringComparison.OrdinalIgnoreCase));
+        OnPropertyChanged(nameof(SelectedWorkAreaPreset));
     }
 
     private void ApplyLayerColors()
@@ -591,7 +650,8 @@ public sealed class MainViewModel : ObservableObject
         if (severity == StatusSeverity.Error) AppLog.Error(logMessage, exception);
         while (StatusEntries.Count > 100) StatusEntries.RemoveAt(StatusEntries.Count - 1);
     }
-    private void ClearPanelization() { panelization = null; PlacementPreviews.Clear(); previewWorkspaceWidthMm = settings.WorkAreaWidthMm; previewWorkspaceHeightMm = settings.WorkAreaHeightMm; OnPropertyChanged(nameof(PreviewWorkspaceWidthMm)); OnPropertyChanged(nameof(PreviewWorkspaceHeightMm)); OnPropertyChanged(nameof(BoardPreviewVisibility)); OnPropertyChanged(nameof(EmptyPreviewVisibility)); OnPropertyChanged(nameof(RenderPlacements)); ExportCommand.RaiseCanExecuteChanged(); ExportWegstrCommand.RaiseCanExecuteChanged(); }
+    private void ClearPanelization() { panelization = null; PlacementPreviews.Clear(); previewWorkspaceWidthMm = settings.WorkAreaWidthMm; previewWorkspaceHeightMm = settings.WorkAreaHeightMm; OnPropertyChanged(nameof(PreviewWorkspaceWidthMm)); OnPropertyChanged(nameof(PreviewWorkspaceHeightMm)); OnPropertyChanged(nameof(BoardPreviewVisibility)); OnPropertyChanged(nameof(EmptyPreviewVisibility)); OnPropertyChanged(nameof(RenderPlacements)); RefreshExportCommands(); }
+    private void RefreshExportCommands() { ExportCommand.RaiseCanExecuteChanged(); ExportWegstrCommand.RaiseCanExecuteChanged(); ExportTrackMakerCommand.RaiseCanExecuteChanged(); }
     private void RefreshBoardCommands() { PanelizeCommand.RaiseCanExecuteChanged(); DeleteBoardCommand.RaiseCanExecuteChanged(); CloneBoardCommand.RaiseCanExecuteChanged(); }
     private static PcbBounds GetUsedBounds(IEnumerable<BoardPlacement> placements) => placements.Aggregate(PcbBounds.Empty, (bounds, placement) => bounds.Include(placement.Bounds));
     private sealed record GitHubReleaseAsset(string Name, string DownloadUrl);
@@ -622,6 +682,10 @@ public sealed class LayerItemViewModel : ObservableObject
     public void SetColor(string color) => Brush = CreateBrush(color);
 
     private static Brush CreateBrush(string color) => (Brush)new BrushConverter().ConvertFromString(color)!;
+}
+public sealed record WorkAreaPresetChoice(string Name, double WidthMm, double HeightMm)
+{
+    public string DisplayName => $"{Name} ({WidthMm:0.##} × {HeightMm:0.##} mm)";
 }
 public sealed class ImportedBoardItemViewModel : ObservableObject
 {

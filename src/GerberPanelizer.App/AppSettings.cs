@@ -8,6 +8,8 @@ public sealed class AppSettings
     public string Language { get; set; } = "cs";
     public double WorkAreaWidthMm { get; set; } = 200;
     public double WorkAreaHeightMm { get; set; } = 130;
+    public List<WorkAreaPreset> WorkAreaPresets { get; set; } = [];
+    public string? ActiveWorkAreaPresetName { get; set; }
     public double BoardSpacingMm { get; set; } = 3;
     public double SafetyMarginMm { get; set; } = 5;
     public bool AllowRotation { get; set; } = true;
@@ -33,6 +35,13 @@ public sealed class AppSettings
     public bool WegstrIncludeOutlineInCopper { get; set; } = true;
 }
 
+public sealed class WorkAreaPreset
+{
+    public string Name { get; set; } = string.Empty;
+    public double WidthMm { get; set; }
+    public double HeightMm { get; set; }
+}
+
 public static class AppSettingsService
 {
     private static readonly string settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GerberPanelizer", "settings.json");
@@ -41,9 +50,11 @@ public static class AppSettingsService
     {
         try
         {
-            return File.Exists(settingsPath)
+            var settings = File.Exists(settingsPath)
                 ? JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(settingsPath)) ?? new AppSettings()
                 : new AppSettings();
+            NormalizeWorkAreaPresets(settings);
+            return settings;
         }
         catch (JsonException exception)
         {
@@ -59,8 +70,35 @@ public static class AppSettingsService
 
     public static void Save(AppSettings settings)
     {
+        NormalizeWorkAreaPresets(settings);
         var directory = Path.GetDirectoryName(settingsPath)!;
         Directory.CreateDirectory(directory);
         File.WriteAllText(settingsPath, JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true }));
+    }
+
+    public static void NormalizeWorkAreaPresets(AppSettings settings)
+    {
+        var uniqueNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        settings.WorkAreaPresets = (settings.WorkAreaPresets ?? [])
+            .Where(preset => !string.IsNullOrWhiteSpace(preset.Name) && preset.WidthMm > 0 && preset.HeightMm > 0)
+            .Select(preset => new WorkAreaPreset { Name = preset.Name.Trim(), WidthMm = preset.WidthMm, HeightMm = preset.HeightMm })
+            .Where(preset => uniqueNames.Add(preset.Name))
+            .ToList();
+
+        if (settings.WorkAreaPresets.Count == 0)
+        {
+            settings.WorkAreaPresets.Add(new WorkAreaPreset
+            {
+                Name = "Výchozí pracovní plocha",
+                WidthMm = settings.WorkAreaWidthMm > 0 ? settings.WorkAreaWidthMm : 200,
+                HeightMm = settings.WorkAreaHeightMm > 0 ? settings.WorkAreaHeightMm : 130,
+            });
+        }
+
+        var activePreset = settings.WorkAreaPresets.FirstOrDefault(preset => string.Equals(preset.Name, settings.ActiveWorkAreaPresetName, StringComparison.OrdinalIgnoreCase))
+            ?? settings.WorkAreaPresets.First();
+        settings.ActiveWorkAreaPresetName = activePreset.Name;
+        settings.WorkAreaWidthMm = activePreset.WidthMm;
+        settings.WorkAreaHeightMm = activePreset.HeightMm;
     }
 }

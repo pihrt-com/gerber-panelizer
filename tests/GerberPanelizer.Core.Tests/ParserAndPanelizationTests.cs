@@ -211,6 +211,36 @@ public sealed class ParserAndPanelizationTests
     }
 
     [Fact]
+    public void PanelExport_TrackMakerZipUsesFlatStandardGerberAndExcellonEntries()
+    {
+        const string gerber = "%MOMM*%\n%FSLAX34Y34*%\n%ADD10C,0.200*%\nD10*\nX0Y0D03*\nM02*";
+        const string drill = "M48\nMETRIC,TZ,000.000\nT1C0.800\n%\nT1\nX0Y0\nM30\n";
+        var board = new ImportedBoard("trackmaker", "trackmaker", [
+            new ManufacturingFile("top.gbr", "top.gbr", ManufacturingLayerKind.CopperTop, FileFormat.Gerber, gerber, new PcbBounds(0, 0, 1, 1), []),
+            new ManufacturingFile("outline.gbr", "outline.gbr", ManufacturingLayerKind.Profile, FileFormat.Gerber, gerber, new PcbBounds(0, 0, 1, 1), []),
+            new ManufacturingFile("drill.xln", "drill.xln", ManufacturingLayerKind.Drill, FileFormat.Excellon, drill, new PcbBounds(0, 0, 1, 1), []),
+        ], new PcbBounds(0, 0, 1, 1));
+        var archivePath = Path.Combine(Path.GetTempPath(), $"gerber-panelizer-{Guid.NewGuid():N}.zip");
+
+        try
+        {
+            var result = new PanelExportService().Export(archivePath, [new BoardPlacement(board, new PcbPoint(0, 0))], PanelExportLayout.TrackMaker);
+            using var archive = ZipFile.OpenRead(archivePath);
+            var entries = archive.Entries.Select(entry => entry.FullName).ToArray();
+
+            Assert.Equal(["panelized-board.gtl", "panelized-board.gko", "panelized-board.drl"], result.Entries);
+            Assert.Equal(result.Entries, entries);
+            Assert.All(entries, entry => Assert.DoesNotContain('/', entry));
+            Assert.Contains("%MOMM*%", ReadEntry(archivePath, "panelized-board.gtl"));
+            Assert.Contains("METRIC,TZ", ReadEntry(archivePath, "panelized-board.drl"));
+        }
+        finally
+        {
+            if (File.Exists(archivePath)) File.Delete(archivePath);
+        }
+    }
+
+    [Fact]
     public void WegstrExport_WritesWegstrIsolationDrillAndOutlinePrograms()
     {
         const string profile = "%MOMM*%\n%FSLAX34Y34*%\n%ADD10C,0.200*%\nD10*\nX0Y0D02*\nX100000Y0D01*\nX100000Y50000D01*\nX0Y50000D01*\nX0Y0D01*\nM02*";

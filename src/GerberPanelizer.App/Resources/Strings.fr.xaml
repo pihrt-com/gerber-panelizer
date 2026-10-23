@@ -100,4 +100,18 @@
     <sys:String x:Key="StatusWegstrExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} fichier(s) G-code Wegstr exporté(s) vers {1}. {2} avertissement(s).</sys:String>
     <sys:String x:Key="StatusWegstrExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Échec de l’export Wegstr : {0}</sys:String>
     <sys:String x:Key="WegstrExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Le ZIP G-code Wegstr a été exporté vers :&#10;{0}&#10;&#10;Exécutez d’abord l’isolation du cuivre, puis le perçage et enfin la découpe. Vérifiez chaque parcours avant de démarrer la broche.</sys:String>
+    <sys:String x:Key="WorkAreaPresets" xmlns:sys="clr-namespace:System;assembly=mscorlib">Préréglages de zone de travail</sys:String>
+    <sys:String x:Key="WorkAreaPresetsHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nommez les zones de travail des différentes machines. Le préréglage sélectionné peut être changé directement au-dessus du panneau.</sys:String>
+    <sys:String x:Key="WorkAreaPresetName" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nom</sys:String>
+    <sys:String x:Key="WorkAreaWidthShort" xmlns:sys="clr-namespace:System;assembly=mscorlib">Largeur mm</sys:String>
+    <sys:String x:Key="WorkAreaHeightShort" xmlns:sys="clr-namespace:System;assembly=mscorlib">Hauteur mm</sys:String>
+    <sys:String x:Key="AddWorkAreaPreset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Ajouter une zone</sys:String>
+    <sys:String x:Key="RemoveWorkAreaPreset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Supprimer le préréglage de zone</sys:String>
+    <sys:String x:Key="NewWorkAreaPreset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nouvelle zone</sys:String>
+    <sys:String x:Key="InvalidWorkAreaPresets" xmlns:sys="clr-namespace:System;assembly=mscorlib">Chaque préréglage doit avoir un nom unique et une largeur et hauteur positives.</sys:String>
+    <sys:String x:Key="StatusWorkAreaPresetSelected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Le préréglage « {0} » ({1}) est actif. Les cartes sont à nouveau préparées pour cette zone.</sys:String>
+    <sys:String x:Key="ExportTrackMaker" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exporter TrackMaker</sys:String>
+    <sys:String x:Key="StatusTrackMakerExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} fichier(s) TrackMaker exporté(s) vers {1}. {2} avertissement(s).</sys:String>
+    <sys:String x:Key="StatusTrackMakerExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Échec de l’export TrackMaker : {0}</sys:String>
+    <sys:String x:Key="TrackMakerExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Le ZIP TrackMaker a été exporté vers :&#10;{0}&#10;&#10;Il contient des fichiers Gerber et Excellon standards à plat pour importer la carte complète. Vérifiez les couches et les parcours d’outil dans TrackMaker avant le fraisage.</sys:String>
 </ResourceDictionary>

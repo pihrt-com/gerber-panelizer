@@ -1,5 +1,11 @@
 # Change log
 
+## Unreleased
+
+- Add named work-area presets with X/Y dimensions, persistent active selection, and a layer-panel drop-down that applies the selected machine area to preview, panelization, printing, and all exports.
+- Replace layer-filter checkboxes with colour-coded toggle buttons that turn grey when a layer is hidden.
+- Add a TrackMaker export ZIP containing flat conventional Gerber layer files and Excellon drilling data for complete-board import.
+
 ## 0.2.2 - 2026-10-22
 
 - Prevent a second installed or portable instance for the same Windows user from loading settings, rotating logs, checking updates, or starting work; instead, it restores and focuses the existing main window.

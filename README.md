@@ -17,7 +17,9 @@ Gerber Panelizer is a lightweight Windows desktop application for preparing prin
 
 The application is implemented as a self-contained Windows x64 executable. It processes common metric and inch RS-274X Gerber and Excellon input locally without requiring a cloud service.
 
-## Latest update — 2026-10-22
+## Latest update — 2026-10-23
+
+Settings now store named work-area presets for multiple machines. The active work area can be switched in the drop-down directly in the layer panel and is immediately used by preview, panelization, printing, and every export. Layer filters are colour buttons that turn grey when disabled. A new TrackMaker export creates a flat ZIP with standard Gerber and Excellon files using conventional layer extensions for importing the complete board in TrackMaker.
 
 Version 0.2.2 allows only one Gerber Panelizer process for each Windows user, including a mix of installed and portable builds; launching it again restores the first window. When an update is available, the application can save the published Setup EXE or download it and immediately start installation. Wegstr adds each board profile to the copper-isolation program by default, marking the outline at isolation depth for boards that will be cut manually instead of milled through.
 
@@ -31,15 +33,16 @@ The main screen shows imported boards, visible manufacturing layers, the machine
 
 ![Settings dialog in English](docs/images/english-settings.png)
 
-Settings provide the interface language, machine work-area dimensions, safety margin, board spacing, Bottom mirror policy, automatic rotation, individual layer colours, and settings import/export.
+Settings provide the interface language, named machine work-area presets, safety margin, board spacing, Bottom mirror policy, automatic rotation, individual layer colours, and settings import/export.
 
 ## Core capabilities
 
 - Import ZIP, RAR, and individual Gerber/Excellon files.
 - Interactive layer preview with an immediate post-import staging area, visibility filtering, mouse-wheel zoom, manual dragging into or out of the panel, continuous 45-degree trace rendering, circular, rectangular, and obround SMT pad flashes, and configurable HEX colours with a click-to-select palette.
-- Configurable milling work area, margins, spacing, and automatic 90-degree placement rotation.
+- Named milling work-area presets with X/Y dimensions, switched directly in the layer panel; the active preset is used consistently for preview, panelization, printing, and export.
 - Top, Bottom, or both-side production selection; optional Bottom Mirror X or Mirror Y is applied consistently to preview, Gerber, Excellon, project data, and G-code.
 - Panel export as one production ZIP package containing per-layer Gerbers and merged Excellon drilling data, with safe confirmation before replacing an existing ZIP and a success dialog showing its final location.
+- Separate TrackMaker export as a flat ZIP with conventional Gerber layer extensions and Excellon drilling data, intended for importing the complete board rather than importing layers one by one.
 - Legacy inch `M72`/`.drd` drilling support and explicit decimal metric Excellon output for reliable TrackMaker import.
 - Separate Wegstr ZIP export with `01-copper-isolation.txt`, optional `02-drill.txt`, and optional `03-board-outline.txt`; it uses negative Y from the top-left origin as in the supplied Wegstr samples and exposes depths, isolation offset, outline-cutter diameter, feeds, spindle speed, and tool number in Settings. By default, `01-copper-isolation.txt` also traces every closed board profile at isolation depth so its outline can be marked without generating a separate cut.
 - Incremental import, board duplication/deletion, portable saved projects, detailed status diagnostics, Czech, English, German, and French UI, panel-only print preview, and printing.

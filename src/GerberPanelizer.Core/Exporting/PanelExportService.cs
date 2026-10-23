@@ -11,6 +11,12 @@ namespace GerberPanelizer.Core.Exporting;
 
 public sealed record PanelExportResult(string ArchivePath, IReadOnlyList<string> Entries, IReadOnlyList<string> Warnings);
 
+public enum PanelExportLayout
+{
+    Production,
+    TrackMaker,
+}
+
 /// <summary>Writes a single manufacturing ZIP. Gerber apertures and Excellon tools are renumbered for every source board.</summary>
 public sealed class PanelExportService
 {
@@ -20,7 +26,7 @@ public sealed class PanelExportService
     private static readonly Regex GerberCoordinateRegex = new(@"(?<axis>[XYIJ])(?<value>[+-]?\d+(?:\.\d+)?)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex GerberOperationRegex = new(@"D0?[123](?!\d)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    public PanelExportResult Export(string archivePath, IEnumerable<BoardPlacement> placements)
+    public PanelExportResult Export(string archivePath, IEnumerable<BoardPlacement> placements, PanelExportLayout layout = PanelExportLayout.Production)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(archivePath);
         var materialized = placements.ToList();
@@ -37,7 +43,7 @@ public sealed class PanelExportService
                      .Where(item => item.file.Format == FileFormat.Gerber)
                      .GroupBy(item => item.file.Layer))
         {
-            var name = $"GerberFiles/{LayerFileName(group.Key)}.gbr";
+            var name = GetGerberEntryName(group.Key, layout);
             WriteTextEntry(archive, name, BuildGerber(group.ToList(), warnings));
             entries.Add(name);
         }
@@ -45,7 +51,7 @@ public sealed class PanelExportService
         var drills = materialized.SelectMany(placement => placement.Board.Files.Where(file => file.Format == FileFormat.Excellon).Select(file => (placement, file))).ToList();
         if (drills.Count > 0)
         {
-            const string name = "DrillFiles/drill.xln";
+            var name = layout == PanelExportLayout.TrackMaker ? "panelized-board.drl" : "DrillFiles/drill.xln";
             WriteTextEntry(archive, name, BuildExcellon(drills, warnings));
             entries.Add(name);
         }
@@ -273,5 +279,23 @@ public sealed class PanelExportService
         ManufacturingLayerKind.PasteTop => "solderpaste_top",
         ManufacturingLayerKind.PasteBottom => "solderpaste_bottom",
         _ => "unknown",
+    };
+
+    private static string GetGerberEntryName(ManufacturingLayerKind layer, PanelExportLayout layout) => layout == PanelExportLayout.TrackMaker
+        ? $"panelized-board{TrackMakerLayerExtension(layer)}"
+        : $"GerberFiles/{LayerFileName(layer)}.gbr";
+
+    private static string TrackMakerLayerExtension(ManufacturingLayerKind layer) => layer switch
+    {
+        ManufacturingLayerKind.Profile => ".gko",
+        ManufacturingLayerKind.CopperTop => ".gtl",
+        ManufacturingLayerKind.CopperBottom => ".gbl",
+        ManufacturingLayerKind.SolderMaskTop => ".gts",
+        ManufacturingLayerKind.SolderMaskBottom => ".gbs",
+        ManufacturingLayerKind.SilkScreenTop => ".gto",
+        ManufacturingLayerKind.SilkScreenBottom => ".gbo",
+        ManufacturingLayerKind.PasteTop => ".gtp",
+        ManufacturingLayerKind.PasteBottom => ".gbp",
+        _ => ".gbr",
     };
 }

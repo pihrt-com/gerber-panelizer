@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:GerberPanelizer.App"
         Title="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[Settings]}"
-        Width="620" Height="650" WindowStartupLocation="CenterOwner" ResizeMode="CanMinimize" Background="#F6F9F8" FontFamily="Segoe UI">
+        Width="680" Height="760" WindowStartupLocation="CenterOwner" ResizeMode="CanMinimize" Background="#F6F9F8" FontFamily="Segoe UI">
     <Border Padding="24">
         <Grid>
             <Grid.RowDefinitions>
@@ -32,15 +32,38 @@
                             <TextBox Text="{Binding BoardSpacingMm, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>
                     </Grid>
-                    <Grid Margin="0,16,0,0">
-                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="16" /><RowDefinition Height="Auto" /><RowDefinition Height="16" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-                        <StackPanel Margin="0,0,12,0"><TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WorkAreaWidth]}" Margin="0,0,0,5" /><TextBox Text="{Binding WorkAreaWidthMm, UpdateSourceTrigger=PropertyChanged}" /></StackPanel>
-                        <StackPanel Grid.Column="1"><TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WorkAreaHeight]}" Margin="0,0,0,5" /><TextBox Text="{Binding WorkAreaHeightMm, UpdateSourceTrigger=PropertyChanged}" /></StackPanel>
-                        <StackPanel Grid.Row="2" Margin="0,0,12,0"><TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[SafetyMargin]}" Margin="0,0,0,5" /><TextBox Text="{Binding SafetyMarginMm, UpdateSourceTrigger=PropertyChanged}" /></StackPanel>
-                        <StackPanel Grid.Row="2" Grid.Column="1"><TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[BottomMirrorPolicy]}" Margin="0,0,0,5" /><ComboBox SelectedValue="{Binding BottomMirrorPolicy}" SelectedValuePath="Tag"><ComboBoxItem Tag="Off">Off</ComboBoxItem><ComboBoxItem Tag="MirrorX">Mirror X</ComboBoxItem><ComboBoxItem Tag="MirrorY">Mirror Y</ComboBoxItem></ComboBox></StackPanel>
-                        <CheckBox Grid.Row="4" Grid.ColumnSpan="2" IsChecked="{Binding AllowRotation}" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[AllowRotation]}" />
+                    <TextBlock FontWeight="SemiBold" Foreground="#193E3A" Margin="0,18,0,4" Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WorkAreaPresets]}" />
+                    <TextBlock FontSize="12" Foreground="{StaticResource MutedTextBrush}" Margin="0,0,0,8" TextWrapping="Wrap" Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WorkAreaPresetsHint]}" />
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                        <ComboBox ItemsSource="{Binding WorkAreaPresets}" SelectedItem="{Binding SelectedWorkAreaPreset}" DisplayMemberPath="Name" />
+                        <Button Grid.Column="1" Margin="8,0,0,0" Command="{Binding AddWorkAreaPresetCommand}" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[AddWorkAreaPreset]}" />
                     </Grid>
+                    <ItemsControl ItemsSource="{Binding WorkAreaPresets}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="10" Margin="0,0,0,8" Background="#F3F7F6" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="6">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="86" /><ColumnDefinition Width="86" /><ColumnDefinition Width="38" /></Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                                        <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WorkAreaPresetName]}" Foreground="{StaticResource MutedTextBrush}" FontSize="11" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WorkAreaWidthShort]}" Foreground="{StaticResource MutedTextBrush}" FontSize="11" />
+                                        <TextBlock Grid.Column="2" Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WorkAreaHeightShort]}" Foreground="{StaticResource MutedTextBrush}" FontSize="11" />
+                                        <TextBox Grid.Row="1" Margin="0,4,8,0" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                                        <TextBox Grid.Row="1" Grid.Column="1" Margin="0,4,8,0" Text="{Binding WidthMm, UpdateSourceTrigger=PropertyChanged}" />
+                                        <TextBox Grid.Row="1" Grid.Column="2" Margin="0,4,8,0" Text="{Binding HeightMm, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Button Grid.Row="1" Grid.Column="3" Margin="0,4,0,0" Padding="6,3" Command="{Binding DataContext.RemoveWorkAreaPresetCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" ToolTip="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[RemoveWorkAreaPreset]}"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" /></Button>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Grid Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <StackPanel Margin="0,0,12,0"><TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[SafetyMargin]}" Margin="0,0,0,5" /><TextBox Text="{Binding SafetyMarginMm, UpdateSourceTrigger=PropertyChanged}" /></StackPanel>
+                        <StackPanel Grid.Column="1"><TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[BottomMirrorPolicy]}" Margin="0,0,0,5" /><ComboBox SelectedValue="{Binding BottomMirrorPolicy}" SelectedValuePath="Tag"><ComboBoxItem Tag="Off">Off</ComboBoxItem><ComboBoxItem Tag="MirrorX">Mirror X</ComboBoxItem><ComboBoxItem Tag="MirrorY">Mirror Y</ComboBoxItem></ComboBox></StackPanel>
+                    </Grid>
+                    <CheckBox Margin="0,12,0,0" IsChecked="{Binding AllowRotation}" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[AllowRotation]}" />
                     <TextBlock FontWeight="SemiBold" Foreground="#193E3A" Margin="0,20,0,4" Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrMachine]}" />
                     <TextBlock FontSize="12" Foreground="{StaticResource MutedTextBrush}" Margin="0,0,0,8" TextWrapping="Wrap" Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrMachineHint]}" />
                     <Grid>

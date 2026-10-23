@@ -11,8 +11,6 @@ public sealed class SettingsViewModel : ObservableObject
 {
     private readonly Window window;
     private string language;
-    private double workAreaWidthMm;
-    private double workAreaHeightMm;
     private double boardSpacingMm;
     private double safetyMarginMm;
     private bool allowRotation;
@@ -31,13 +29,13 @@ public sealed class SettingsViewModel : ObservableObject
     private bool wegstrIncludeDrilling;
     private bool wegstrIncludeOutline;
     private bool wegstrIncludeOutlineInCopper;
+    private WorkAreaPresetSettingViewModel? selectedWorkAreaPreset;
 
     public SettingsViewModel(AppSettings settings, Window window)
     {
         this.window = window;
+        AppSettingsService.NormalizeWorkAreaPresets(settings);
         language = settings.Language;
-        workAreaWidthMm = settings.WorkAreaWidthMm;
-        workAreaHeightMm = settings.WorkAreaHeightMm;
         boardSpacingMm = settings.BoardSpacingMm;
         safetyMarginMm = settings.SafetyMarginMm;
         allowRotation = settings.AllowRotation;
@@ -64,15 +62,17 @@ public sealed class SettingsViewModel : ObservableObject
         wegstrIncludeDrilling = settings.WegstrIncludeDrilling;
         wegstrIncludeOutline = settings.WegstrIncludeOutline;
         wegstrIncludeOutlineInCopper = settings.WegstrIncludeOutlineInCopper;
+        WorkAreaPresets = new ObservableCollection<WorkAreaPresetSettingViewModel>();
+        LoadWorkAreaPresets(settings);
         SaveCommand = new RelayCommand(_ => Save());
         PickColorCommand = new RelayCommand(color => PickColor(color as LayerColorSettingViewModel));
+        AddWorkAreaPresetCommand = new RelayCommand(_ => AddWorkAreaPreset());
+        RemoveWorkAreaPresetCommand = new RelayCommand(preset => RemoveWorkAreaPreset(preset as WorkAreaPresetSettingViewModel), _ => WorkAreaPresets.Count > 1);
         ExportSettingsCommand = new RelayCommand(_ => ExportSettings());
         ImportSettingsCommand = new RelayCommand(_ => ImportSettings());
     }
 
     public string Language { get => language; set => SetProperty(ref language, value); }
-    public double WorkAreaWidthMm { get => workAreaWidthMm; set => SetProperty(ref workAreaWidthMm, value); }
-    public double WorkAreaHeightMm { get => workAreaHeightMm; set => SetProperty(ref workAreaHeightMm, value); }
     public double BoardSpacingMm { get => boardSpacingMm; set => SetProperty(ref boardSpacingMm, value); }
     public double SafetyMarginMm { get => safetyMarginMm; set => SetProperty(ref safetyMarginMm, value); }
     public bool AllowRotation { get => allowRotation; set => SetProperty(ref allowRotation, value); }
@@ -91,17 +91,26 @@ public sealed class SettingsViewModel : ObservableObject
     public bool WegstrIncludeDrilling { get => wegstrIncludeDrilling; set => SetProperty(ref wegstrIncludeDrilling, value); }
     public bool WegstrIncludeOutline { get => wegstrIncludeOutline; set => SetProperty(ref wegstrIncludeOutline, value); }
     public bool WegstrIncludeOutlineInCopper { get => wegstrIncludeOutlineInCopper; set => SetProperty(ref wegstrIncludeOutlineInCopper, value); }
+    public ObservableCollection<WorkAreaPresetSettingViewModel> WorkAreaPresets { get; }
+    public WorkAreaPresetSettingViewModel? SelectedWorkAreaPreset { get => selectedWorkAreaPreset; set => SetProperty(ref selectedWorkAreaPreset, value); }
     public ObservableCollection<LayerColorSettingViewModel> LayerColors { get; }
     public RelayCommand SaveCommand { get; }
     public RelayCommand PickColorCommand { get; }
+    public RelayCommand AddWorkAreaPresetCommand { get; }
+    public RelayCommand RemoveWorkAreaPresetCommand { get; }
     public RelayCommand ExportSettingsCommand { get; }
     public RelayCommand ImportSettingsCommand { get; }
 
     private void Save()
     {
-        if (WorkAreaWidthMm <= 0 || WorkAreaHeightMm <= 0 || BoardSpacingMm < 0 || SafetyMarginMm < 0)
+        if (BoardSpacingMm < 0 || SafetyMarginMm < 0)
         {
             MessageBox.Show(LocalizationService.Instance["InvalidDimensions"], "Gerber Panelizer", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+        if (WorkAreaPresets.Any(preset => !preset.IsValid) || WorkAreaPresets.GroupBy(preset => preset.Name.Trim(), StringComparer.OrdinalIgnoreCase).Any(group => group.Key.Length == 0 || group.Count() > 1))
+        {
+            MessageBox.Show(LocalizationService.Instance["InvalidWorkAreaPresets"], "Gerber Panelizer", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
         if (LayerColors.Any(color => !color.IsHexValid))
@@ -132,8 +141,8 @@ public sealed class SettingsViewModel : ObservableObject
     private AppSettings ToSettings() => new()
     {
         Language = Language,
-        WorkAreaWidthMm = WorkAreaWidthMm,
-        WorkAreaHeightMm = WorkAreaHeightMm,
+        WorkAreaPresets = WorkAreaPresets.Select(preset => preset.ToSettings()).ToList(),
+        ActiveWorkAreaPresetName = SelectedWorkAreaPreset?.Name,
         BoardSpacingMm = BoardSpacingMm,
         SafetyMarginMm = SafetyMarginMm,
         AllowRotation = AllowRotation,
@@ -159,6 +168,36 @@ public sealed class SettingsViewModel : ObservableObject
         WegstrIncludeOutlineInCopper = WegstrIncludeOutlineInCopper,
     };
 
+    private void LoadWorkAreaPresets(AppSettings settings)
+    {
+        AppSettingsService.NormalizeWorkAreaPresets(settings);
+        WorkAreaPresets.Clear();
+        foreach (var preset in settings.WorkAreaPresets) WorkAreaPresets.Add(new WorkAreaPresetSettingViewModel(preset));
+        SelectedWorkAreaPreset = WorkAreaPresets.FirstOrDefault(preset => string.Equals(preset.Name, settings.ActiveWorkAreaPresetName, StringComparison.OrdinalIgnoreCase)) ?? WorkAreaPresets.FirstOrDefault();
+        RemoveWorkAreaPresetCommand?.RaiseCanExecuteChanged();
+    }
+
+    private void AddWorkAreaPreset()
+    {
+        var baseName = LocalizationService.Instance["NewWorkAreaPreset"];
+        var suffix = 1;
+        var name = baseName;
+        while (WorkAreaPresets.Any(preset => string.Equals(preset.Name, name, StringComparison.OrdinalIgnoreCase))) name = $"{baseName} {++suffix}";
+        var preset = new WorkAreaPresetSettingViewModel(new WorkAreaPreset { Name = name, WidthMm = SelectedWorkAreaPreset?.WidthMm ?? 200, HeightMm = SelectedWorkAreaPreset?.HeightMm ?? 130 });
+        WorkAreaPresets.Add(preset);
+        SelectedWorkAreaPreset = preset;
+        RemoveWorkAreaPresetCommand.RaiseCanExecuteChanged();
+    }
+
+    private void RemoveWorkAreaPreset(WorkAreaPresetSettingViewModel? preset)
+    {
+        if (preset is null || WorkAreaPresets.Count <= 1) return;
+        var index = WorkAreaPresets.IndexOf(preset);
+        WorkAreaPresets.Remove(preset);
+        if (ReferenceEquals(SelectedWorkAreaPreset, preset)) SelectedWorkAreaPreset = WorkAreaPresets[Math.Min(index, WorkAreaPresets.Count - 1)];
+        RemoveWorkAreaPresetCommand.RaiseCanExecuteChanged();
+    }
+
     private void ExportSettings()
     {
         var dialog = new SaveFileDialog { Filter = $"{LocalizationService.Instance["FilterSettingsJson"]}|*.json", DefaultExt = ".json", FileName = "gerber-panelizer-settings.json" };
@@ -173,9 +212,9 @@ public sealed class SettingsViewModel : ObservableObject
         {
             var imported = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(dialog.FileName));
             if (imported is null) throw new JsonException();
+            AppSettingsService.NormalizeWorkAreaPresets(imported);
             Language = imported.Language;
-            WorkAreaWidthMm = imported.WorkAreaWidthMm;
-            WorkAreaHeightMm = imported.WorkAreaHeightMm;
+            LoadWorkAreaPresets(imported);
             BoardSpacingMm = imported.BoardSpacingMm;
             SafetyMarginMm = imported.SafetyMarginMm;
             AllowRotation = imported.AllowRotation;
@@ -203,6 +242,26 @@ public sealed class SettingsViewModel : ObservableObject
         catch (IOException exception) { AppLog.Warning("Settings import failed because the file could not be read.", exception); MessageBox.Show(LocalizationService.Instance["SettingsReadFailed"], "Gerber Panelizer", MessageBoxButton.OK, MessageBoxImage.Warning); }
         catch (JsonException exception) { AppLog.Warning("Settings import failed because the file contains invalid JSON.", exception); MessageBox.Show(LocalizationService.Instance["SettingsInvalid"], "Gerber Panelizer", MessageBoxButton.OK, MessageBoxImage.Warning); }
     }
+}
+
+public sealed class WorkAreaPresetSettingViewModel : ObservableObject
+{
+    private string name;
+    private double widthMm;
+    private double heightMm;
+
+    public WorkAreaPresetSettingViewModel(WorkAreaPreset preset)
+    {
+        name = preset.Name;
+        widthMm = preset.WidthMm;
+        heightMm = preset.HeightMm;
+    }
+
+    public string Name { get => name; set { if (SetProperty(ref name, value)) OnPropertyChanged(nameof(IsValid)); } }
+    public double WidthMm { get => widthMm; set { if (SetProperty(ref widthMm, value)) OnPropertyChanged(nameof(IsValid)); } }
+    public double HeightMm { get => heightMm; set { if (SetProperty(ref heightMm, value)) OnPropertyChanged(nameof(IsValid)); } }
+    public bool IsValid => !string.IsNullOrWhiteSpace(Name) && WidthMm > 0 && HeightMm > 0;
+    public WorkAreaPreset ToSettings() => new() { Name = Name.Trim(), WidthMm = WidthMm, HeightMm = HeightMm };
 }
 
 public sealed class LayerColorSettingViewModel : ObservableObject

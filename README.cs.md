@@ -2,7 +2,9 @@
 
 ## Verze 0.2.1 - 2026-10-17
 
-## Aktuální změny — 2026-10-22
+## Aktuální změny — 2026-10-23
+
+Nastavení nyní ukládá pojmenované předvolby pracovních ploch pro více strojů. Aktivní plochu lze přepnout v rozbalovacím seznamu přímo v panelu vrstev; okamžitě se použije pro náhled, panelizaci, tisk i všechny exporty. Filtry vrstev mají podobu barevných tlačítek, která při vypnutí zešednou. Přibylo také tlačítko Export TrackMaker: vytvoří plochý ZIP se standardními Gerber a Excellon soubory s běžnými příponami vrstev pro import celé desky v TrackMakeru.
 
 Verze 0.2.2 povolí pro jednoho uživatele Windows jen jednu instanci Gerber Panelizeru, a to i při kombinaci instalované a přenosné verze; další spuštění obnoví první okno. Je-li dostupná aktualizace, aplikace nabídne uložení zveřejněného Setup EXE nebo jeho stažení a okamžité spuštění instalace. Wegstr nyní ve výchozím stavu přidá obrys každé desky do programu izolace mědi v izolační hloubce, takže lze obrys naznačit a desku později ustřihnout bez samostatného vyříznutí.
 
@@ -35,15 +37,16 @@ Hlavní obrazovka zobrazuje načtené desky, viditelné výrobní vrstvy, pracov
 
 ![Okno Nastavení v češtině](docs/images/czech-settings.png)
 
-V Nastavení lze zvolit jazyk, rozměry pracovní plochy, bezpečný okraj, mezery mezi deskami, pravidlo zrcadlení Bottom, automatické otočení, barvy vrstev a import či export nastavení.
+V Nastavení lze zvolit jazyk, pojmenované předvolby pracovních ploch pro více strojů, bezpečný okraj, mezery mezi deskami, pravidlo zrcadlení Bottom, automatické otočení, barvy vrstev a import či export nastavení.
 
 ## Klíčové vlastnosti
 
 - Import ZIP, RAR a samostatných souborů Gerber/Excellon.
 - Interaktivní náhled vrstev s odkládací plochou zobrazenou ihned po importu, filtrováním, přiblížením kolečkem myši, ručním přesouváním desek dovnitř i ven, souvislým vykreslením spojů pod 45°, kruhovými, obdélníkovými i oválnými SMT pady a nastavitelnými HEX barvami s klikací paletou.
-- Nastavitelná pracovní plocha frézky, okraje, mezery a automatická rotace rozmístění po 90 stupních.
+- Pojmenované předvolby pracovních ploch frézek s rozměry X/Y, přepínané přímo v panelu vrstev; aktivní předvolba se shodně použije pro náhled, panelizaci, tisk a export.
 - Volba Top, Bottom nebo obou stran; volitelné zrcadlení Bottom podle osy X nebo Y se shodně aplikuje na náhled, Gerber, Excellon, projekt i G-code.
 - Export panelu do jedné výrobní ZIP sady s Gerbery jednotlivých vrstev a sloučeným Excellon vrtáním, včetně bezpečného potvrzení před přepsáním existujícího ZIPu a okna s cílovou cestou po úspěšném exportu.
+- Samostatný export TrackMaker do plochého ZIPu s konvenčními příponami Gerber vrstev a Excellon vrtáním, určený pro import celé desky místo postupného importu jednotlivých vrstev.
 - Podpora staršího palcového vrtání `M72`/`.drd` a jednoznačný desetinný metrický výstup Excellon pro spolehlivý import do TrackMakeru.
 - Samostatný ZIP export Wegstr se soubory `01-copper-isolation.txt`, volitelným `02-drill.txt` a volitelným `03-board-outline.txt`; používá zápornou osu Y od levého horního počátku podle vzorků Wegstr a v Nastavení nabízí hloubky, odsazení izolace, průměr frézy obrysu, posuvy, otáčky a číslo nástroje. Ve výchozím stavu `01-copper-isolation.txt` také projede každý uzavřený obrys desky v izolační hloubce, aby šel obrys naznačit bez samostatného vyřezání.
 - Postupný import, duplikování a mazání desek, přenositelné uložené projekty, podrobná diagnostika stavů, české, anglické, německé a francouzské rozhraní, náhled tisku samotného panelu a tisk.

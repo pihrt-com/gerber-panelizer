@@ -41,9 +41,27 @@
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
-        <Style x:Key="LayerToggle" TargetType="CheckBox">
-            <Setter Property="Margin" Value="0,0,10,0" />
+        <Style x:Key="LayerToggle" TargetType="ToggleButton">
+            <Setter Property="Margin" Value="0,0,7,0" />
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Background" Value="{Binding Brush}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="9,5" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="5" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="False"><Setter Property="Background" Value="#C6D0CE" /><Setter Property="Foreground" Value="#647573" /></Trigger>
+            </Style.Triggers>
         </Style>
     </Window.Resources>
     <Window.InputBindings>
@@ -152,13 +170,15 @@
                 <Border Grid.Row="0" Background="White" BorderBrush="#D4E1DF" BorderThickness="1" CornerRadius="9" Padding="14,0">
                     <DockPanel>
                         <TextBlock DockPanel.Dock="Left" Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[Layers]}" FontWeight="SemiBold" Foreground="#244542" VerticalAlignment="Center" Margin="0,0,16,0" />
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WorkArea]}" Foreground="#486764" FontSize="11" VerticalAlignment="Center" Margin="0,0,7,0" />
+                            <ComboBox Width="245" ItemsSource="{Binding WorkAreaPresets}" SelectedItem="{Binding SelectedWorkAreaPreset, Mode=TwoWay}" DisplayMemberPath="DisplayName" />
+                        </StackPanel>
                         <ItemsControl ItemsSource="{Binding Layers}">
                             <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <CheckBox Style="{StaticResource LayerToggle}" IsChecked="{Binding IsVisible}">
-                                        <StackPanel Orientation="Horizontal"><Ellipse Width="9" Height="9" Fill="{Binding Brush}" Margin="0,0,5,0" /><TextBlock Text="{Binding Name}" /></StackPanel>
-                                    </CheckBox>
+                                    <ToggleButton Style="{StaticResource LayerToggle}" IsChecked="{Binding IsVisible}"><TextBlock Text="{Binding Name}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}" /></ToggleButton>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -191,6 +211,7 @@
                         <Button Command="{Binding PanelizeCommand}" Style="{StaticResource SmallActionButton}" Margin="0,0,8,0"><StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE895;" Margin="0,0,6,0" /><TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[Panelize]}" /></StackPanel></Button>
                         <Button Command="{Binding PrintCommand}" Style="{StaticResource SmallActionButton}" Margin="0,0,8,0"><StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE749;" Margin="0,0,6,0" /><TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[Print]}" /></StackPanel></Button>
                         <Button Command="{Binding ExportWegstrCommand}" Style="{StaticResource SmallActionButton}" Margin="0,0,8,0"><StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEDE1;" Margin="0,0,6,0" /><TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[ExportWegstr]}" /></StackPanel></Button>
+                        <Button Command="{Binding ExportTrackMakerCommand}" Style="{StaticResource SmallActionButton}" Margin="0,0,8,0"><StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEDE1;" Margin="0,0,6,0" /><TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[ExportTrackMaker]}" /></StackPanel></Button>
                         <Button Command="{Binding ExportCommand}" Style="{StaticResource PrimaryButton}"><StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEDE1;" Margin="0,0,7,0" /><TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[Export]}" /></StackPanel></Button>
                     </StackPanel>
                 </Grid>

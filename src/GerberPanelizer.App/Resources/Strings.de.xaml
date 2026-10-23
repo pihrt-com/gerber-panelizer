@@ -100,4 +100,18 @@
     <sys:String x:Key="StatusWegstrExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} Wegstr-G-Code-Datei(en) nach {1} exportiert. {2} Warnung(en).</sys:String>
     <sys:String x:Key="StatusWegstrExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr-Export fehlgeschlagen: {0}</sys:String>
     <sys:String x:Key="WegstrExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Das Wegstr-G-Code-ZIP wurde erfolgreich exportiert nach:&#10;{0}&#10;&#10;Führen Sie zuerst die Kupferisolation, dann das Bohren und zuletzt den Konturschnitt aus. Prüfen Sie jeden Werkzeugweg vor dem Spindelstart.</sys:String>
+    <sys:String x:Key="WorkAreaPresets" xmlns:sys="clr-namespace:System;assembly=mscorlib">Arbeitsflächen-Vorlagen</sys:String>
+    <sys:String x:Key="WorkAreaPresetsHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Benennen Sie die Arbeitsflächen der einzelnen Maschinen. Die ausgewählte Vorlage kann direkt über dem Panel gewechselt werden.</sys:String>
+    <sys:String x:Key="WorkAreaPresetName" xmlns:sys="clr-namespace:System;assembly=mscorlib">Name</sys:String>
+    <sys:String x:Key="WorkAreaWidthShort" xmlns:sys="clr-namespace:System;assembly=mscorlib">Breite mm</sys:String>
+    <sys:String x:Key="WorkAreaHeightShort" xmlns:sys="clr-namespace:System;assembly=mscorlib">Höhe mm</sys:String>
+    <sys:String x:Key="AddWorkAreaPreset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Arbeitsfläche hinzufügen</sys:String>
+    <sys:String x:Key="RemoveWorkAreaPreset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Arbeitsflächen-Vorlage entfernen</sys:String>
+    <sys:String x:Key="NewWorkAreaPreset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Neue Arbeitsfläche</sys:String>
+    <sys:String x:Key="InvalidWorkAreaPresets" xmlns:sys="clr-namespace:System;assembly=mscorlib">Jede Vorlage benötigt einen eindeutigen Namen sowie positive Breite und Höhe.</sys:String>
+    <sys:String x:Key="StatusWorkAreaPresetSelected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Arbeitsflächen-Vorlage „{0}“ ({1}) wird verwendet. Die Platinen werden für diese Fläche erneut bereitgestellt.</sys:String>
+    <sys:String x:Key="ExportTrackMaker" xmlns:sys="clr-namespace:System;assembly=mscorlib">TrackMaker exportieren</sys:String>
+    <sys:String x:Key="StatusTrackMakerExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} TrackMaker-Datei(en) nach {1} exportiert. {2} Warnung(en).</sys:String>
+    <sys:String x:Key="StatusTrackMakerExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">TrackMaker-Export fehlgeschlagen: {0}</sys:String>
+    <sys:String x:Key="TrackMakerExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Die TrackMaker-ZIP wurde erfolgreich exportiert nach:&#10;{0}&#10;&#10;Sie enthält flache Standard-Gerber- und Excellon-Dateien für den Import der gesamten Platine. Prüfen Sie die Ebenen und Werkzeugwege in TrackMaker vor dem Fräsen.</sys:String>
 </ResourceDictionary>

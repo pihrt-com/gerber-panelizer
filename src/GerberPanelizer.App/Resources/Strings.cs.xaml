@@ -141,4 +141,18 @@
     <sys:String x:Key="StatusWegstrExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exportováno {0} souborů G-code Wegstr do {1}. Varování: {2}.</sys:String>
     <sys:String x:Key="StatusWegstrExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Export Wegstr se nezdařil: {0}</sys:String>
     <sys:String x:Key="WegstrExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">ZIP s G-code pro Wegstr byl úspěšně exportován do:&#10;{0}&#10;&#10;Pořadí je izolace mědi, vrtání a nakonec vyříznutí obrysu. Před zapnutím vřetena ověřte všechny dráhy na řídicím systému.</sys:String>
+    <sys:String x:Key="WorkAreaPresets" xmlns:sys="clr-namespace:System;assembly=mscorlib">Předvolby pracovních ploch</sys:String>
+    <sys:String x:Key="WorkAreaPresetsHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pojmenujte pracovní plochy jednotlivých strojů. Vybranou předvolbu lze kdykoli přepnout přímo nad panelem.</sys:String>
+    <sys:String x:Key="WorkAreaPresetName" xmlns:sys="clr-namespace:System;assembly=mscorlib">Název</sys:String>
+    <sys:String x:Key="WorkAreaWidthShort" xmlns:sys="clr-namespace:System;assembly=mscorlib">Šířka mm</sys:String>
+    <sys:String x:Key="WorkAreaHeightShort" xmlns:sys="clr-namespace:System;assembly=mscorlib">Výška mm</sys:String>
+    <sys:String x:Key="AddWorkAreaPreset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Přidat plochu</sys:String>
+    <sys:String x:Key="RemoveWorkAreaPreset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Odstranit předvolbu pracovní plochy</sys:String>
+    <sys:String x:Key="NewWorkAreaPreset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nová plocha</sys:String>
+    <sys:String x:Key="InvalidWorkAreaPresets" xmlns:sys="clr-namespace:System;assembly=mscorlib">Každá předvolba musí mít jedinečný název a kladnou šířku i výšku.</sys:String>
+    <sys:String x:Key="StatusWorkAreaPresetSelected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Použita předvolba pracovní plochy „{0}“ ({1}). Desky jsou znovu připravené pro tuto plochu.</sys:String>
+    <sys:String x:Key="ExportTrackMaker" xmlns:sys="clr-namespace:System;assembly=mscorlib">Export TrackMaker</sys:String>
+    <sys:String x:Key="StatusTrackMakerExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exportováno {0} souborů pro TrackMaker do {1}. Varování: {2}.</sys:String>
+    <sys:String x:Key="StatusTrackMakerExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Export TrackMaker se nezdařil: {0}</sys:String>
+    <sys:String x:Key="TrackMakerExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">ZIP pro TrackMaker byl úspěšně exportován do:&#10;{0}&#10;&#10;Obsahuje ploché standardní soubory Gerber a Excellon pro import celé desky. Před frézováním ověřte vrstvy a dráhy nástrojů v TrackMakeru.</sys:String>
 </ResourceDictionary>
