@@ -19,7 +19,7 @@ The application is implemented as a self-contained Windows x64 executable. It pr
 
 ## Latest update — 2026-10-23
 
-Settings now store named work-area presets for multiple machines. The active work area can be switched in the drop-down directly in the layer panel and is immediately used by preview, panelization, printing, and every export. Layer filters are colour buttons that turn grey when disabled. A new TrackMaker export creates a flat ZIP with standard Gerber and Excellon files using conventional layer extensions for importing the complete board in TrackMaker.
+Version 0.2.3 stores named work-area presets for multiple machines. The active work area can be switched in the drop-down directly in the layer panel and is immediately used by preview, panelization, printing, and every export. Layer filters are colour buttons that turn grey when disabled. A new TrackMaker export creates a flat ZIP with standard Gerber and Excellon files using conventional layer extensions for importing the complete board in TrackMaker.
 
 Version 0.2.2 allows only one Gerber Panelizer process for each Windows user, including a mix of installed and portable builds; launching it again restores the first window. When an update is available, the application can save the published Setup EXE or download it and immediately start installation. Wegstr adds each board profile to the copper-isolation program by default, marking the outline at isolation depth for boards that will be cut manually instead of milled through.
 

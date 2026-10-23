@@ -1,6 +1,6 @@
 # Gerber Panelizer
 
-## Verze 0.2.1 - 2026-10-17
+## Verze 0.2.3 - 2026-10-23
 
 ## Aktuální změny — 2026-10-23
 

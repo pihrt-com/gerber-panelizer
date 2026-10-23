@@ -1,6 +1,6 @@
 # Change log
 
-## Unreleased
+## 0.2.3 - 2026-10-23
 
 - Add named work-area presets with X/Y dimensions, persistent active selection, and a layer-panel drop-down that applies the selected machine area to preview, panelization, printing, and all exports.
 - Replace layer-filter checkboxes with colour-coded toggle buttons that turn grey when a layer is hidden.
