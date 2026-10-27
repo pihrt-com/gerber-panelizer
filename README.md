@@ -17,7 +17,9 @@ Gerber Panelizer is a lightweight Windows desktop application for preparing prin
 
 The application is implemented as a self-contained Windows x64 executable. It processes common metric and inch RS-274X Gerber and Excellon input locally without requiring a cloud service.
 
-## Latest update — 2026-10-26
+## Latest update — 2026-10-27
+
+Version 0.3.1 adds automatic Wegstr surface probing and level compensation. It measures only raster cells crossed by prepared toolpaths, uses the first touch as the Z reference, and approaches each cell correction one Z step per motion sample with configurable backlash compensation. The simulator provides a deterministic uneven surface for a complete software-only rehearsal; a real controller, probe wiring, axis directions, and clearances still require physical acceptance before production use.
 
 Version 0.3.0 adds a dedicated **Direct Wegstr control** tab. It prepares isolation, drilling, and outline operations directly from the current panel, compiles them to the verified Wegstr 3.2.0 serial protocol in memory, and runs them through a safe-by-default simulator or an explicitly confirmed 9600 8N1 serial connection. Manual X/Y/Z positioning follows the original application's press-and-hold and one-click stepping behavior, with a 100% rapid button for moving to a board position; this manual setting does not change machining feeds.
 
@@ -47,7 +49,7 @@ Settings provide the interface language, named machine work-area presets, safety
 - Separate TrackMaker export as a flat ZIP with conventional Gerber layer extensions and Excellon drilling data, intended for importing the complete board rather than importing layers one by one.
 - Legacy inch `M72`/`.drd` drilling support and explicit decimal metric Excellon output for reliable TrackMaker import.
 - Separate Wegstr ZIP export with `01-copper-isolation.txt`, optional `02-drill.txt`, and optional `03-board-outline.txt`; it uses negative Y from the top-left origin as in the supplied Wegstr samples and exposes depths, isolation offset, outline-cutter diameter, feeds, spindle speed, and tool number in Settings. By default, `01-copper-isolation.txt` also traces every closed board profile at isolation depth so its outline can be marked without generating a separate cut.
-- Direct Wegstr control from the current panel, with simulator-first connection, serial status and acknowledgement checks, start/pause/continue/STOP, tool-change pauses, packet progress, spindle control, editable work coordinates, zeroing, safe-Z return to zero, and manual X/Y/Z stepping or press-and-hold positioning rapid. Physical-machine acceptance is still required before production use, and auto-level probing remains in the original Wegstr application.
+- Direct Wegstr control from the current panel, with simulator-first connection, serial status and acknowledgement checks, start/pause/continue/STOP, tool-change pauses, packet progress, spindle control, editable work coordinates, zeroing, safe-Z return to zero, manual X/Y/Z positioning, path-scoped automatic surface probing, and gradual Z level compensation. Physical-machine and probe acceptance is still required before production use.
 - Incremental import, board duplication/deletion, portable saved projects, detailed status diagnostics, Czech, English, German, and French UI, panel-only print preview, and printing.
 - Custom PCB application icon embedded in the executable, title bar, and taskbar, a localized confirmation before exit, automatic GitHub Release checking after startup with direct Setup EXE download or download-and-install choices, and a retained manual update-check button beside Settings.
 - Rotating `gerber-panelizer.log` diagnostics beside the launched executable; when the installation folder is not writable, the log falls back to `%LOCALAPPDATA%\GerberPanelizer\logs`.

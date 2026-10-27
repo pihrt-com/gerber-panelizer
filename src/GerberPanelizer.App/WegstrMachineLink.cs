@@ -9,20 +9,58 @@ internal interface IWegstrMachineLink : IAsyncDisposable
     string Name { get; }
     bool IsOpen { get; }
     Task OpenAsync(CancellationToken cancellationToken);
-    Task<WegstrMachineStatus> ExchangeAsync(byte[] packet, CancellationToken cancellationToken);
+    Task<WegstrControllerResponse> ExchangeAsync(byte[] packet, bool probeArmed, CancellationToken cancellationToken);
 }
 
 internal sealed class SimulatedWegstrMachineLink : IWegstrMachineLink
 {
+    private readonly int calibrationX;
+    private readonly int calibrationY;
+    private readonly int calibrationZ;
+    private int xSteps;
+    private int ySteps;
+    private int zSteps;
+
+    public SimulatedWegstrMachineLink(int calibrationX, int calibrationY, int calibrationZ)
+    {
+        this.calibrationX = calibrationX;
+        this.calibrationY = calibrationY;
+        this.calibrationZ = calibrationZ;
+    }
+
     public string Name => LocalizationService.Instance["WegstrSimulatorName"];
     public bool IsOpen { get; private set; }
     public Task OpenAsync(CancellationToken cancellationToken) { IsOpen = true; return Task.CompletedTask; }
-    public async Task<WegstrMachineStatus> ExchangeAsync(byte[] packet, CancellationToken cancellationToken)
+    public async Task<WegstrControllerResponse> ExchangeAsync(byte[] packet, bool probeArmed, CancellationToken cancellationToken)
     {
         if (!IsOpen) throw new InvalidOperationException("Simulator is not connected.");
         if (packet.Length != WegstrPacketCodec.PacketLength) throw new ArgumentException("Invalid Wegstr packet length.", nameof(packet));
         await Task.Delay(59, cancellationToken);
-        return WegstrMachineStatus.Ready;
+        foreach (var step in WegstrPacketCodec.Decode(packet))
+        {
+            xSteps += step.X;
+            ySteps += step.Y;
+            var nextZ = zSteps + step.Z;
+            if (probeArmed && step.Z < 0)
+            {
+                var surfaceZ = SimulatedSurfaceZSteps(xSteps, ySteps);
+                if (nextZ <= surfaceZ)
+                {
+                    zSteps = surfaceZ;
+                    return new WegstrControllerResponse(WegstrMachineStatus.Probe, checked((short)surfaceZ));
+                }
+            }
+            zSteps = nextZ;
+        }
+        return new WegstrControllerResponse(WegstrMachineStatus.Ready, null);
+    }
+
+    private int SimulatedSurfaceZSteps(int x, int y)
+    {
+        var xMillimetres = x * 10d / calibrationX;
+        var yMillimetres = y * 10d / calibrationY;
+        var surfaceMillimetres = .025 * xMillimetres - .018 * yMillimetres + .04 * Math.Sin(xMillimetres / 12d) * Math.Cos(yMillimetres / 10d);
+        return (int)Math.Round(surfaceMillimetres * calibrationZ / 10d);
     }
     public ValueTask DisposeAsync() { IsOpen = false; return ValueTask.CompletedTask; }
 }
@@ -39,7 +77,7 @@ internal sealed class SerialWegstrMachineLink(string portName) : IWegstrMachineL
     };
     private readonly object sync = new();
     private readonly List<byte> receiveBuffer = [];
-    private TaskCompletionSource<WegstrMachineStatus>? pendingResponse;
+    private TaskCompletionSource<WegstrControllerResponse>? pendingResponse;
 
     public string Name => portName;
     public bool IsOpen => port.IsOpen;
@@ -52,11 +90,11 @@ internal sealed class SerialWegstrMachineLink(string portName) : IWegstrMachineL
         return Task.CompletedTask;
     }
 
-    public async Task<WegstrMachineStatus> ExchangeAsync(byte[] packet, CancellationToken cancellationToken)
+    public async Task<WegstrControllerResponse> ExchangeAsync(byte[] packet, bool probeArmed, CancellationToken cancellationToken)
     {
         if (!port.IsOpen) throw new InvalidOperationException("Serial port is not connected.");
         if (packet.Length != WegstrPacketCodec.PacketLength) throw new ArgumentException("Invalid Wegstr packet length.", nameof(packet));
-        TaskCompletionSource<WegstrMachineStatus> response;
+        TaskCompletionSource<WegstrControllerResponse> response;
         lock (sync)
         {
             if (pendingResponse is not null) throw new InvalidOperationException("Only one Wegstr packet may be in flight.");
@@ -85,8 +123,8 @@ internal sealed class SerialWegstrMachineLink(string portName) : IWegstrMachineL
     {
         try
         {
-            TaskCompletionSource<WegstrMachineStatus>? completedResponse = null;
-            WegstrMachineStatus completedStatus = default;
+            TaskCompletionSource<WegstrControllerResponse>? completedResponse = null;
+            WegstrControllerResponse completedResponseValue = default;
             lock (sync)
             {
                 while (port.IsOpen && port.BytesToRead > 0) receiveBuffer.Add((byte)port.ReadByte());
@@ -95,18 +133,18 @@ internal sealed class SerialWegstrMachineLink(string portName) : IWegstrMachineL
                 if (!WegstrResponseCodec.TryDecode(receiveBuffer, out var response, out var responseLength)) return;
                 receiveBuffer.RemoveRange(0, responseLength);
                 completedResponse = pendingResponse;
-                completedStatus = response.Status;
+                completedResponseValue = response;
                 if (receiveBuffer.Count > 0)
                 {
                     receiveBuffer.Clear();
                     port.DiscardInBuffer();
                 }
             }
-            completedResponse.TrySetResult(completedStatus);
+            completedResponse.TrySetResult(completedResponseValue);
         }
         catch (Exception exception) when (exception is IOException or InvalidOperationException)
         {
-            TaskCompletionSource<WegstrMachineStatus>? response;
+            TaskCompletionSource<WegstrControllerResponse>? response;
             lock (sync) response = pendingResponse;
             response?.TrySetException(exception);
         }

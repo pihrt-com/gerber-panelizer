@@ -68,7 +68,7 @@ public sealed class MainViewModel : ObservableObject
         PrintCommand = new(_ => Print());
         OpenSettingsCommand = new(_ => OpenSettings());
         CheckForUpdatesCommand = new(_ => CheckForUpdates(showCurrentResult: true), _ => !IsCheckingForUpdates);
-        WegstrMachine = new WegstrMachineViewModel(owner, PrepareWegstrPrograms, () => new WegstrDirectSettings(settings.WegstrCalibrationX, settings.WegstrCalibrationY, settings.WegstrCalibrationZ, settings.WegstrSpeedPercent, settings.WegstrSafeZMm));
+        WegstrMachine = new WegstrMachineViewModel(owner, PrepareWegstrPrograms, () => new WegstrDirectSettings(settings.WegstrCalibrationX, settings.WegstrCalibrationY, settings.WegstrCalibrationZ, settings.WegstrSpeedPercent, settings.WegstrSafeZMm, settings.WegstrAutoLevelRasterMm, settings.WegstrAutoLevelSafeZMm, settings.WegstrAutoLevelZBacklashSteps));
         owner.Loaded += OnOwnerLoaded;
         AddStatus(StatusSeverity.Information, statusText, [L("DiagnosticsLogPath", AppLog.LogFilePath)]);
     }

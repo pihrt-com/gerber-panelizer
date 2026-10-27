@@ -40,7 +40,7 @@ Tlačítky vrstev nad pracovní plochou zobrazíte nebo skryjete vrtání, měď
 Náhled pomáhá s přípravou. Výrobní stroj je stále konečnou autoritou pro výběr nástroje, nulový bod, upnutí, vřeteno a bezpečnost materiálu.
 
 ## Nastavení a přenositelnost
-Nastavení zahrnuje pracovní plochu, bezpečnostní okraje, mezery, automatickou rotaci, barvy vrstev, jazyk, pravidlo zrcadlení Bottom a profil stroje Wegstr. Profil Wegstr obsahuje bezpečné Z, tloušťku materiálu, hloubky izolace, vrtání a obrysu, odsazení izolace, průměr frézy obrysu, posuvy, otáčky, číslo nástroje a volby zahrnutí vrtání a obrysu. Aplikace tyto hodnoty uloží pro aktuálního uživatele Windows.
+Nastavení zahrnuje pracovní plochu, bezpečnostní okraje, mezery, automatickou rotaci, barvy vrstev, jazyk, pravidlo zrcadlení Bottom a profil stroje Wegstr. Profil Wegstr obsahuje bezpečné Z, tloušťku materiálu, hloubky izolace, vrtání a obrysu, odsazení izolace, průměr frézy obrysu, posuvy, otáčky, číslo nástroje, volby zahrnutí operací, rastr měření, bezpečné Z měření a kompenzaci vůle Z. Aplikace tyto hodnoty uloží pro aktuálního uživatele Windows.
 
 Použijte **Exportovat nastavení** pro uložení přenosné konfigurace a **Importovat nastavení** pro její obnovu na jiném počítači. Importované nastavení považujte za profil stroje: před prvním použitím vždy ověřte rozměry a pravidlo zrcadlení.
 
@@ -48,9 +48,9 @@ Použijte **Exportovat nastavení** pro uložení přenosné konfigurace a **Imp
 
 ## Přímé řízení Wegstr
 
-Samostatná záložka **Přímé řízení Wegstr** použije aktuální panel a profil Wegstr bez ukládání mezilehlého souboru. Během přípravy a kontroly operací ponechte zapnutý simulátor. Ruční ovládání X/Y/Z podporuje souvislý pohyb při držení tlačítka na 2–100 %, jeden krokovací paket na stisknutí při 1 % a samostatný rychloposuv 100 % pro najetí nad desku; ruční nastavení nemění řezné ani vrtací posuvy. Záložka dále nabízí úpravu pracovních souřadnic, nulování jednotlivých os i XYZ, ovládání vřetena, bezpečný návrat na nulu, start, pauzu/pokračování, STOP, zastavení při výměně nástroje a průběh paketů.
+Samostatná záložka **Přímé řízení Wegstr** použije aktuální panel a profil Wegstr bez ukládání mezilehlého souboru. Během přípravy a kontroly operací ponechte zapnutý simulátor. Ruční ovládání X/Y/Z podporuje souvislý pohyb při držení tlačítka na 2–100 %, jeden krokovací paket na stisknutí při 1 % a samostatný rychloposuv 100 % pro najetí nad desku; ruční nastavení nemění řezné ani vrtací posuvy. Záložka dále nabízí úpravu pracovních souřadnic, nulování jednotlivých os i XYZ, ovládání vřetena, bezpečný návrat na nulu, start, pauzu/pokračování, STOP, zastavení při výměně nástroje, průběh paketů, automatické měření povrchu a volitelnou kompenzaci nivelace.
 
-Podrobný protokol, přesné porovnání s původní aplikací, kontrolní seznam fyzické přejímky a aktuálně nepodporovaný autolevel se sondou popisuje dokument [Přímé řízení Wegstr](WEGSTR_DIRECT_CONTROL.md).
+Připravte panel, připojte simulátor a zvolte **Změřit povrch**. Změří se pouze buňky rastru projeté připravenými drahami; po dokončení zkontrolujte počet bodů a rozsah korekce a teprve potom spusťte program se zapnutou kompenzací. Nová příprava nebo změna pracovních souřadnic měření vymaže. Podrobný postup, protokol, porovnání s původní aplikací a kontrolní seznam fyzické přejímky popisuje dokument [Přímé řízení Wegstr](WEGSTR_DIRECT_CONTROL.md).
 
 ## Tisk
 V Náhledu tisku ověřte měřítko a viditelné vrstvy, potom tiskněte přes standardní dialog Windows. Náhled i tisková úloha obsahují pouze pracovní plochu DPS, nikoli okno programu. Před tiskem vyberte Přizpůsobit stránce, skutečnou velikost, 75 % nebo 50 %, vypněte škálování tiskárny a změřte známou referenční vzdálenost. Výtisk slouží pro kontrolu nebo ruční šablonu, není to export pro stroj.

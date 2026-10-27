@@ -13,6 +13,7 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
     private readonly Func<WegstrProgramSet> preparePrograms;
     private readonly Func<WegstrDirectSettings> directSettings;
     private readonly WegstrGCodeCompiler compiler = new();
+    private readonly WegstrSurfaceLeveler surfaceLeveler = new();
     private readonly CancellationTokenSource lifetimeCancellation = new();
     private IWegstrMachineLink? link;
     private CancellationTokenSource? runCancellation;
@@ -40,6 +41,9 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
     private double progress;
     private string status = string.Empty;
     private string currentTool = "-";
+    private WegstrSurfaceMap? surfaceMap;
+    private bool isSurfaceCompensationEnabled;
+    private string surfaceSummary = string.Empty;
 
     public WegstrMachineViewModel(Window owner, Func<WegstrProgramSet> preparePrograms, Func<WegstrDirectSettings> directSettings)
     {
@@ -48,6 +52,7 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
         this.directSettings = directSettings;
         manualSpeedPercent = directSettings().SpeedPercent;
         status = L("WegstrStatusSimulatorSelected");
+        surfaceSummary = L("WegstrSurfaceNotMeasured");
         RefreshPortsCommand = new(_ => RefreshPorts(), _ => !IsRunning && !IsManualMoving && !isConnecting);
         PrepareCommand = new(_ => Prepare(), _ => !IsRunning && !IsManualMoving);
         ConnectCommand = new(_ => Connect(), _ => !IsConnected && !IsRunning && !IsManualMoving && !isConnecting && (UseSimulator || !string.IsNullOrWhiteSpace(SelectedPort)));
@@ -59,6 +64,8 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
         ToggleSpindleCommand = new(_ => ToggleSpindle(), _ => CanUseManualControls);
         GoToZeroCommand = new(_ => GoToZero(), _ => CanUseManualControls && (positionXSteps != 0 || positionYSteps != 0 || positionZSteps != 0));
         ZeroAxisCommand = new(ZeroAxis, _ => !IsRunning && !IsManualMoving);
+        MeasureSurfaceCommand = new(_ => MeasureSurface(), _ => CanMeasureSurface);
+        ResetSurfaceCommand = new(_ => ResetSurfaceMap(), _ => surfaceMap is not null && !IsRunning && !IsManualMoving);
         RefreshPorts();
     }
 
@@ -75,6 +82,8 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
     public RelayCommand ToggleSpindleCommand { get; }
     public RelayCommand GoToZeroCommand { get; }
     public RelayCommand ZeroAxisCommand { get; }
+    public RelayCommand MeasureSurfaceCommand { get; }
+    public RelayCommand ResetSurfaceCommand { get; }
 
     public WegstrPreparedProgram? SelectedProgram
     {
@@ -105,13 +114,14 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
     public Visibility HardwareControlsVisibility => UseSimulator ? Visibility.Collapsed : Visibility.Visible;
     public bool ConnectionModeEnabled => !IsConnected && !IsRunning && !IsManualMoving && !isConnecting;
     public bool CanUseManualControls => IsConnected && IsMachineReady && !IsRunning && !IsManualMoving;
+    public bool CanMeasureSurface => IsConnected && IsMachineReady && !IsRunning && !IsManualMoving && Programs.Count > 0;
     public bool CanJog => IsConnected && IsMachineReady && !IsRunning && (!IsManualMoving || jogRequested);
     public bool CoordinatesEditable => !IsRunning && !IsManualMoving;
-    public bool IsConnected { get => isConnected; private set { if (SetProperty(ref isConnected, value)) { OnPropertyChanged(nameof(ConnectionModeEnabled)); OnPropertyChanged(nameof(CanUseManualControls)); OnPropertyChanged(nameof(CanJog)); RefreshCommands(); } } }
-    public bool IsMachineReady { get => isMachineReady; private set { if (SetProperty(ref isMachineReady, value)) { OnPropertyChanged(nameof(CanUseManualControls)); OnPropertyChanged(nameof(CanJog)); RefreshCommands(); } } }
-    public bool IsRunning { get => isRunning; private set { if (SetProperty(ref isRunning, value)) { OnPropertyChanged(nameof(ConnectionModeEnabled)); OnPropertyChanged(nameof(CanUseManualControls)); OnPropertyChanged(nameof(CanJog)); OnPropertyChanged(nameof(CoordinatesEditable)); RefreshCommands(); } } }
+    public bool IsConnected { get => isConnected; private set { if (SetProperty(ref isConnected, value)) { OnPropertyChanged(nameof(ConnectionModeEnabled)); OnPropertyChanged(nameof(CanUseManualControls)); OnPropertyChanged(nameof(CanMeasureSurface)); OnPropertyChanged(nameof(CanJog)); RefreshCommands(); } } }
+    public bool IsMachineReady { get => isMachineReady; private set { if (SetProperty(ref isMachineReady, value)) { OnPropertyChanged(nameof(CanUseManualControls)); OnPropertyChanged(nameof(CanMeasureSurface)); OnPropertyChanged(nameof(CanJog)); RefreshCommands(); } } }
+    public bool IsRunning { get => isRunning; private set { if (SetProperty(ref isRunning, value)) { OnPropertyChanged(nameof(ConnectionModeEnabled)); OnPropertyChanged(nameof(CanUseManualControls)); OnPropertyChanged(nameof(CanMeasureSurface)); OnPropertyChanged(nameof(CanJog)); OnPropertyChanged(nameof(CoordinatesEditable)); RefreshCommands(); } } }
     public bool IsPaused { get => isPaused; private set { if (SetProperty(ref isPaused, value)) RefreshCommands(); } }
-    public bool IsManualMoving { get => isManualMoving; private set { if (SetProperty(ref isManualMoving, value)) { OnPropertyChanged(nameof(ConnectionModeEnabled)); OnPropertyChanged(nameof(CanUseManualControls)); OnPropertyChanged(nameof(CanJog)); OnPropertyChanged(nameof(CoordinatesEditable)); RefreshCommands(); } } }
+    public bool IsManualMoving { get => isManualMoving; private set { if (SetProperty(ref isManualMoving, value)) { OnPropertyChanged(nameof(ConnectionModeEnabled)); OnPropertyChanged(nameof(CanUseManualControls)); OnPropertyChanged(nameof(CanMeasureSurface)); OnPropertyChanged(nameof(CanJog)); OnPropertyChanged(nameof(CoordinatesEditable)); RefreshCommands(); } } }
     public bool IsSpindleOn { get => isSpindleOn; private set => SetProperty(ref isSpindleOn, value); }
     public int ManualSpeedPercent
     {
@@ -129,6 +139,17 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
     public double Progress { get => progress; private set => SetProperty(ref progress, value); }
     public string Status { get => status; private set => SetProperty(ref status, value); }
     public string CurrentTool { get => currentTool; private set => SetProperty(ref currentTool, value); }
+    public string SurfaceSummary { get => surfaceSummary; private set => SetProperty(ref surfaceSummary, value); }
+    public bool IsSurfaceMapReady => surfaceMap is not null;
+    public bool IsSurfaceCompensationEnabled
+    {
+        get => isSurfaceCompensationEnabled;
+        set
+        {
+            if (value && surfaceMap is null) return;
+            SetProperty(ref isSurfaceCompensationEnabled, value);
+        }
+    }
 
     public void BeginJog(WegstrAxis axis, int direction)
     {
@@ -169,6 +190,8 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
             Programs.Clear();
             foreach (var program in compiled) Programs.Add(program);
             SelectedProgram = Programs.FirstOrDefault();
+            ResetSurfaceMap();
+            OnPropertyChanged(nameof(CanMeasureSurface));
             Status = L("WegstrStatusPrepared", Programs.Count) + (set.Warnings.Count > 0 ? $" {L("WegstrStatusWarnings", string.Join(" ", set.Warnings))}" : string.Empty);
         }
         catch (Exception exception) when (exception is InvalidOperationException or ArgumentOutOfRangeException or NotSupportedException)
@@ -184,7 +207,8 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
         RefreshCommands();
         try
         {
-            link = UseSimulator ? new SimulatedWegstrMachineLink() : new SerialWegstrMachineLink(SelectedPort!);
+            var machine = directSettings();
+            link = UseSimulator ? new SimulatedWegstrMachineLink(machine.CalibrationX, machine.CalibrationY, machine.CalibrationZ) : new SerialWegstrMachineLink(SelectedPort!);
             if (!UseSimulator)
             {
                 var answer = MessageBox.Show(owner,
@@ -193,12 +217,12 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
                 if (answer != MessageBoxResult.Yes) { await link.DisposeAsync(); link = null; return; }
             }
             await link.OpenAsync(CancellationToken.None);
-            var probe = await link.ExchangeAsync(WegstrPacketCodec.SpindleOffPacket(), CancellationToken.None);
-            if (probe is not (WegstrMachineStatus.Ready or WegstrMachineStatus.SpindleOverload or WegstrMachineStatus.MachineReleased)) throw new InvalidOperationException($"Unexpected Wegstr response: {(byte)probe}.");
+            var probe = await link.ExchangeAsync(WegstrPacketCodec.SpindleOffPacket(), false, CancellationToken.None);
+            if (probe.Status is not (WegstrMachineStatus.Ready or WegstrMachineStatus.SpindleOverload or WegstrMachineStatus.MachineReleased)) throw new InvalidOperationException($"Unexpected Wegstr response: {(byte)probe.Status}.");
             IsConnected = true;
-            IsMachineReady = probe == WegstrMachineStatus.Ready;
+            IsMachineReady = probe.Status == WegstrMachineStatus.Ready;
             IsSpindleOn = false;
-            Status = probe switch
+            Status = probe.Status switch
             {
                 WegstrMachineStatus.Ready => L("WegstrStatusConnectedReady", link.Name),
                 WegstrMachineStatus.SpindleOverload => L("WegstrStatusConnectedOverload", link.Name),
@@ -225,7 +249,7 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
     {
         if (link is not null)
         {
-            try { if (link.IsOpen) await link.ExchangeAsync(WegstrPacketCodec.SpindleOffPacket(), CancellationToken.None); } catch { }
+            try { if (link.IsOpen) await link.ExchangeAsync(WegstrPacketCodec.SpindleOffPacket(), false, CancellationToken.None); } catch { }
             await link.DisposeAsync();
         }
         link = null;
@@ -233,6 +257,118 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
         IsMachineReady = false;
         IsSpindleOn = false;
         Status = L("WegstrStatusDisconnected");
+    }
+
+    private void MeasureSurface()
+    {
+        if (!CanMeasureSurface || link is null) return;
+        manualStopRequested = false;
+        var machine = directSettings();
+        WegstrSurfaceProbePlan plan;
+        try
+        {
+            plan = surfaceLeveler.CreateProbePlan(Programs.Select(program => program.Compiled), machine.AutoLevelRasterMillimetres, machine.CalibrationX, machine.CalibrationY);
+        }
+        catch (Exception exception) when (exception is InvalidOperationException or ArgumentOutOfRangeException)
+        {
+            Status = L("WegstrStatusSurfacePlanFailed", exception.Message);
+            return;
+        }
+
+        if (!UseSimulator)
+        {
+            var answer = MessageBox.Show(owner,
+                L("WegstrConfirmSurfaceMeasure", plan.Points.Count, link.Name, machine.AutoLevelSafeZMillimetres),
+                L("WegstrConfirmSurfaceMeasureTitle"), MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+            if (answer != MessageBoxResult.Yes) return;
+        }
+
+        ResetSurfaceMap();
+        runCancellation = new();
+        runStopRequested = false;
+        activeRunTask = MeasureSurfaceAsync(plan, machine, runCancellation.Token);
+    }
+
+    private async Task MeasureSurfaceAsync(WegstrSurfaceProbePlan plan, WegstrDirectSettings machine, CancellationToken cancellationToken)
+    {
+        IsRunning = true;
+        IsPaused = false;
+        Progress = 0;
+        CurrentTool = L("WegstrProbeTool");
+        var measured = new List<int>(plan.Points.Count);
+        try
+        {
+            var safeZSteps = MillimetresToSteps(machine.AutoLevelSafeZMillimetres, machine.CalibrationZ);
+            var probeLimitSteps = MillimetresToSteps(-10, machine.CalibrationZ);
+            for (var index = 0; index < plan.Points.Count; index++)
+            {
+                if (runStopRequested) throw new OperationCanceledException();
+                var point = plan.Points[index];
+                if (positionZSteps < safeZSteps) await SendFiniteMoveAsync(0, 0, safeZSteps - positionZSteps, cancellationToken);
+                await SendFiniteMoveAsync(point.XSteps - positionXSteps, point.YSteps - positionYSteps, 0, cancellationToken);
+                var touchedZ = await ProbeDownAsync(probeLimitSteps, cancellationToken);
+                measured.Add(touchedZ);
+                Progress = (index + 1) * 100d / plan.Points.Count;
+                Status = L("WegstrStatusSurfaceMeasuring", index + 1, plan.Points.Count, StepsToMillimetres(touchedZ, machine.CalibrationZ));
+            }
+
+            if (positionZSteps < safeZSteps) await SendFiniteMoveAsync(0, 0, safeZSteps - positionZSteps, cancellationToken);
+            await SendFiniteMoveAsync(-positionXSteps, -positionYSteps, 0, cancellationToken);
+            await SendFiniteMoveAsync(0, 0, -positionZSteps, cancellationToken);
+            surfaceMap = surfaceLeveler.CreateSurfaceMap(plan, measured);
+            IsSurfaceCompensationEnabled = true;
+            OnPropertyChanged(nameof(IsSurfaceMapReady));
+            var minimum = StepsToMillimetres(surfaceMap.MinimumCorrectionSteps, machine.CalibrationZ);
+            var maximum = StepsToMillimetres(surfaceMap.MaximumCorrectionSteps, machine.CalibrationZ);
+            SurfaceSummary = L("WegstrSurfaceMeasured", surfaceMap.PointCount, minimum, maximum);
+            Status = L("WegstrStatusSurfaceMeasured", surfaceMap.PointCount, minimum, maximum);
+        }
+        catch (OperationCanceledException)
+        {
+            Status = L("WegstrStatusSurfaceStopped");
+        }
+        catch (Exception exception) when (exception is IOException or InvalidOperationException or TimeoutException or WegstrSafetyException)
+        {
+            IsMachineReady = false;
+            Status = L("WegstrStatusSurfaceFailed", exception.Message);
+        }
+        finally
+        {
+            IsRunning = false;
+            CurrentTool = "-";
+            runCancellation?.Dispose();
+            runCancellation = null;
+        }
+    }
+
+    private async Task<int> ProbeDownAsync(int probeLimitSteps, CancellationToken cancellationToken)
+    {
+        if (link is null) throw new InvalidOperationException("Wegstr is not connected.");
+        foreach (var packet in WegstrManualMotionPlanner.PlanFiniteMove(0, 0, probeLimitSteps - positionZSteps, 100, false))
+        {
+            if (runStopRequested) throw new OperationCanceledException();
+            var response = await link.ExchangeAsync(packet, true, cancellationToken);
+            ThrowForSafetyStatus(response.Status);
+            if (response.Status == WegstrMachineStatus.Probe && response.ProbePositionSteps is short touchedZ)
+            {
+                positionZSteps = touchedZ;
+                IsSpindleOn = false;
+                OnPropertyChanged(nameof(PositionZMillimetres));
+                return touchedZ;
+            }
+            if (response.Status != WegstrMachineStatus.Ready) throw new WegstrSafetyException($"Unexpected controller response {(byte)response.Status} while probing.");
+            ApplyAcknowledgedPacket(packet);
+        }
+        throw new WegstrSafetyException("The probe did not touch the surface before the -10 mm travel limit.");
+    }
+
+    private void ResetSurfaceMap()
+    {
+        surfaceMap = null;
+        IsSurfaceCompensationEnabled = false;
+        SurfaceSummary = L("WegstrSurfaceNotMeasured");
+        OnPropertyChanged(nameof(IsSurfaceMapReady));
+        RefreshCommands();
     }
 
     private void StartOrResume()
@@ -265,9 +401,13 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
         var completedPackets = 0;
         try
         {
-            for (var blockIndex = 0; blockIndex < program.Compiled.Blocks.Count; blockIndex++)
+            var machine = directSettings();
+            var compiled = IsSurfaceCompensationEnabled && surfaceMap is not null
+                ? surfaceLeveler.Apply(program.Compiled, surfaceMap, machine.AutoLevelZBacklashSteps)
+                : program.Compiled;
+            for (var blockIndex = 0; blockIndex < compiled.Blocks.Count; blockIndex++)
             {
-                var block = program.Compiled.Blocks[blockIndex];
+                var block = compiled.Blocks[blockIndex];
                 CurrentTool = block.ToolNumber == 0 ? "Current tool" : $"T{block.ToolNumber}";
                 if (blockIndex > 0)
                 {
@@ -290,8 +430,8 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
                     ApplyAcknowledgedPacket(packet);
                     if (runStopRequested) throw new OperationCanceledException();
                     completedPackets++;
-                    Progress = completedPackets * 100d / program.PacketCount;
-                    Status = L("WegstrStatusRunning", program.DisplayName, completedPackets, program.PacketCount);
+                    Progress = completedPackets * 100d / compiled.PacketCount;
+                    Status = L("WegstrStatusRunning", program.DisplayName, completedPackets, compiled.PacketCount);
                 }
             }
             Status = L("WegstrStatusCompleted", program.DisplayName);
@@ -395,9 +535,9 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
         {
             var machine = directSettings();
             var safeZSteps = MillimetresToSteps(machine.SafeZMillimetres, machine.CalibrationZ);
-            if (positionZSteps < safeZSteps) await SendFiniteMoveAsync(0, 0, safeZSteps - positionZSteps);
-            if (!manualStopRequested) await SendFiniteMoveAsync(-positionXSteps, -positionYSteps, 0);
-            if (!manualStopRequested) await SendFiniteMoveAsync(0, 0, -positionZSteps);
+            if (positionZSteps < safeZSteps) await SendFiniteMoveAsync(0, 0, safeZSteps - positionZSteps, lifetimeCancellation.Token);
+            if (!manualStopRequested) await SendFiniteMoveAsync(-positionXSteps, -positionYSteps, 0, lifetimeCancellation.Token);
+            if (!manualStopRequested) await SendFiniteMoveAsync(0, 0, -positionZSteps, lifetimeCancellation.Token);
             Status = manualStopRequested ? L("WegstrStatusReturnZeroStopped") : L("WegstrStatusReturnedZero");
         }
         catch (OperationCanceledException) when (lifetimeCancellation.IsCancellationRequested) { }
@@ -409,12 +549,12 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
         finally { IsManualMoving = false; }
     }
 
-    private async Task SendFiniteMoveAsync(int deltaX, int deltaY, int deltaZ)
+    private async Task SendFiniteMoveAsync(int deltaX, int deltaY, int deltaZ, CancellationToken cancellationToken)
     {
         foreach (var packet in WegstrManualMotionPlanner.PlanFiniteMove(deltaX, deltaY, deltaZ, ManualSpeedPercent, IsSpindleOn))
         {
             if (manualStopRequested) break;
-            await ExchangeReadyAsync(packet, lifetimeCancellation.Token);
+            await ExchangeReadyAsync(packet, cancellationToken);
             ApplyAcknowledgedPacket(packet);
         }
     }
@@ -422,10 +562,15 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
     private async Task ExchangeReadyAsync(byte[] packet, CancellationToken cancellationToken)
     {
         if (link is null) throw new InvalidOperationException("Wegstr is not connected.");
-        var response = await link.ExchangeAsync(packet, cancellationToken);
-        if (response == WegstrMachineStatus.SpindleOverload) throw new WegstrSafetyException("The controller reported spindle overload.");
-        if (response == WegstrMachineStatus.MachineReleased) throw new WegstrSafetyException("The controller reported machine release/emergency state.");
-        if (response != WegstrMachineStatus.Ready) throw new WegstrSafetyException($"Unexpected controller response {(byte)response}.");
+        var response = await link.ExchangeAsync(packet, false, cancellationToken);
+        ThrowForSafetyStatus(response.Status);
+        if (response.Status != WegstrMachineStatus.Ready) throw new WegstrSafetyException($"Unexpected controller response {(byte)response.Status}.");
+    }
+
+    private static void ThrowForSafetyStatus(WegstrMachineStatus status)
+    {
+        if (status == WegstrMachineStatus.SpindleOverload) throw new WegstrSafetyException("The controller reported spindle overload.");
+        if (status == WegstrMachineStatus.MachineReleased) throw new WegstrSafetyException("The controller reported machine release/emergency state.");
     }
 
     private void ApplyAcknowledgedPacket(byte[] packet)
@@ -444,6 +589,7 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
     private void SetPosition(WegstrAxis axis, double millimetres)
     {
         if (!CoordinatesEditable || double.IsNaN(millimetres) || double.IsInfinity(millimetres)) return;
+        if (surfaceMap is not null) ResetSurfaceMap();
         millimetres = Math.Clamp(millimetres, -9999, 9999);
         var machine = directSettings();
         switch (axis)
@@ -457,6 +603,7 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
 
     private void ZeroAxis(object? parameter)
     {
+        if (surfaceMap is not null) ResetSurfaceMap();
         switch (parameter as string)
         {
             case "X": positionXSteps = 0; OnPropertyChanged(nameof(PositionXMillimetres)); break;
@@ -522,8 +669,8 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
         {
             if (link?.IsOpen == true)
             {
-                var finalStatus = await link.ExchangeAsync(WegstrPacketCodec.SpindleOffPacket(), CancellationToken.None);
-                if (finalStatus != WegstrMachineStatus.Ready) IsMachineReady = false;
+                var finalStatus = await link.ExchangeAsync(WegstrPacketCodec.SpindleOffPacket(), false, CancellationToken.None);
+                if (finalStatus.Status != WegstrMachineStatus.Ready) IsMachineReady = false;
                 else IsSpindleOn = false;
             }
         }
@@ -543,6 +690,8 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
         ToggleSpindleCommand.RaiseCanExecuteChanged();
         GoToZeroCommand.RaiseCanExecuteChanged();
         ZeroAxisCommand.RaiseCanExecuteChanged();
+        MeasureSurfaceCommand.RaiseCanExecuteChanged();
+        ResetSurfaceCommand.RaiseCanExecuteChanged();
     }
 
     private static int MillimetresToSteps(double millimetres, int calibration) => (int)Math.Round(millimetres * calibration / 10d);
@@ -575,7 +724,15 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
     private sealed class WegstrSafetyException(string message) : Exception(message);
 }
 
-public sealed record WegstrDirectSettings(int CalibrationX, int CalibrationY, int CalibrationZ, int SpeedPercent, double SafeZMillimetres);
+public sealed record WegstrDirectSettings(
+    int CalibrationX,
+    int CalibrationY,
+    int CalibrationZ,
+    int SpeedPercent,
+    double SafeZMillimetres,
+    double AutoLevelRasterMillimetres,
+    double AutoLevelSafeZMillimetres,
+    int AutoLevelZBacklashSteps);
 
 public sealed class WegstrPreparedProgram(string fileName, WegstrCompiledProgram compiled, string gCode)
 {

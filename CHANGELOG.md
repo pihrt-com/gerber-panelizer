@@ -1,5 +1,12 @@
 # Change log
 
+## 0.3.1 - 2026-10-27
+
+- Add automatic Wegstr surface probing for the raster cells crossed by the prepared machining paths, using response `4` and its signed absolute-Z position from the controller.
+- Add Wegstr-style level compensation that references the first touch point, approaches each raster-cell correction one Z step per motion sample, and includes configurable Z backlash compensation.
+- Add simulator support for a deterministic uneven surface, localized measurement controls and safety prompts, persistent raster/safe-Z/backlash settings, and automatic invalidation after preparation or work-coordinate changes.
+- Add regression coverage for path-scoped probing, first-point correction, and bounded gradual compensation; physical acceptance on a connected Wegstr machine and its probe remains required before production use.
+
 ## 0.3.0 - 2026-10-27
 
 - Add a separate direct Wegstr control tab that compiles the current panel operations in memory and sends the verified Wegstr 3.2.0 seven-byte protocol through either the safe simulator or an explicitly confirmed 9600 8N1 serial connection.

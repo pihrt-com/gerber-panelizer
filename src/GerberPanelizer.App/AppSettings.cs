@@ -34,6 +34,9 @@ public sealed class AppSettings
     public int WegstrCalibrationY { get; set; } = 2500;
     public int WegstrCalibrationZ { get; set; } = 2500;
     public int WegstrSpeedPercent { get; set; } = 100;
+    public double WegstrAutoLevelRasterMm { get; set; } = 1;
+    public double WegstrAutoLevelSafeZMm { get; set; } = 1;
+    public int WegstrAutoLevelZBacklashSteps { get; set; } = 4;
     public bool WegstrIncludeDrilling { get; set; } = true;
     public bool WegstrIncludeOutline { get; set; }
     public bool WegstrIncludeOutlineInCopper { get; set; } = true;

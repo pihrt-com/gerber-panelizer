@@ -28,7 +28,13 @@ Každý paket čeká na jednu odpověď; další paket se neodešle, dokud není
 | Pracovní souřadnice a nulování X/Y/Z | Ano, souřadnice lze upravit nebo vynulovat jednotlivě i společně bez pohybu stroje. |
 | Návrat na nulu | Ano, nejprve Z do nastavené bezpečné výšky, potom X/Y na nulu a nakonec Z na nulu. |
 | Zapnutí/vypnutí vřetena | Ano, samostatný paket bez pohybu. |
-| Autolevel s dotykovou sondou | Ne. Původní aplikace přijímá odpověď `4` se dvěma dalšími bajty absolutní polohy Z a používá rastr, bezpečnou výšku a kompenzaci vůle. Bez fyzického ověření konkrétní sondy nebylo bezpečné tuto funkci aktivovat. |
+| Automatické měření s dotykovou sondou | Ano. Po odpovědi `4` se načte následující znaménková absolutní poloha Z v pořadí big-endian. Plán obsahuje jen buňky rastru projeté připravenými drahami se zapnutým vřetenem, první dotyk je reference a korekce se přibližuje po jednom kroku Z v každém vzorku pohybu včetně nastavitelné kompenzace vůle. |
+
+## Automatické měření povrchu
+
+Připravte všechny operace panelu, připojte simulátor a zvolte **Změřit povrch**. Plán zachová pořadí prvního průjezdu buňkami rastru pod izolačními, vrtacími a obrysovými drahami, takže neměří nevyužitou obdélníkovou plochu. V každém bodě se Z zvedne do nastavené bezpečné výšky měření, X/Y přejede na uloženou pozici dráhy a Z klesá do odpovědi sondy `4` nebo pevného omezení Z -10 mm. Po posledním dotyku se stroj přes bezpečné Z vrátí na pracovní nulu a kompenzace se automaticky zapne.
+
+První změřené Z je reference. Každá další buňka uloží hodnotu `reference - změřené Z`; při obrábění se odesílaný pohyb Z přibližuje ke korekci vybrané buňky nejvýše o jeden kladný nebo záporný krok v každém vzorku. Nastavitelná vůle Z odpovídá chování původní aplikace při změně směru. Nová příprava panelu nebo úprava či vynulování pracovních souřadnic měření vymaže, protože jeho souřadnicový základ už není platný. Předvídatelný nerovný povrch simulátoru umožňuje projít celý postup bez hardwaru.
 
 ## Ruční polohování
 
@@ -37,13 +43,14 @@ Pro rychlé najetí nad desku připojte nejprve simulátor, ověřte směr všec
 ## Doporučený postup
 
 1. V záložce Panel načtěte data, zvolte pracovní plochu, umístěte celé desky a zkontrolujte vrstvy, orientaci a obrysy.
-2. V Nastavení ověřte kalibraci X/Y/Z v rozsahu 2400–2600 kroků na 10 mm, bezpečné Z, hloubky, nástroje a výrobní posuvy.
+2. V Nastavení ověřte kalibraci X/Y/Z v rozsahu 2400–2600 kroků na 10 mm, bezpečné Z, hloubky, nástroje, výrobní posuvy, rastr měření 0,5–70 mm, bezpečné Z měření 0,1–40 mm a vůli Z 0–30 kroků.
 3. Otevřete **Přímé řízení Wegstr**, ponechte zapnutý simulátor, zvolte **Připravit data panelu** a projděte všechny operace, počty paketů a výměny nástrojů.
-4. V simulátoru ověřte krokování, souvislý pohyb, STOP, nulování, vřeteno a návrat na nulu.
+4. V simulátoru ověřte krokování, souvislý pohyb, STOP, nulování, vřeteno, návrat na nulu, celé měření povrchu, počet bodů, rozsah korekcí a běh programu se zapnutou kompenzací.
 5. Teprve potom vypněte simulátor, vyberte správný COM port a potvrďte připojení. Aplikace odešle identifikační paket bez pohybu a musí zobrazit stav připraveno.
 6. S odpojeným vřetenem nebo vyjmutým nástrojem a osou Z bezpečně nad materiálem ověřte znaménka X/Y/Z, měřenou vzdálenost 10 mm, krok 0,012 mm při výchozí kalibraci, STOP a fyzické nouzové zastavení.
-7. Proveďte celý zkušební chod nad obětovaným materiálem. Výrobu spusťte až po potvrzení nulového bodu, upnutí, nástroje, bezpečné výšky a volného prostoru vřetena.
+7. Nezávisle ověřte zapojení a polaritu sondy, použijte hrubý rastr nad obětovaným materiálem, ponechte přístup k nouzovému zastavení a před povolením kompenzace zkontrolujte, že každý dotyk hlásí věrohodnou absolutní polohu Z.
+8. Proveďte celý zkušební chod nad obětovaným materiálem. Výrobu spusťte až po potvrzení nulového bodu, upnutí, nástroje, bezpečné výšky, případného odpojení sondy a volného prostoru vřetena.
 
-## Hranice ověření
+## Rozsah ověření
 
-Kodér paketu, ruční zrychlování, krokování, přesné součty pohybů, omezení ±14 kroků, překládání generovaného lineárního G-code, simulované potvrzování, stavové přechody a grafické ovládání byly automaticky nebo interaktivně ověřeny. Testovací prostředí nebylo připojeno k fyzickému stroji Wegstr, proto dokumentace netvrdí, že konkrétní řadič, kabeláž, směry os, sonda, kalibrace ani vřeteno prošly výrobní přejímkou.
+Kodér paketu, načtení odpovědi sondy, plánování rastru pod dráhou, reference prvního dotyku, plynulá omezená kompenzace, ruční zrychlování, krokování, přesné součty pohybů, omezení ±14 kroků, překládání generovaného lineárního G-code, simulované potvrzování, stavové přechody a grafické ovládání byly automaticky nebo interaktivně ověřeny. Testovací prostředí nebylo připojeno k fyzickému stroji Wegstr, proto dokumentace netvrdí, že konkrétní řadič, kabeláž, směry os, sonda, kalibrace ani vřeteno prošly výrobní přejímkou.

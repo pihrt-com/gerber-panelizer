@@ -121,7 +121,7 @@
     <sys:String x:Key="FilterSettingsJson" xmlns:sys="clr-namespace:System;assembly=mscorlib">JSON settings</sys:String>
     <sys:String x:Key="StatusProjectAbsoluteSource" xmlns:sys="clr-namespace:System;assembly=mscorlib">The project contains a non-portable absolute source path.</sys:String>
     <sys:String x:Key="ExportWegstr" xmlns:sys="clr-namespace:System;assembly=mscorlib">Export Wegstr</sys:String>
-    <sys:String x:Key="InvalidWegstrSettings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr settings are invalid. Safe Z and feed rates must be positive, cutting depths negative, spindle speed 1-100000 RPM, and tool number 1-99.</sys:String>
+    <sys:String x:Key="InvalidWegstrSettings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr settings are invalid. Safe Z and feeds must be positive, depths negative, speed 1-100000 RPM, tool 1-99, probing raster 0.5-70 mm, probing safe Z 0.1-40 mm, and Z backlash 0-30 steps.</sys:String>
     <sys:String x:Key="WegstrMachine" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr machine</sys:String>
     <sys:String x:Key="WegstrMachineHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Metric G-code matching the Wegstr samples. Y is negative from the top-left origin; copper isolation, drilling, and outline cutting are separate TXT programs.</sys:String>
     <sys:String x:Key="WegstrSafeZ" xmlns:sys="clr-namespace:System;assembly=mscorlib">Safe Z (mm)</sys:String>
@@ -226,4 +226,22 @@
     <sys:String x:Key="WegstrStatusPauseRequested" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pause requested; waiting for the current packet acknowledgement.</sys:String>
     <sys:String x:Key="WegstrStatusStoppingJob" xmlns:sys="clr-namespace:System;assembly=mscorlib">Stopping after the current serial operation…</sys:String>
     <sys:String x:Key="WegstrStatusStoppingManual" xmlns:sys="clr-namespace:System;assembly=mscorlib">Stopping manual movement after the current acknowledged packet…</sys:String>
+    <sys:String x:Key="WegstrAutoLevelRaster" xmlns:sys="clr-namespace:System;assembly=mscorlib">Automatic probing raster (mm)</sys:String>
+    <sys:String x:Key="WegstrAutoLevelSafeZ" xmlns:sys="clr-namespace:System;assembly=mscorlib">Probing safe Z (mm)</sys:String>
+    <sys:String x:Key="WegstrAutoLevelBacklash" xmlns:sys="clr-namespace:System;assembly=mscorlib">Z backlash compensation (steps)</sys:String>
+    <sys:String x:Key="WegstrSurfaceLeveling" xmlns:sys="clr-namespace:System;assembly=mscorlib">Automatic surface probing</sys:String>
+    <sys:String x:Key="WegstrSurfaceLevelingHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Measures only raster cells crossed by prepared toolpaths and applies smooth one-step Z compensation while machining.</sys:String>
+    <sys:String x:Key="WegstrMeasureSurface" xmlns:sys="clr-namespace:System;assembly=mscorlib">Measure surface</sys:String>
+    <sys:String x:Key="WegstrResetSurface" xmlns:sys="clr-namespace:System;assembly=mscorlib">Clear measurement</sys:String>
+    <sys:String x:Key="WegstrApplySurfaceCompensation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Apply surface-level compensation</sys:String>
+    <sys:String x:Key="WegstrSurfaceNotMeasured" xmlns:sys="clr-namespace:System;assembly=mscorlib">The surface has not been measured yet.</sys:String>
+    <sys:String x:Key="WegstrSurfaceMeasured" xmlns:sys="clr-namespace:System;assembly=mscorlib">Measured points: {0}. Z correction range: {1:F3} to {2:F3} mm.</sys:String>
+    <sys:String x:Key="WegstrStatusSurfacePlanFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Surface probing preparation failed: {0}</sys:String>
+    <sys:String x:Key="WegstrConfirmSurfaceMeasure" xmlns:sys="clr-namespace:System;assembly=mscorlib">Start automatic measurement of {0} points on {1}?&#10;&#10;Safe Z: {2:F1} mm. Connect the probe, verify the work zero, and ensure unobstructed motion. Each point descends no farther than Z -10 mm.</sys:String>
+    <sys:String x:Key="WegstrConfirmSurfaceMeasureTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Measure Wegstr surface</sys:String>
+    <sys:String x:Key="WegstrProbeTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Probe</sys:String>
+    <sys:String x:Key="WegstrStatusSurfaceMeasuring" xmlns:sys="clr-namespace:System;assembly=mscorlib">Measuring point {0} of {1}; touch Z {2:F3} mm.</sys:String>
+    <sys:String x:Key="WegstrStatusSurfaceMeasured" xmlns:sys="clr-namespace:System;assembly=mscorlib">Measurement complete: {0} points, Z correction {1:F3} to {2:F3} mm. Compensation is enabled.</sys:String>
+    <sys:String x:Key="WegstrStatusSurfaceStopped" xmlns:sys="clr-namespace:System;assembly=mscorlib">Surface probing was stopped.</sys:String>
+    <sys:String x:Key="WegstrStatusSurfaceFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Surface probing stopped safely: {0}</sys:String>
 </ResourceDictionary>

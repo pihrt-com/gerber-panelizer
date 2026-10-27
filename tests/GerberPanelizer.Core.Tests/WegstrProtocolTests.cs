@@ -160,6 +160,64 @@ public sealed class WegstrProtocolTests
         });
     }
 
+    [Fact]
+    public void SurfaceProbePlanIncludesOnlyRasterCellsCrossedByCuttingPath()
+    {
+        var program = CompileLShapedCut();
+
+        var plan = new WegstrSurfaceLeveler().CreateProbePlan([program], 1, 2500, 2500);
+
+        Assert.Equal(4, plan.Points.Count);
+        Assert.Equal(plan.Points.Count, plan.Points.Select(point => point.Cell).Distinct().Count());
+        Assert.Contains(plan.Points, point => point.Cell == new WegstrSurfaceCell(0, 0));
+        Assert.Contains(plan.Points, point => point.Cell == new WegstrSurfaceCell(1, 2));
+        Assert.DoesNotContain(plan.Points, point => point.Cell == new WegstrSurfaceCell(0, 2));
+    }
+
+    [Fact]
+    public void SurfaceMapUsesFirstTouchAsReference()
+    {
+        var leveler = new WegstrSurfaceLeveler();
+        var plan = leveler.CreateProbePlan([CompileLShapedCut()], 1, 2500, 2500);
+        var measurements = Enumerable.Range(0, plan.Points.Count).Select(index => 1000 - (index * 3)).ToArray();
+
+        var map = leveler.CreateSurfaceMap(plan, measurements);
+
+        Assert.True(map.TryGetCorrection(plan.Points[0].XSteps, plan.Points[0].YSteps, out var first));
+        Assert.True(map.TryGetCorrection(plan.Points[^1].XSteps, plan.Points[^1].YSteps, out var last));
+        Assert.Equal(0, first);
+        Assert.Equal((plan.Points.Count - 1) * 3, last);
+    }
+
+    [Fact]
+    public void SurfaceCompensationApproachesCellCorrectionOneStepPerSample()
+    {
+        var source = CompileLShapedCut();
+        var leveler = new WegstrSurfaceLeveler();
+        var plan = leveler.CreateProbePlan([source], 1, 2500, 2500);
+        var measurements = plan.Points.Select((_, index) => index == 0 ? 1000 : 988).ToArray();
+        var map = leveler.CreateSurfaceMap(plan, measurements);
+
+        var transformed = leveler.Apply(source, map, 0);
+        var sourceSteps = source.Blocks.SelectMany(block => block.Packets).SelectMany(WegstrPacketCodec.Decode).ToArray();
+        var transformedSteps = transformed.Blocks.SelectMany(block => block.Packets).SelectMany(WegstrPacketCodec.Decode).ToArray();
+
+        Assert.Equal(sourceSteps.Length, transformedSteps.Length);
+        Assert.Contains(sourceSteps.Zip(transformedSteps), pair => pair.First.Z != pair.Second.Z);
+        Assert.All(sourceSteps.Zip(transformedSteps), pair => Assert.InRange(pair.Second.Z - pair.First.Z, -1, 1));
+        Assert.All(transformedSteps, step => Assert.InRange(step.Z, -14, 14));
+    }
+
+    private static WegstrCompiledProgram CompileLShapedCut() => new WegstrGCodeCompiler().Compile("surface", """
+        G21G90
+        G00X0Y0Z0
+        M03
+        G01X2Y0F170
+        G01X2Y2
+        M05
+        M30
+        """);
+
     private static IEnumerable<WegstrStep> Decode(byte[] packet, byte expectedHeader = WegstrPacketCodec.ProgramHeader)
     {
         Assert.Equal(expectedHeader, packet[0]);

@@ -24,7 +24,7 @@ Zdrojové Gerbery se nesmí pouze spojit za sebe. Různé desky mohou stejnému 
 
 Výstup je ZIP sada s manifestem, samostatnými zvolenými Gerber vrstvami a jedním vrtacím souborem. Validace probíhá před zabalením a odmítne panel s geometrií mimo plochu nebo nevyřešenými vstupními daty.
 
-Přímé řízení Wegstr znovu používá sadu operací exportéru v paměti, překládá pouze generovanou lineární podmnožinu G-code do ověřených sedmibajtových rámců Wegstr 3.2.0 a nepodporované příkazy odmítne. Core obsahuje kodér protokolu, plánovač pohybu a překladač bez závislosti na WPF. Vrstva App obsahuje sériový přenos, simulátor, potvrzování, stavový automat, bezpečnostní dialogy a ovládací zobrazení. Přenos povolí právě jeden nepotvrzený paket a před odesláním dalšího rámce vyhodnotí odpověď řadiče.
+Přímé řízení Wegstr znovu používá sadu operací exportéru v paměti, překládá pouze generovanou lineární podmnožinu G-code do ověřených sedmibajtových rámců Wegstr 3.2.0 a nepodporované příkazy odmítne. Core obsahuje kodér protokolu, plánovač pohybu, překladač, plán měření pod připravenými drahami, mapu povrchu a postupnou kompenzaci Z bez závislosti na WPF. Vrstva App obsahuje sériový přenos, simulátor nerovného povrchu, sekvenci měření, potvrzování, stavový automat, bezpečnostní dialogy a ovládací zobrazení. Přenos povolí právě jeden nepotvrzený paket a před odesláním dalšího rámce načte celou tříbajtovou odpověď sondy.
 
 ## Vykreslení a tisk
 

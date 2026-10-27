@@ -121,7 +121,7 @@
     <sys:String x:Key="FilterSettingsJson" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nastavení JSON</sys:String>
     <sys:String x:Key="StatusProjectAbsoluteSource" xmlns:sys="clr-namespace:System;assembly=mscorlib">Projekt obsahuje nepřenosnou absolutní cestu ke zdrojovému souboru.</sys:String>
     <sys:String x:Key="ExportWegstr" xmlns:sys="clr-namespace:System;assembly=mscorlib">Export Wegstr</sys:String>
-    <sys:String x:Key="InvalidWegstrSettings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nastavení Wegstr není platné. Bezpečné Z a posuvy musí být kladné, hloubky záporné, otáčky v rozsahu 1-100000 a číslo nástroje 1-99.</sys:String>
+    <sys:String x:Key="InvalidWegstrSettings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nastavení Wegstr není platné. Bezpečné Z a posuvy musí být kladné, hloubky záporné, otáčky 1-100000, nástroj 1-99, rastr měření 0,5-70 mm, bezpečné Z měření 0,1-40 mm a vůle Z 0-30 kroků.</sys:String>
     <sys:String x:Key="WegstrMachine" xmlns:sys="clr-namespace:System;assembly=mscorlib">Stroj Wegstr</sys:String>
     <sys:String x:Key="WegstrMachineHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Metrický G-code podle vzorků Wegstr. Osa Y je záporná od levého horního počátku; izolace mědi, vrtání a obrys jsou oddělené TXT programy.</sys:String>
     <sys:String x:Key="WegstrSafeZ" xmlns:sys="clr-namespace:System;assembly=mscorlib">Bezpečné Z (mm)</sys:String>
@@ -226,4 +226,22 @@
     <sys:String x:Key="WegstrStatusPauseRequested" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vyžádáno pozastavení; čekám na potvrzení aktuálního paketu.</sys:String>
     <sys:String x:Key="WegstrStatusStoppingJob" xmlns:sys="clr-namespace:System;assembly=mscorlib">Zastavuji po dokončení aktuální sériové operace…</sys:String>
     <sys:String x:Key="WegstrStatusStoppingManual" xmlns:sys="clr-namespace:System;assembly=mscorlib">Zastavuji ruční pohyb po aktuálním potvrzeném paketu…</sys:String>
+    <sys:String x:Key="WegstrAutoLevelRaster" xmlns:sys="clr-namespace:System;assembly=mscorlib">Rastr automatického měření (mm)</sys:String>
+    <sys:String x:Key="WegstrAutoLevelSafeZ" xmlns:sys="clr-namespace:System;assembly=mscorlib">Bezpečné Z měření (mm)</sys:String>
+    <sys:String x:Key="WegstrAutoLevelBacklash" xmlns:sys="clr-namespace:System;assembly=mscorlib">Kompenzace vůle Z (kroky)</sys:String>
+    <sys:String x:Key="WegstrSurfaceLeveling" xmlns:sys="clr-namespace:System;assembly=mscorlib">Automatické měření povrchu</sys:String>
+    <sys:String x:Key="WegstrSurfaceLevelingHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Změří pouze buňky rastru, kterými procházejí připravené dráhy, a při obrábění plynule kompenzuje Z po jednotlivých krocích.</sys:String>
+    <sys:String x:Key="WegstrMeasureSurface" xmlns:sys="clr-namespace:System;assembly=mscorlib">Změřit povrch</sys:String>
+    <sys:String x:Key="WegstrResetSurface" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vymazat měření</sys:String>
+    <sys:String x:Key="WegstrApplySurfaceCompensation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Použít kompenzaci nivelace</sys:String>
+    <sys:String x:Key="WegstrSurfaceNotMeasured" xmlns:sys="clr-namespace:System;assembly=mscorlib">Povrch zatím nebyl změřen.</sys:String>
+    <sys:String x:Key="WegstrSurfaceMeasured" xmlns:sys="clr-namespace:System;assembly=mscorlib">Změřeno bodů: {0}. Rozsah korekce Z: {1:F3} až {2:F3} mm.</sys:String>
+    <sys:String x:Key="WegstrStatusSurfacePlanFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Příprava měření povrchu se nezdařila: {0}</sys:String>
+    <sys:String x:Key="WegstrConfirmSurfaceMeasure" xmlns:sys="clr-namespace:System;assembly=mscorlib">Spustit automatické měření {0} bodů na {1}?&#10;&#10;Bezpečné Z: {2:F1} mm. Připojte sondu, ověřte pracovní nulu a zajistěte volný pohyb. Každý bod klesá nejvýše do Z -10 mm.</sys:String>
+    <sys:String x:Key="WegstrConfirmSurfaceMeasureTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Změřit povrch Wegstr</sys:String>
+    <sys:String x:Key="WegstrProbeTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Sonda</sys:String>
+    <sys:String x:Key="WegstrStatusSurfaceMeasuring" xmlns:sys="clr-namespace:System;assembly=mscorlib">Měřím bod {0} z {1}; dotyk Z {2:F3} mm.</sys:String>
+    <sys:String x:Key="WegstrStatusSurfaceMeasured" xmlns:sys="clr-namespace:System;assembly=mscorlib">Měření dokončeno: {0} bodů, korekce Z {1:F3} až {2:F3} mm. Kompenzace je zapnutá.</sys:String>
+    <sys:String x:Key="WegstrStatusSurfaceStopped" xmlns:sys="clr-namespace:System;assembly=mscorlib">Měření povrchu bylo zastaveno.</sys:String>
+    <sys:String x:Key="WegstrStatusSurfaceFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Měření povrchu bylo bezpečně ukončeno: {0}</sys:String>
 </ResourceDictionary>

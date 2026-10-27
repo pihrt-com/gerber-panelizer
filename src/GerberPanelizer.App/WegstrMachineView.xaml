@@ -158,6 +158,20 @@
                     </Border>
 
                     <Border Background="White" BorderBrush="#D4E1DF" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,14,0,0">
+                        <StackPanel>
+                            <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrSurfaceLeveling]}" FontSize="16" FontWeight="SemiBold" Foreground="#244542" />
+                            <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrSurfaceLevelingHint]}" TextWrapping="Wrap" Foreground="#5B7774" FontSize="11" Margin="0,6,0,12" />
+                            <Grid>
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="10" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                <Button Command="{Binding MeasureSurfaceCommand}" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrMeasureSurface]}" Style="{StaticResource WegstrPrimaryButton}" Padding="12,8" FontWeight="SemiBold" />
+                                <Button Grid.Column="2" Command="{Binding ResetSurfaceCommand}" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrResetSurface]}" Padding="12,8" />
+                            </Grid>
+                            <CheckBox IsChecked="{Binding IsSurfaceCompensationEnabled}" IsEnabled="{Binding IsSurfaceMapReady}" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrApplySurfaceCompensation]}" Margin="0,12,0,0" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding SurfaceSummary}" TextWrapping="Wrap" Foreground="#486764" Margin="0,7,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="White" BorderBrush="#D4E1DF" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,14,0,0">
                         <Grid>
                             <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
                             <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrOperations]}" FontSize="16" FontWeight="SemiBold" Foreground="#244542" />

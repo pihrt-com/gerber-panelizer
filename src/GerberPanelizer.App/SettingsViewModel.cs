@@ -30,6 +30,9 @@ public sealed class SettingsViewModel : ObservableObject
     private int wegstrCalibrationY;
     private int wegstrCalibrationZ;
     private int wegstrSpeedPercent;
+    private double wegstrAutoLevelRasterMm;
+    private double wegstrAutoLevelSafeZMm;
+    private int wegstrAutoLevelZBacklashSteps;
     private bool wegstrIncludeDrilling;
     private bool wegstrIncludeOutline;
     private bool wegstrIncludeOutlineInCopper;
@@ -67,6 +70,9 @@ public sealed class SettingsViewModel : ObservableObject
         wegstrCalibrationY = settings.WegstrCalibrationY;
         wegstrCalibrationZ = settings.WegstrCalibrationZ;
         wegstrSpeedPercent = settings.WegstrSpeedPercent;
+        wegstrAutoLevelRasterMm = settings.WegstrAutoLevelRasterMm;
+        wegstrAutoLevelSafeZMm = settings.WegstrAutoLevelSafeZMm;
+        wegstrAutoLevelZBacklashSteps = settings.WegstrAutoLevelZBacklashSteps;
         wegstrIncludeDrilling = settings.WegstrIncludeDrilling;
         wegstrIncludeOutline = settings.WegstrIncludeOutline;
         wegstrIncludeOutlineInCopper = settings.WegstrIncludeOutlineInCopper;
@@ -100,6 +106,9 @@ public sealed class SettingsViewModel : ObservableObject
     public int WegstrCalibrationY { get => wegstrCalibrationY; set => SetProperty(ref wegstrCalibrationY, value); }
     public int WegstrCalibrationZ { get => wegstrCalibrationZ; set => SetProperty(ref wegstrCalibrationZ, value); }
     public int WegstrSpeedPercent { get => wegstrSpeedPercent; set => SetProperty(ref wegstrSpeedPercent, value); }
+    public double WegstrAutoLevelRasterMm { get => wegstrAutoLevelRasterMm; set => SetProperty(ref wegstrAutoLevelRasterMm, value); }
+    public double WegstrAutoLevelSafeZMm { get => wegstrAutoLevelSafeZMm; set => SetProperty(ref wegstrAutoLevelSafeZMm, value); }
+    public int WegstrAutoLevelZBacklashSteps { get => wegstrAutoLevelZBacklashSteps; set => SetProperty(ref wegstrAutoLevelZBacklashSteps, value); }
     public bool WegstrIncludeDrilling { get => wegstrIncludeDrilling; set => SetProperty(ref wegstrIncludeDrilling, value); }
     public bool WegstrIncludeOutline { get => wegstrIncludeOutline; set => SetProperty(ref wegstrIncludeOutline, value); }
     public bool WegstrIncludeOutlineInCopper { get => wegstrIncludeOutlineInCopper; set => SetProperty(ref wegstrIncludeOutlineInCopper, value); }
@@ -130,7 +139,7 @@ public sealed class SettingsViewModel : ObservableObject
             MessageBox.Show(LocalizationService.Instance["InvalidLayerColours"], "Gerber Panelizer", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
-        if (WegstrMaterialThicknessMm <= 0 || WegstrSafeZMm <= 0 || WegstrIsolationDepthMm >= 0 || WegstrIsolationOffsetMm <= 0 || WegstrOutlineDepthMm >= 0 || WegstrOutlineToolDiameterMm <= 0 || WegstrDrillingDepthMm >= 0 || WegstrMillingFeedMmPerMinute <= 0 || WegstrPlungeFeedMmPerMinute <= 0 || WegstrSpindleRpm is < 1 or > 100000 || WegstrMillingToolNumber is < 1 or > 99 || WegstrCalibrationX is < 2400 or > 2600 || WegstrCalibrationY is < 2400 or > 2600 || WegstrCalibrationZ is < 2400 or > 2600 || WegstrSpeedPercent is < 1 or > 100)
+        if (WegstrMaterialThicknessMm <= 0 || WegstrSafeZMm <= 0 || WegstrIsolationDepthMm >= 0 || WegstrIsolationOffsetMm <= 0 || WegstrOutlineDepthMm >= 0 || WegstrOutlineToolDiameterMm <= 0 || WegstrDrillingDepthMm >= 0 || WegstrMillingFeedMmPerMinute <= 0 || WegstrPlungeFeedMmPerMinute <= 0 || WegstrSpindleRpm is < 1 or > 100000 || WegstrMillingToolNumber is < 1 or > 99 || WegstrCalibrationX is < 2400 or > 2600 || WegstrCalibrationY is < 2400 or > 2600 || WegstrCalibrationZ is < 2400 or > 2600 || WegstrSpeedPercent is < 1 or > 100 || WegstrAutoLevelRasterMm is < .5 or > 70 || WegstrAutoLevelSafeZMm is < .1 or > 40 || WegstrAutoLevelZBacklashSteps is < 0 or > 30)
         {
             MessageBox.Show(LocalizationService.Instance["InvalidWegstrSettings"], "Gerber Panelizer", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
@@ -179,6 +188,9 @@ public sealed class SettingsViewModel : ObservableObject
         WegstrCalibrationY = WegstrCalibrationY,
         WegstrCalibrationZ = WegstrCalibrationZ,
         WegstrSpeedPercent = WegstrSpeedPercent,
+        WegstrAutoLevelRasterMm = WegstrAutoLevelRasterMm,
+        WegstrAutoLevelSafeZMm = WegstrAutoLevelSafeZMm,
+        WegstrAutoLevelZBacklashSteps = WegstrAutoLevelZBacklashSteps,
         WegstrIncludeDrilling = WegstrIncludeDrilling,
         WegstrIncludeOutline = WegstrIncludeOutline,
         WegstrIncludeOutlineInCopper = WegstrIncludeOutlineInCopper,
@@ -255,6 +267,9 @@ public sealed class SettingsViewModel : ObservableObject
             WegstrCalibrationY = imported.WegstrCalibrationY;
             WegstrCalibrationZ = imported.WegstrCalibrationZ;
             WegstrSpeedPercent = imported.WegstrSpeedPercent;
+            WegstrAutoLevelRasterMm = imported.WegstrAutoLevelRasterMm;
+            WegstrAutoLevelSafeZMm = imported.WegstrAutoLevelSafeZMm;
+            WegstrAutoLevelZBacklashSteps = imported.WegstrAutoLevelZBacklashSteps;
             WegstrIncludeDrilling = imported.WegstrIncludeDrilling;
             WegstrIncludeOutline = imported.WegstrIncludeOutline;
             WegstrIncludeOutlineInCopper = imported.WegstrIncludeOutlineInCopper;

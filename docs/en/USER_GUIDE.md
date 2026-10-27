@@ -55,7 +55,7 @@ The preview is a planning aid. The manufacturing machine remains the final autho
 
 ## Settings and portability
 
-Settings include the work area, safety margins, spacing, automatic rotation, layer colors, language, Bottom mirror policy, and the Wegstr machine profile. The Wegstr profile contains safe Z, material thickness, isolation, drilling, and outline depths, isolation offset, outline-cutter diameter, feeds, spindle speed, tool number, and inclusion choices for drilling and outline cutting. The application stores these values for the current Windows user.
+Settings include the work area, safety margins, spacing, automatic rotation, layer colors, language, Bottom mirror policy, and the Wegstr machine profile. The Wegstr profile contains safe Z, material thickness, isolation, drilling, and outline depths, isolation offset, outline-cutter diameter, feeds, spindle speed, tool number, inclusion choices, probing raster, probing safe Z, and Z backlash compensation. The application stores these values for the current Windows user.
 
 Use **Export settings** to save a portable configuration file and **Import settings** to restore it on another computer. Treat imported settings as machine profiles: verify dimensions and the mirror policy before first use.
 
@@ -71,9 +71,9 @@ See [Wegstr G-code](WEGSTR_GCODE.md) for the exact generated command subset, sam
 
 ## Direct Wegstr control
 
-The separate **Direct Wegstr control** tab uses the current panel and Wegstr profile without writing an intermediate file. Keep the simulator selected while preparing and checking operations. Manual X/Y/Z controls support press-and-hold movement at 2–100%, one packet per click at 1%, and a dedicated 100% rapid for positioning above the board; this manual control does not change cutting or drilling feeds. The tab also provides editable work coordinates, axis and combined zeroing, spindle control, safe-Z return to zero, start, pause/continue, STOP, tool-change pauses, and packet progress.
+The separate **Direct Wegstr control** tab uses the current panel and Wegstr profile without writing an intermediate file. Keep the simulator selected while preparing and checking operations. Manual X/Y/Z controls support press-and-hold movement at 2–100%, one packet per click at 1%, and a dedicated 100% rapid for positioning above the board; this manual control does not change cutting or drilling feeds. The tab also provides editable work coordinates, axis and combined zeroing, spindle control, safe-Z return to zero, start, pause/continue, STOP, tool-change pauses, packet progress, automatic surface measurement, and switchable level compensation.
 
-See [Direct Wegstr control](WEGSTR_DIRECT_CONTROL.md) for protocol evidence, the exact original-application parity table, the physical acceptance checklist, and the currently unsupported probe auto-level function.
+Prepare the panel, connect the simulator, and select **Measure surface**. Only raster cells crossed by prepared toolpaths are measured; after completion, review the point count and correction range before running a compensated program. Preparing again or changing the work coordinates clears the measurement. See [Direct Wegstr control](WEGSTR_DIRECT_CONTROL.md) for the full workflow, protocol evidence, original-application parity table, and physical acceptance checklist.
 
 ## Printing
 

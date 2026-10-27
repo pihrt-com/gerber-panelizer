@@ -28,7 +28,13 @@ Each packet waits for one response; another packet is never sent while the first
 | Work coordinates and X/Y/Z zeroing | Yes; coordinates can be edited or reset individually or together without machine motion. |
 | Return to zero | Yes; Z first rises to the configured safe height, then X/Y return to zero, and finally Z returns to zero. |
 | Spindle on/off | Yes; a stationary manual packet is used. |
-| Probe auto-level | No. The original application receives response `4` with two additional absolute-Z bytes and applies raster, safe-height, and backlash compensation. Enabling this without physical verification of the specific probe would not be safe. |
+| Probe auto-level | Yes. Response `4` consumes the following signed big-endian absolute-Z value. The probing plan contains only raster cells crossed by prepared spindle-on paths, the first touch is the reference, and compensation approaches the active cell correction one Z step per motion sample with configurable backlash compensation. |
+
+## Automatic surface probing
+
+Prepare all panel operations and connect the simulator before selecting **Measure surface**. The probing plan preserves the first encounter order of the raster cells crossed by isolation, drilling, and outline paths rather than measuring an unused rectangular area. At every point, Z rises to the configured probing safe height, X/Y moves to the stored path position, and Z descends until probe response `4` or the fixed Z -10 mm travel limit. After the final touch, the machine returns through safe Z to work zero and compensation is enabled automatically.
+
+The first measured Z is the reference. Every other cell stores `reference - measured Z`; during machining the outgoing Z motion approaches the selected correction by at most one extra positive or negative step per sample. The configurable Z backlash value follows the original application's direction-change behavior. Preparing the panel again or editing/zeroing work coordinates clears the measurement because its coordinate basis is no longer valid. The deterministic simulator surface exercises the complete workflow without hardware.
 
 ## Manual positioning
 
@@ -37,13 +43,14 @@ For fast positioning above the board, connect the simulator first, verify every 
 ## Acceptance checklist
 
 1. On the Panel tab, import the data, select the work area, place complete boards, and inspect layers, orientation, and profiles.
-2. In Settings, confirm X/Y/Z calibration within 2400–2600 steps per 10 mm, safe Z, depths, tools, and manufacturing feeds.
+2. In Settings, confirm X/Y/Z calibration within 2400–2600 steps per 10 mm, safe Z, depths, tools, manufacturing feeds, probing raster (0.5–70 mm), probing safe Z (0.1–40 mm), and Z backlash (0–30 steps).
 3. Open **Direct Wegstr control**, keep the simulator enabled, choose **Prepare panel data**, and review every operation, packet count, and tool change.
-4. In the simulator, verify stepping, continuous movement, STOP, zeroing, spindle control, and return to zero.
+4. In the simulator, verify stepping, continuous movement, STOP, zeroing, spindle control, return to zero, the full surface measurement, its point count and correction range, and a compensated program run.
 5. Only then disable the simulator, select the correct COM port, and confirm the connection. The application sends a stationary identification packet and must report ready.
 6. With the spindle disconnected or the tool removed and Z safely above the workpiece, verify X/Y/Z signs, a measured 10 mm distance, the default-calibration 0.012 mm step, STOP, and the physical emergency stop.
-7. Complete a full raised-tool dry run above sacrificial material. Begin machining only after verifying the work origin, clamping, tool, safe height, and spindle clearance.
+7. Verify probe wiring and polarity independently, use a coarse raster over sacrificial material, keep access to emergency stop, and confirm that every touch reports a plausible absolute Z before allowing compensation.
+8. Complete a full raised-tool dry run above sacrificial material. Begin machining only after verifying the work origin, clamping, tool, safe height, probe removal where required, and spindle clearance.
 
 ## Verification boundary
 
-Packet encoding, manual acceleration, stepping, exact motion totals, the ±14-step limit, compilation of generated linear G-code, simulated acknowledgements, state transitions, and the graphical controls were verified automatically or interactively. The test environment was not connected to a physical Wegstr machine, so this document does not claim production acceptance of a particular controller, cable, axis direction, probe, calibration, or spindle.
+Packet encoding, probe-response parsing, path-scoped raster planning, first-touch referencing, gradual bounded compensation, manual acceleration, stepping, exact motion totals, the ±14-step limit, compilation of generated linear G-code, simulated acknowledgements, state transitions, and the graphical controls were verified automatically or interactively. The test environment was not connected to a physical Wegstr machine, so this document does not claim production acceptance of a particular controller, cable, axis direction, probe, calibration, or spindle.

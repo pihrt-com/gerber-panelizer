@@ -1,8 +1,10 @@
 # Gerber Panelizer
 
-## Verze 0.3.0 - 2026-10-27
+## Verze 0.3.1 - 2026-10-27
 
-## Aktuální změny — 2026-10-26
+## Aktuální změny — 2026-10-27
+
+Verze 0.3.1 přidává automatické měření povrchu a kompenzaci nivelace Wegstr. Změří jen buňky rastru, kterými procházejí připravené dráhy, první dotyk použije jako referenci Z a ke korekci každé buňky se přibližuje po jednom kroku Z v každém vzorku pohybu včetně nastavitelné kompenzace vůle. Simulátor nabízí předvídatelný nerovný povrch pro úplnou zkoušku bez stroje; skutečný řadič, zapojení sondy, směry os a volný pohyb je před výrobou stále nutné fyzicky ověřit.
 
 Verze 0.3.0 přidává samostatnou záložku **Přímé řízení Wegstr**. Operace izolace, vrtání a obrysu připraví přímo z aktuálního panelu, v paměti je přeloží do ověřeného sériového protokolu Wegstr 3.2.0 a spustí je přes bezpečný výchozí simulátor nebo výslovně potvrzené připojení 9600 8N1. Ruční polohování X/Y/Z odpovídá původní aplikaci: tlačítko lze držet, při 1 % provede jedno stisknutí přesný krok a tlačítko 100 % slouží k rychlému najetí na desku; rychlost výroby se tím nemění.
 
@@ -51,7 +53,7 @@ V Nastavení lze zvolit jazyk, pojmenované předvolby pracovních ploch pro ví
 - Samostatný export TrackMaker do plochého ZIPu s konvenčními příponami Gerber vrstev a Excellon vrtáním, určený pro import celé desky místo postupného importu jednotlivých vrstev.
 - Podpora staršího palcového vrtání `M72`/`.drd` a jednoznačný desetinný metrický výstup Excellon pro spolehlivý import do TrackMakeru.
 - Samostatný ZIP export Wegstr se soubory `01-copper-isolation.txt`, volitelným `02-drill.txt` a volitelným `03-board-outline.txt`; používá zápornou osu Y od levého horního počátku podle vzorků Wegstr a v Nastavení nabízí hloubky, odsazení izolace, průměr frézy obrysu, posuvy, otáčky a číslo nástroje. Ve výchozím stavu `01-copper-isolation.txt` také projede každý uzavřený obrys desky v izolační hloubce, aby šel obrys naznačit bez samostatného vyřezání.
-- Přímé řízení Wegstr z aktuálního panelu se simulátorem, kontrolou odpovědí řadiče, funkcemi start/pauza/pokračování/STOP, pauzou při výměně nástroje, průběhem paketů, ovládáním vřetena, upravitelnými pracovními souřadnicemi, nulováním, bezpečným návratem na nulu a ručním krokováním nebo rychloposuvem X/Y/Z. Před výrobou je stále nutná fyzická přejímka na konkrétním stroji; autolevel zůstává do ověření sondy v původní aplikaci Wegstr.
+- Přímé řízení Wegstr z aktuálního panelu se simulátorem, kontrolou odpovědí řadiče, funkcemi start/pauza/pokračování/STOP, pauzou při výměně nástroje, průběhem paketů, ovládáním vřetena, upravitelnými pracovními souřadnicemi, nulováním, bezpečným návratem na nulu, ručním polohováním X/Y/Z, automatickým měřením povrchu pod obráběcími drahami a plynulou kompenzací Z. Před výrobou je stále nutná fyzická přejímka konkrétního stroje a sondy.
 - Postupný import, duplikování a mazání desek, přenositelné uložené projekty, podrobná diagnostika stavů, české, anglické, německé a francouzské rozhraní, náhled tisku samotného panelu a tisk.
 - Vlastní ikona PCB vložená do EXE, titulku a hlavního panelu aplikace, včetně lokalizovaného potvrzení před ukončením, automatické kontroly vydání po spuštění s přímým stažením Setup EXE nebo stažením a instalací a ruční kontroly jedním tlačítkem vedle Nastavení.
 - Rotovaný diagnostický log `gerber-panelizer.log` vedle spuštěného EXE; pokud je instalační složka chráněná proti zápisu, použije se `%LOCALAPPDATA%\GerberPanelizer\logs`.

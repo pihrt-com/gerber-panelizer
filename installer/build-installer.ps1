@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [string]$Version = '0.2.4',
+    [string]$Version = '0.3.1',
     [string]$OutputDirectory = (Join-Path $PSScriptRoot '..\artifacts\installer'),
     [switch]$CleanPublish
 )
