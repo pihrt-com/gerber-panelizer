@@ -12,7 +12,7 @@ Gerber Panelizer spojí více výrobních zakázek DPS do jednoho panelu pro CNC
 3. Tlačítkem **Vložit soubory** vyberte ZIP z Fusionu/EAGLE, RAR nebo samostatné Gerber a Excellon soubory. Později jej můžete použít znovu pro přidání dalších desek.
 4. Potvrďte, zda je panel určený pro Top, Bottom, nebo obě strany.
 5. Importované desky se ihned zobrazí na odkládací ploše vedle pracovní plochy. Přetáhněte je ručně dovnitř, nebo zvolte **Panelizovat** pro automatické rozmístění.
-6. Výsledek ověřte filtry vrstev a náhledem, potom tlačítkem **Export** vytvořte výrobní ZIP sadu.
+6. Výsledek ověřte filtry vrstev a náhledem, potom tlačítkem **Export** vytvořte výrobní ZIP sadu, tlačítkem **Export Wegstr** samostatný G-code balíček nebo otevřete **Přímé řízení Wegstr** a připravte aktuální panel pro simulátor či připojený řadič.
 
 V horní liště použijte **Nový projekt**, **Uložit projekt** a **Otevřít projekt**, chcete-li rozdělaný panel dokončit později. Projekt uloží relativní cesty ke zdrojovým archivům nebo souborům, zvolené desky i jejich ruční umístění; při přesunu na jiný počítač jej ponechte vedle zdrojových výrobních dat.
 
@@ -46,6 +46,12 @@ Použijte **Exportovat nastavení** pro uložení přenosné konfigurace a **Imp
 
 ![Nastavení po uložení](../images/czech-settings-saved.png)
 
+## Přímé řízení Wegstr
+
+Samostatná záložka **Přímé řízení Wegstr** použije aktuální panel a profil Wegstr bez ukládání mezilehlého souboru. Během přípravy a kontroly operací ponechte zapnutý simulátor. Ruční ovládání X/Y/Z podporuje souvislý pohyb při držení tlačítka na 2–100 %, jeden krokovací paket na stisknutí při 1 % a samostatný rychloposuv 100 % pro najetí nad desku; ruční nastavení nemění řezné ani vrtací posuvy. Záložka dále nabízí úpravu pracovních souřadnic, nulování jednotlivých os i XYZ, ovládání vřetena, bezpečný návrat na nulu, start, pauzu/pokračování, STOP, zastavení při výměně nástroje a průběh paketů.
+
+Podrobný protokol, přesné porovnání s původní aplikací, kontrolní seznam fyzické přejímky a aktuálně nepodporovaný autolevel se sondou popisuje dokument [Přímé řízení Wegstr](WEGSTR_DIRECT_CONTROL.md).
+
 ## Tisk
 V Náhledu tisku ověřte měřítko a viditelné vrstvy, potom tiskněte přes standardní dialog Windows. Náhled i tisková úloha obsahují pouze pracovní plochu DPS, nikoli okno programu. Před tiskem vyberte Přizpůsobit stránce, skutečnou velikost, 75 % nebo 50 %, vypněte škálování tiskárny a změřte známou referenční vzdálenost. Výtisk slouží pro kontrolu nebo ruční šablonu, není to export pro stroj.
 
@@ -66,4 +72,4 @@ Varování, zachycené chyby, chyby úloh na pozadí a neočekávané pády se z
 | Stroj export odmítá | Zachovejte zdrojový archiv, ověřte názvy vrstev a vrtání očekávané strojem a proveďte malý testovací panel. |
 
 ## Bezpečnostní upozornění
-Gerber Panelizer připravuje souřadnicová data, neovládá stroj. Před spuštěním CNC vždy ověřte rozměry, počátek, průměry nástrojů, materiál, upnutí a bezpečnost vřetena.
+Gerber Panelizer připravuje souřadnicová data a ze samostatné záložky Wegstr může ovládat připojený stroj. Simulátor je výchozí a fyzické připojení vyžaduje výslovné potvrzení portu, tato opatření však nenahrazují dostupné nouzové zastavení ani dohled obsluhy. Před každou úlohou ověřte rozměry, kalibraci, směry os, počátek, průměry nástrojů, materiál, upnutí, bezpečné Z a volný prostor vřetena.

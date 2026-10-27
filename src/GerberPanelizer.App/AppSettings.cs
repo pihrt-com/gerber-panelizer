@@ -30,6 +30,10 @@ public sealed class AppSettings
     public double WegstrPlungeFeedMmPerMinute { get; set; } = 170;
     public int WegstrSpindleRpm { get; set; } = 12000;
     public int WegstrMillingToolNumber { get; set; } = 1;
+    public int WegstrCalibrationX { get; set; } = 2500;
+    public int WegstrCalibrationY { get; set; } = 2500;
+    public int WegstrCalibrationZ { get; set; } = 2500;
+    public int WegstrSpeedPercent { get; set; } = 100;
     public bool WegstrIncludeDrilling { get; set; } = true;
     public bool WegstrIncludeOutline { get; set; }
     public bool WegstrIncludeOutlineInCopper { get; set; } = true;

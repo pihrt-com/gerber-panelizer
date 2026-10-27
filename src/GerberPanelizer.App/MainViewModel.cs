@@ -68,6 +68,7 @@ public sealed class MainViewModel : ObservableObject
         PrintCommand = new(_ => Print());
         OpenSettingsCommand = new(_ => OpenSettings());
         CheckForUpdatesCommand = new(_ => CheckForUpdates(showCurrentResult: true), _ => !IsCheckingForUpdates);
+        WegstrMachine = new WegstrMachineViewModel(owner, PrepareWegstrPrograms, () => new WegstrDirectSettings(settings.WegstrCalibrationX, settings.WegstrCalibrationY, settings.WegstrCalibrationZ, settings.WegstrSpeedPercent, settings.WegstrSafeZMm));
         owner.Loaded += OnOwnerLoaded;
         AddStatus(StatusSeverity.Information, statusText, [L("DiagnosticsLogPath", AppLog.LogFilePath)]);
     }
@@ -94,6 +95,7 @@ public sealed class MainViewModel : ObservableObject
     public RelayCommand PrintCommand { get; }
     public RelayCommand OpenSettingsCommand { get; }
     public RelayCommand CheckForUpdatesCommand { get; }
+    public WegstrMachineViewModel WegstrMachine { get; }
     public string VersionCaption => $"v{BuildStamp.Version}";
     public string BuildCaption => $"{BuildStamp.DateUtc} · {BuildStamp.Revision}";
     public string WorkAreaCaption => $"{settings.WorkAreaWidthMm:0.##} × {settings.WorkAreaHeightMm:0.##} mm";
@@ -425,25 +427,7 @@ public sealed class MainViewModel : ObservableObject
         var temporaryArchivePath = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(dialog.FileName))!, $".{Path.GetFileNameWithoutExtension(dialog.FileName)}-{Guid.NewGuid():N}.tmp");
         try
         {
-            var profile = new WegstrMachineProfile
-            {
-                WorkAreaWidthMillimetres = settings.WorkAreaWidthMm,
-                WorkAreaHeightMillimetres = settings.WorkAreaHeightMm,
-                MaterialThicknessMillimetres = settings.WegstrMaterialThicknessMm,
-                SafeZMillimetres = settings.WegstrSafeZMm,
-                IsolationDepthMillimetres = settings.WegstrIsolationDepthMm,
-                IsolationOffsetMillimetres = settings.WegstrIsolationOffsetMm,
-                OutlineDepthMillimetres = settings.WegstrOutlineDepthMm,
-                OutlineToolDiameterMillimetres = settings.WegstrOutlineToolDiameterMm,
-                DrillingDepthMillimetres = settings.WegstrDrillingDepthMm,
-                MillingFeedMillimetresPerMinute = settings.WegstrMillingFeedMmPerMinute,
-                PlungeFeedMillimetresPerMinute = settings.WegstrPlungeFeedMmPerMinute,
-                SpindleRpm = settings.WegstrSpindleRpm,
-                MillingToolNumber = settings.WegstrMillingToolNumber,
-                IncludeDrilling = settings.WegstrIncludeDrilling,
-                IncludeOutline = settings.WegstrIncludeOutline,
-                IncludeOutlineInCopper = settings.WegstrIncludeOutlineInCopper,
-            };
+            var profile = CreateWegstrProfile();
             var result = wegstrExporter.Export(temporaryArchivePath, panelPlacements, profile);
             File.Move(temporaryArchivePath, dialog.FileName, overwrite: true);
             AddStatus(result.Warnings.Count == 0 ? StatusSeverity.Success : StatusSeverity.Warning, L("StatusWegstrExported", result.Entries.Count, Path.GetFileName(dialog.FileName), result.Warnings.Count), result.Warnings);
@@ -455,6 +439,32 @@ public sealed class MainViewModel : ObservableObject
             if (File.Exists(temporaryArchivePath)) File.Delete(temporaryArchivePath);
         }
     }
+
+    private WegstrProgramSet PrepareWegstrPrograms()
+    {
+        if (!TryGetPanelPlacements(out var panelPlacements)) throw new InvalidOperationException(L("StatusNoBoardsOnPanel"));
+        return wegstrExporter.BuildPrograms(panelPlacements, CreateWegstrProfile());
+    }
+
+    private WegstrMachineProfile CreateWegstrProfile() => new()
+    {
+        WorkAreaWidthMillimetres = settings.WorkAreaWidthMm,
+        WorkAreaHeightMillimetres = settings.WorkAreaHeightMm,
+        MaterialThicknessMillimetres = settings.WegstrMaterialThicknessMm,
+        SafeZMillimetres = settings.WegstrSafeZMm,
+        IsolationDepthMillimetres = settings.WegstrIsolationDepthMm,
+        IsolationOffsetMillimetres = settings.WegstrIsolationOffsetMm,
+        OutlineDepthMillimetres = settings.WegstrOutlineDepthMm,
+        OutlineToolDiameterMillimetres = settings.WegstrOutlineToolDiameterMm,
+        DrillingDepthMillimetres = settings.WegstrDrillingDepthMm,
+        MillingFeedMillimetresPerMinute = settings.WegstrMillingFeedMmPerMinute,
+        PlungeFeedMillimetresPerMinute = settings.WegstrPlungeFeedMmPerMinute,
+        SpindleRpm = settings.WegstrSpindleRpm,
+        MillingToolNumber = settings.WegstrMillingToolNumber,
+        IncludeDrilling = settings.WegstrIncludeDrilling,
+        IncludeOutline = settings.WegstrIncludeOutline,
+        IncludeOutlineInCopper = settings.WegstrIncludeOutlineInCopper,
+    };
 
     private void ExportTrackMaker()
     {

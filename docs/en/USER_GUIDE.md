@@ -13,7 +13,7 @@ The export is one ZIP production package. The package contains one Gerber file f
 3. Use **Import files** to choose Fusion/EAGLE ZIP files, RAR files, or individual Gerber and Excellon files. You can repeat this later to add more boards.
 4. Confirm whether the panel is for Top, Bottom, or both sides.
 5. Imported boards appear immediately in the staging area beside the work area. Drag them inside manually or select **Panelize** for automatic arrangement.
-6. Check the result with the layer filters and preview, then select **Export ZIP** for Gerber/Excellon or **Export Wegstr** for the separate machine G-code package.
+6. Check the result with the layer filters and preview, then select **Export ZIP** for Gerber/Excellon, **Export Wegstr** for the separate G-code package, or open **Direct Wegstr control** to prepare the current panel for a simulator or connected controller.
 
 Use **New project**, **Save project**, and **Open project** in the top bar to resume an unfinished panel. A project stores relative paths to its source archives or files, its chosen boards, and manual board positions; keep it beside the source manufacturing data when moving it to another computer.
 
@@ -69,6 +69,12 @@ The isolation program unions supported circular traces and circle, rectangle, or
 
 See [Wegstr G-code](WEGSTR_GCODE.md) for the exact generated command subset, sample programs, and known limitations.
 
+## Direct Wegstr control
+
+The separate **Direct Wegstr control** tab uses the current panel and Wegstr profile without writing an intermediate file. Keep the simulator selected while preparing and checking operations. Manual X/Y/Z controls support press-and-hold movement at 2–100%, one packet per click at 1%, and a dedicated 100% rapid for positioning above the board; this manual control does not change cutting or drilling feeds. The tab also provides editable work coordinates, axis and combined zeroing, spindle control, safe-Z return to zero, start, pause/continue, STOP, tool-change pauses, and packet progress.
+
+See [Direct Wegstr control](WEGSTR_DIRECT_CONTROL.md) for protocol evidence, the exact original-application parity table, the physical acceptance checklist, and the currently unsupported probe auto-level function.
+
 ## Printing
 
 Use Print Preview to verify scale and visible layers, then print through the standard Windows printer dialog. The preview and print job contain only the PCB work area, never the application window. Select Fit to page, actual size, 75 %, or 50 % before printing; disable printer scaling and confirm that a known reference distance measures correctly. A printout is for review or a manual template; it is not the machine export.
@@ -90,4 +96,4 @@ Warnings, handled errors, background-task failures, and unexpected crashes are w
 
 ## Safety note
 
-Gerber Panelizer prepares coordinate data; it does not operate the machine. Verify all dimensions, origin, tool diameters, material setup, clamps, and spindle safety before running a CNC job.
+Gerber Panelizer can prepare coordinate data and, from the dedicated Wegstr tab, operate a connected machine. The simulator is the default and physical control requires an explicit port confirmation, but these safeguards do not replace a reachable emergency stop or operator supervision. Verify all dimensions, calibration, axis directions, origin, tool diameters, material setup, clamps, safe Z, and spindle clearance before every CNC job.

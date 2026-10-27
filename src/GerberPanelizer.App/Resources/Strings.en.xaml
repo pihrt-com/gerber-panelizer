@@ -155,4 +155,75 @@
     <sys:String x:Key="StatusTrackMakerExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exported {0} TrackMaker file(s) to {1}. {2} warning(s).</sys:String>
     <sys:String x:Key="StatusTrackMakerExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">TrackMaker export failed: {0}</sys:String>
     <sys:String x:Key="TrackMakerExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">The TrackMaker ZIP was successfully exported to:&#10;{0}&#10;&#10;It contains flat standard Gerber and Excellon files for importing the complete board. Verify the layers and toolpaths in TrackMaker before milling.</sys:String>
+    <sys:String x:Key="PanelTab" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panel</sys:String>
+    <sys:String x:Key="WegstrDirectTab" xmlns:sys="clr-namespace:System;assembly=mscorlib">Direct Wegstr control</sys:String>
+    <sys:String x:Key="WegstrDirectSafetyTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Machine safety</sys:String>
+    <sys:String x:Key="WegstrDirectSafetyText" xmlns:sys="clr-namespace:System;assembly=mscorlib">The simulator is enabled by default. Before connecting hardware, verify the work origin, clamping, tool, safe Z height, and access to the emergency stop.</sys:String>
+    <sys:String x:Key="WegstrConnection" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connection</sys:String>
+    <sys:String x:Key="WegstrSimulator" xmlns:sys="clr-namespace:System;assembly=mscorlib">Simulator (safe default)</sys:String>
+    <sys:String x:Key="WegstrSimulatorName" xmlns:sys="clr-namespace:System;assembly=mscorlib">simulator</sys:String>
+    <sys:String x:Key="WegstrSerialPort" xmlns:sys="clr-namespace:System;assembly=mscorlib">Serial port</sys:String>
+    <sys:String x:Key="WegstrRefresh" xmlns:sys="clr-namespace:System;assembly=mscorlib">Refresh</sys:String>
+    <sys:String x:Key="WegstrConnect" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connect</sys:String>
+    <sys:String x:Key="WegstrDisconnect" xmlns:sys="clr-namespace:System;assembly=mscorlib">Disconnect</sys:String>
+    <sys:String x:Key="WegstrPrepare" xmlns:sys="clr-namespace:System;assembly=mscorlib">Prepare panel data</sys:String>
+    <sys:String x:Key="WegstrPrepareHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Builds operations directly from the current panel and Wegstr settings. Nothing is exported to disk.</sys:String>
+    <sys:String x:Key="WegstrOperations" xmlns:sys="clr-namespace:System;assembly=mscorlib">Prepared operations</sys:String>
+    <sys:String x:Key="WegstrCurrentTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Current tool</sys:String>
+    <sys:String x:Key="WegstrControl" xmlns:sys="clr-namespace:System;assembly=mscorlib">Job control</sys:String>
+    <sys:String x:Key="WegstrStartContinue" xmlns:sys="clr-namespace:System;assembly=mscorlib">Start / Continue</sys:String>
+    <sys:String x:Key="WegstrPause" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pause</sys:String>
+    <sys:String x:Key="WegstrStop" xmlns:sys="clr-namespace:System;assembly=mscorlib">STOP + spindle off</sys:String>
+    <sys:String x:Key="WegstrManualControl" xmlns:sys="clr-namespace:System;assembly=mscorlib">Manual XYZ control</sys:String>
+    <sys:String x:Key="WegstrGoToZero" xmlns:sys="clr-namespace:System;assembly=mscorlib">Return to zero</sys:String>
+    <sys:String x:Key="WegstrZeroAll" xmlns:sys="clr-namespace:System;assembly=mscorlib">Zero XYZ</sys:String>
+    <sys:String x:Key="WegstrSpindle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Spindle on / off</sys:String>
+    <sys:String x:Key="WegstrRapid" xmlns:sys="clr-namespace:System;assembly=mscorlib">Rapid 100%</sys:String>
+    <sys:String x:Key="WegstrSteppingHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">1 = stepping</sys:String>
+    <sys:String x:Key="WegstrRapidHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">100 = rapid</sys:String>
+    <sys:String x:Key="WegstrManualHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Manual motion follows Wegstr 3.2.0: hold a direction at 2–100%; at 1%, each press sends one stepping packet. STOP also interrupts return-to-zero.</sys:String>
+    <sys:String x:Key="WegstrCalibrationX" xmlns:sys="clr-namespace:System;assembly=mscorlib">X calibration (steps / 10 mm)</sys:String>
+    <sys:String x:Key="WegstrCalibrationY" xmlns:sys="clr-namespace:System;assembly=mscorlib">Y calibration (steps / 10 mm)</sys:String>
+    <sys:String x:Key="WegstrCalibrationZ" xmlns:sys="clr-namespace:System;assembly=mscorlib">Z calibration (steps / 10 mm)</sys:String>
+    <sys:String x:Key="WegstrSpeedPercent" xmlns:sys="clr-namespace:System;assembly=mscorlib">Machine speed (%)</sys:String>
+    <sys:String x:Key="WegstrModeStepping" xmlns:sys="clr-namespace:System;assembly=mscorlib">Stepping: 3 controller steps per click</sys:String>
+    <sys:String x:Key="WegstrModeContinuous" xmlns:sys="clr-namespace:System;assembly=mscorlib">Continuous manual movement: {0}%</sys:String>
+    <sys:String x:Key="WegstrStatusSimulatorSelected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Simulator is selected. Prepare a job from the current panel.</sys:String>
+    <sys:String x:Key="WegstrStatusNoPorts" xmlns:sys="clr-namespace:System;assembly=mscorlib">No serial ports were found. Simulator remains available.</sys:String>
+    <sys:String x:Key="WegstrStatusPortsFound" xmlns:sys="clr-namespace:System;assembly=mscorlib">Found {0} serial port(s). No port has been opened.</sys:String>
+    <sys:String x:Key="WegstrStatusPreparing" xmlns:sys="clr-namespace:System;assembly=mscorlib">Preparing Wegstr toolpaths and packets…</sys:String>
+    <sys:String x:Key="WegstrStatusPrepared" xmlns:sys="clr-namespace:System;assembly=mscorlib">Prepared {0} operation(s). Review the selected operation before starting.</sys:String>
+    <sys:String x:Key="WegstrStatusWarnings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Warnings: {0}</sys:String>
+    <sys:String x:Key="WegstrStatusPreparationFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Preparation failed: {0}</sys:String>
+    <sys:String x:Key="WegstrConfirmConnect" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connect to {0} at 9600 8N1?&#10;&#10;The application will send a zero-motion identification packet. Make sure the emergency stop is reachable and the spindle is clear.</sys:String>
+    <sys:String x:Key="WegstrConfirmConnectTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connect Wegstr</sys:String>
+    <sys:String x:Key="WegstrStatusConnectedReady" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connected to {0}; machine reports ready.</sys:String>
+    <sys:String x:Key="WegstrStatusConnectedOverload" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connected to {0}; spindle overload is active.</sys:String>
+    <sys:String x:Key="WegstrStatusConnectedReleased" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connected to {0}; machine release/emergency state is active.</sys:String>
+    <sys:String x:Key="WegstrStatusConnectionFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connection failed: {0}</sys:String>
+    <sys:String x:Key="WegstrStatusDisconnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Disconnected. Spindle-off was requested before closing the port.</sys:String>
+    <sys:String x:Key="WegstrStatusResuming" xmlns:sys="clr-namespace:System;assembly=mscorlib">Resuming after the acknowledged packet.</sys:String>
+    <sys:String x:Key="WegstrConfirmStart" xmlns:sys="clr-namespace:System;assembly=mscorlib">Start '{0}' on {1}?&#10;&#10;Packets: {2:N0}&#10;Estimated motion time: {3}&#10;&#10;Verify the work origin, tool, clamping, safe Z and spindle clearance.</sys:String>
+    <sys:String x:Key="WegstrConfirmStartTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Start Wegstr job</sys:String>
+    <sys:String x:Key="WegstrStatusToolChange" xmlns:sys="clr-namespace:System;assembly=mscorlib">Tool change required: install T{0}, then press Continue.</sys:String>
+    <sys:String x:Key="WegstrStatusPaused" xmlns:sys="clr-namespace:System;assembly=mscorlib">Paused after an acknowledged packet. Press Continue or Stop.</sys:String>
+    <sys:String x:Key="WegstrStatusRunning" xmlns:sys="clr-namespace:System;assembly=mscorlib">Running {0}: packet {1:N0} of {2:N0}.</sys:String>
+    <sys:String x:Key="WegstrStatusCompleted" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} completed. Spindle-off packet sent.</sys:String>
+    <sys:String x:Key="WegstrStatusStopped" xmlns:sys="clr-namespace:System;assembly=mscorlib">Job stopped. A spindle-off packet was sent.</sys:String>
+    <sys:String x:Key="WegstrStatusSafetyStop" xmlns:sys="clr-namespace:System;assembly=mscorlib">Job stopped for safety: {0}</sys:String>
+    <sys:String x:Key="WegstrStatusManualStep" xmlns:sys="clr-namespace:System;assembly=mscorlib">Manual {0}{1} step completed.</sys:String>
+    <sys:String x:Key="WegstrStatusManualMove" xmlns:sys="clr-namespace:System;assembly=mscorlib">Manual {0}{1} movement at {2}%. Release the button to stop.</sys:String>
+    <sys:String x:Key="WegstrStatusManualSafetyStop" xmlns:sys="clr-namespace:System;assembly=mscorlib">Manual movement stopped for safety: {0}</sys:String>
+    <sys:String x:Key="WegstrStatusSpindleOn" xmlns:sys="clr-namespace:System;assembly=mscorlib">Spindle switched on.</sys:String>
+    <sys:String x:Key="WegstrStatusSpindleOff" xmlns:sys="clr-namespace:System;assembly=mscorlib">Spindle switched off.</sys:String>
+    <sys:String x:Key="WegstrStatusSpindleFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Spindle command failed safely: {0}</sys:String>
+    <sys:String x:Key="WegstrConfirmReturnZero" xmlns:sys="clr-namespace:System;assembly=mscorlib">Return to the displayed work zero?&#10;&#10;The machine will first raise Z to the configured safe height, then move X/Y to zero, and finally move Z to zero. The displayed coordinates must match the real machine position.</sys:String>
+    <sys:String x:Key="WegstrConfirmReturnZeroTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Return Wegstr to zero</sys:String>
+    <sys:String x:Key="WegstrStatusReturnZeroStopped" xmlns:sys="clr-namespace:System;assembly=mscorlib">Return to zero stopped after an acknowledged packet.</sys:String>
+    <sys:String x:Key="WegstrStatusReturnedZero" xmlns:sys="clr-namespace:System;assembly=mscorlib">Machine returned to the displayed work zero.</sys:String>
+    <sys:String x:Key="WegstrStatusReturnZeroSafetyStop" xmlns:sys="clr-namespace:System;assembly=mscorlib">Return to zero stopped for safety: {0}</sys:String>
+    <sys:String x:Key="WegstrStatusCoordinatesReset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Displayed work coordinates were reset; no motion command was sent.</sys:String>
+    <sys:String x:Key="WegstrStatusPauseRequested" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pause requested; waiting for the current packet acknowledgement.</sys:String>
+    <sys:String x:Key="WegstrStatusStoppingJob" xmlns:sys="clr-namespace:System;assembly=mscorlib">Stopping after the current serial operation…</sys:String>
+    <sys:String x:Key="WegstrStatusStoppingManual" xmlns:sys="clr-namespace:System;assembly=mscorlib">Stopping manual movement after the current acknowledged packet…</sys:String>
 </ResourceDictionary>

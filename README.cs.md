@@ -1,10 +1,10 @@
 # Gerber Panelizer
 
-## Verze 0.2.4 - 2026-10-23
+## Verze 0.3.0 - 2026-10-27
 
-## Aktuální změny — 2026-10-23
+## Aktuální změny — 2026-10-26
 
-Verze 0.2.4 opravuje aktualizátor Setup EXE: dočasně stažený soubor se nyní před atomickým nahrazením cílového souboru uzavře. Stáhnout i Stáhnout a nainstalovat proto ve Windows neskončí chybou zamknutého souboru.
+Verze 0.3.0 přidává samostatnou záložku **Přímé řízení Wegstr**. Operace izolace, vrtání a obrysu připraví přímo z aktuálního panelu, v paměti je přeloží do ověřeného sériového protokolu Wegstr 3.2.0 a spustí je přes bezpečný výchozí simulátor nebo výslovně potvrzené připojení 9600 8N1. Ruční polohování X/Y/Z odpovídá původní aplikaci: tlačítko lze držet, při 1 % provede jedno stisknutí přesný krok a tlačítko 100 % slouží k rychlému najetí na desku; rychlost výroby se tím nemění.
 
 Nastavení nyní ukládá pojmenované předvolby pracovních ploch pro více strojů. Aktivní plochu lze přepnout v rozbalovacím seznamu přímo v panelu vrstev; okamžitě se použije pro náhled, panelizaci, tisk i všechny exporty. Filtry vrstev mají podobu barevných tlačítek, která při vypnutí zešednou. Přibylo také tlačítko Export TrackMaker: vytvoří plochý ZIP se standardními Gerber a Excellon soubory s běžnými příponami vrstev pro import celé desky v TrackMakeru.
 
@@ -51,6 +51,7 @@ V Nastavení lze zvolit jazyk, pojmenované předvolby pracovních ploch pro ví
 - Samostatný export TrackMaker do plochého ZIPu s konvenčními příponami Gerber vrstev a Excellon vrtáním, určený pro import celé desky místo postupného importu jednotlivých vrstev.
 - Podpora staršího palcového vrtání `M72`/`.drd` a jednoznačný desetinný metrický výstup Excellon pro spolehlivý import do TrackMakeru.
 - Samostatný ZIP export Wegstr se soubory `01-copper-isolation.txt`, volitelným `02-drill.txt` a volitelným `03-board-outline.txt`; používá zápornou osu Y od levého horního počátku podle vzorků Wegstr a v Nastavení nabízí hloubky, odsazení izolace, průměr frézy obrysu, posuvy, otáčky a číslo nástroje. Ve výchozím stavu `01-copper-isolation.txt` také projede každý uzavřený obrys desky v izolační hloubce, aby šel obrys naznačit bez samostatného vyřezání.
+- Přímé řízení Wegstr z aktuálního panelu se simulátorem, kontrolou odpovědí řadiče, funkcemi start/pauza/pokračování/STOP, pauzou při výměně nástroje, průběhem paketů, ovládáním vřetena, upravitelnými pracovními souřadnicemi, nulováním, bezpečným návratem na nulu a ručním krokováním nebo rychloposuvem X/Y/Z. Před výrobou je stále nutná fyzická přejímka na konkrétním stroji; autolevel zůstává do ověření sondy v původní aplikaci Wegstr.
 - Postupný import, duplikování a mazání desek, přenositelné uložené projekty, podrobná diagnostika stavů, české, anglické, německé a francouzské rozhraní, náhled tisku samotného panelu a tisk.
 - Vlastní ikona PCB vložená do EXE, titulku a hlavního panelu aplikace, včetně lokalizovaného potvrzení před ukončením, automatické kontroly vydání po spuštění s přímým stažením Setup EXE nebo stažením a instalací a ruční kontroly jedním tlačítkem vedle Nastavení.
 - Rotovaný diagnostický log `gerber-panelizer.log` vedle spuštěného EXE; pokud je instalační složka chráněná proti zápisu, použije se `%LOCALAPPDATA%\GerberPanelizer\logs`.
@@ -59,6 +60,7 @@ V Nastavení lze zvolit jazyk, pojmenované předvolby pracovních ploch pro ví
 
 - [Uživatelská příručka](docs/cs/PRIRUCKA_UZIVATELE.md)
 - [G-code pro Wegstr: příkazy, příklady a omezení](docs/cs/WEGSTR_GCODE.md)
+- [Přímé řízení Wegstr, ověřený protokol a bezpečnostní kontrola](docs/cs/WEGSTR_DIRECT_CONTROL.md)
 - [User guide](docs/en/USER_GUIDE.md)
 - [Technická architektura](docs/cs/ARCHITEKTURA.md)
 - [Technical architecture](docs/en/ARCHITECTURE.md)

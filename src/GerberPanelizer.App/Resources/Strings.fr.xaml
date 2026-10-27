@@ -114,4 +114,35 @@
     <sys:String x:Key="StatusTrackMakerExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} fichier(s) TrackMaker exporté(s) vers {1}. {2} avertissement(s).</sys:String>
     <sys:String x:Key="StatusTrackMakerExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Échec de l’export TrackMaker : {0}</sys:String>
     <sys:String x:Key="TrackMakerExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Le ZIP TrackMaker a été exporté vers :&#10;{0}&#10;&#10;Il contient des fichiers Gerber et Excellon standards à plat pour importer la carte complète. Vérifiez les couches et les parcours d’outil dans TrackMaker avant le fraisage.</sys:String>
+    <sys:String x:Key="PanelTab" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panneau</sys:String>
+    <sys:String x:Key="WegstrDirectTab" xmlns:sys="clr-namespace:System;assembly=mscorlib">Commande directe Wegstr</sys:String>
+    <sys:String x:Key="WegstrDirectSafetyTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Sécurité de la machine</sys:String>
+    <sys:String x:Key="WegstrDirectSafetyText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Le simulateur est activé par défaut. Avant la connexion, vérifiez l'origine, le bridage, l'outil, la hauteur Z sûre et l'arrêt d'urgence.</sys:String>
+    <sys:String x:Key="WegstrConnection" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connexion</sys:String>
+    <sys:String x:Key="WegstrSimulator" xmlns:sys="clr-namespace:System;assembly=mscorlib">Simulateur (valeur sûre)</sys:String>
+    <sys:String x:Key="WegstrSimulatorName" xmlns:sys="clr-namespace:System;assembly=mscorlib">simulateur</sys:String>
+    <sys:String x:Key="WegstrSerialPort" xmlns:sys="clr-namespace:System;assembly=mscorlib">Port série</sys:String>
+    <sys:String x:Key="WegstrRefresh" xmlns:sys="clr-namespace:System;assembly=mscorlib">Actualiser</sys:String>
+    <sys:String x:Key="WegstrConnect" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connecter</sys:String>
+    <sys:String x:Key="WegstrDisconnect" xmlns:sys="clr-namespace:System;assembly=mscorlib">Déconnecter</sys:String>
+    <sys:String x:Key="WegstrPrepare" xmlns:sys="clr-namespace:System;assembly=mscorlib">Préparer les données</sys:String>
+    <sys:String x:Key="WegstrPrepareHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Crée les opérations depuis le panneau et les réglages Wegstr actuels, sans export de fichier.</sys:String>
+    <sys:String x:Key="WegstrOperations" xmlns:sys="clr-namespace:System;assembly=mscorlib">Opérations préparées</sys:String>
+    <sys:String x:Key="WegstrCurrentTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Outil actuel</sys:String>
+    <sys:String x:Key="WegstrControl" xmlns:sys="clr-namespace:System;assembly=mscorlib">Commande du travail</sys:String>
+    <sys:String x:Key="WegstrStartContinue" xmlns:sys="clr-namespace:System;assembly=mscorlib">Démarrer / Continuer</sys:String>
+    <sys:String x:Key="WegstrPause" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pause</sys:String>
+    <sys:String x:Key="WegstrStop" xmlns:sys="clr-namespace:System;assembly=mscorlib">STOP + broche arrêtée</sys:String>
+    <sys:String x:Key="WegstrManualControl" xmlns:sys="clr-namespace:System;assembly=mscorlib">Commande manuelle XYZ</sys:String>
+    <sys:String x:Key="WegstrGoToZero" xmlns:sys="clr-namespace:System;assembly=mscorlib">Retour à zéro</sys:String>
+    <sys:String x:Key="WegstrZeroAll" xmlns:sys="clr-namespace:System;assembly=mscorlib">Mettre XYZ à zéro</sys:String>
+    <sys:String x:Key="WegstrSpindle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Broche marche / arrêt</sys:String>
+    <sys:String x:Key="WegstrRapid" xmlns:sys="clr-namespace:System;assembly=mscorlib">Rapide 100 %</sys:String>
+    <sys:String x:Key="WegstrSteppingHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">1 = pas à pas</sys:String>
+    <sys:String x:Key="WegstrRapidHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">100 = rapide</sys:String>
+    <sys:String x:Key="WegstrManualHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Le mouvement manuel suit Wegstr 3.2.0 : maintenir une direction entre 2 et 100 % ; à 1 %, chaque pression envoie un paquet pas à pas. STOP interrompt aussi le retour à zéro.</sys:String>
+    <sys:String x:Key="WegstrCalibrationX" xmlns:sys="clr-namespace:System;assembly=mscorlib">Calibration X (pas / 10 mm)</sys:String>
+    <sys:String x:Key="WegstrCalibrationY" xmlns:sys="clr-namespace:System;assembly=mscorlib">Calibration Y (pas / 10 mm)</sys:String>
+    <sys:String x:Key="WegstrCalibrationZ" xmlns:sys="clr-namespace:System;assembly=mscorlib">Calibration Z (pas / 10 mm)</sys:String>
+    <sys:String x:Key="WegstrSpeedPercent" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vitesse machine (%)</sys:String>
 </ResourceDictionary>

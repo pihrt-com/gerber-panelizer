@@ -26,6 +26,10 @@ public sealed class SettingsViewModel : ObservableObject
     private double wegstrPlungeFeedMmPerMinute;
     private int wegstrSpindleRpm;
     private int wegstrMillingToolNumber;
+    private int wegstrCalibrationX;
+    private int wegstrCalibrationY;
+    private int wegstrCalibrationZ;
+    private int wegstrSpeedPercent;
     private bool wegstrIncludeDrilling;
     private bool wegstrIncludeOutline;
     private bool wegstrIncludeOutlineInCopper;
@@ -59,6 +63,10 @@ public sealed class SettingsViewModel : ObservableObject
         wegstrPlungeFeedMmPerMinute = settings.WegstrPlungeFeedMmPerMinute;
         wegstrSpindleRpm = settings.WegstrSpindleRpm;
         wegstrMillingToolNumber = settings.WegstrMillingToolNumber;
+        wegstrCalibrationX = settings.WegstrCalibrationX;
+        wegstrCalibrationY = settings.WegstrCalibrationY;
+        wegstrCalibrationZ = settings.WegstrCalibrationZ;
+        wegstrSpeedPercent = settings.WegstrSpeedPercent;
         wegstrIncludeDrilling = settings.WegstrIncludeDrilling;
         wegstrIncludeOutline = settings.WegstrIncludeOutline;
         wegstrIncludeOutlineInCopper = settings.WegstrIncludeOutlineInCopper;
@@ -88,6 +96,10 @@ public sealed class SettingsViewModel : ObservableObject
     public double WegstrPlungeFeedMmPerMinute { get => wegstrPlungeFeedMmPerMinute; set => SetProperty(ref wegstrPlungeFeedMmPerMinute, value); }
     public int WegstrSpindleRpm { get => wegstrSpindleRpm; set => SetProperty(ref wegstrSpindleRpm, value); }
     public int WegstrMillingToolNumber { get => wegstrMillingToolNumber; set => SetProperty(ref wegstrMillingToolNumber, value); }
+    public int WegstrCalibrationX { get => wegstrCalibrationX; set => SetProperty(ref wegstrCalibrationX, value); }
+    public int WegstrCalibrationY { get => wegstrCalibrationY; set => SetProperty(ref wegstrCalibrationY, value); }
+    public int WegstrCalibrationZ { get => wegstrCalibrationZ; set => SetProperty(ref wegstrCalibrationZ, value); }
+    public int WegstrSpeedPercent { get => wegstrSpeedPercent; set => SetProperty(ref wegstrSpeedPercent, value); }
     public bool WegstrIncludeDrilling { get => wegstrIncludeDrilling; set => SetProperty(ref wegstrIncludeDrilling, value); }
     public bool WegstrIncludeOutline { get => wegstrIncludeOutline; set => SetProperty(ref wegstrIncludeOutline, value); }
     public bool WegstrIncludeOutlineInCopper { get => wegstrIncludeOutlineInCopper; set => SetProperty(ref wegstrIncludeOutlineInCopper, value); }
@@ -118,7 +130,7 @@ public sealed class SettingsViewModel : ObservableObject
             MessageBox.Show(LocalizationService.Instance["InvalidLayerColours"], "Gerber Panelizer", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
-        if (WegstrMaterialThicknessMm <= 0 || WegstrSafeZMm <= 0 || WegstrIsolationDepthMm >= 0 || WegstrIsolationOffsetMm <= 0 || WegstrOutlineDepthMm >= 0 || WegstrOutlineToolDiameterMm <= 0 || WegstrDrillingDepthMm >= 0 || WegstrMillingFeedMmPerMinute <= 0 || WegstrPlungeFeedMmPerMinute <= 0 || WegstrSpindleRpm is < 1 or > 100000 || WegstrMillingToolNumber is < 1 or > 99)
+        if (WegstrMaterialThicknessMm <= 0 || WegstrSafeZMm <= 0 || WegstrIsolationDepthMm >= 0 || WegstrIsolationOffsetMm <= 0 || WegstrOutlineDepthMm >= 0 || WegstrOutlineToolDiameterMm <= 0 || WegstrDrillingDepthMm >= 0 || WegstrMillingFeedMmPerMinute <= 0 || WegstrPlungeFeedMmPerMinute <= 0 || WegstrSpindleRpm is < 1 or > 100000 || WegstrMillingToolNumber is < 1 or > 99 || WegstrCalibrationX is < 2400 or > 2600 || WegstrCalibrationY is < 2400 or > 2600 || WegstrCalibrationZ is < 2400 or > 2600 || WegstrSpeedPercent is < 1 or > 100)
         {
             MessageBox.Show(LocalizationService.Instance["InvalidWegstrSettings"], "Gerber Panelizer", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
@@ -163,6 +175,10 @@ public sealed class SettingsViewModel : ObservableObject
         WegstrPlungeFeedMmPerMinute = WegstrPlungeFeedMmPerMinute,
         WegstrSpindleRpm = WegstrSpindleRpm,
         WegstrMillingToolNumber = WegstrMillingToolNumber,
+        WegstrCalibrationX = WegstrCalibrationX,
+        WegstrCalibrationY = WegstrCalibrationY,
+        WegstrCalibrationZ = WegstrCalibrationZ,
+        WegstrSpeedPercent = WegstrSpeedPercent,
         WegstrIncludeDrilling = WegstrIncludeDrilling,
         WegstrIncludeOutline = WegstrIncludeOutline,
         WegstrIncludeOutlineInCopper = WegstrIncludeOutlineInCopper,
@@ -235,6 +251,10 @@ public sealed class SettingsViewModel : ObservableObject
             WegstrPlungeFeedMmPerMinute = imported.WegstrPlungeFeedMmPerMinute;
             WegstrSpindleRpm = imported.WegstrSpindleRpm;
             WegstrMillingToolNumber = imported.WegstrMillingToolNumber;
+            WegstrCalibrationX = imported.WegstrCalibrationX;
+            WegstrCalibrationY = imported.WegstrCalibrationY;
+            WegstrCalibrationZ = imported.WegstrCalibrationZ;
+            WegstrSpeedPercent = imported.WegstrSpeedPercent;
             WegstrIncludeDrilling = imported.WegstrIncludeDrilling;
             WegstrIncludeOutline = imported.WegstrIncludeOutline;
             WegstrIncludeOutlineInCopper = imported.WegstrIncludeOutlineInCopper;

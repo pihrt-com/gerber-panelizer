@@ -10,6 +10,8 @@ using GerberPanelizer.Core.Parsing;
 namespace GerberPanelizer.Core.Exporting;
 
 public sealed record WegstrExportResult(string ArchivePath, IReadOnlyList<string> Entries, IReadOnlyList<string> Warnings);
+public sealed record WegstrProgram(string FileName, string DisplayName, string GCode);
+public sealed record WegstrProgramSet(IReadOnlyList<WegstrProgram> Programs, IReadOnlyList<string> Warnings);
 
 /// <summary>Writes Wegstr/Vectric-style metric G-code for copper isolation, drilling, and compensated board outlines.</summary>
 public sealed class WegstrGCodeExportService
@@ -20,24 +22,32 @@ public sealed class WegstrGCodeExportService
     public WegstrExportResult Export(string archivePath, IEnumerable<BoardPlacement> placements, WegstrMachineProfile profile)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(archivePath);
+        var programSet = BuildPrograms(placements, profile);
+        var entries = new List<string>();
+        Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(archivePath))!);
+        using var archive = ZipFile.Open(archivePath, ZipArchiveMode.Create);
+        foreach (var program in programSet.Programs) AddProgram(archive, entries, program.FileName, program.GCode);
+        return new WegstrExportResult(archivePath, entries, programSet.Warnings);
+    }
+
+    public WegstrProgramSet BuildPrograms(IEnumerable<BoardPlacement> placements, WegstrMachineProfile profile)
+    {
+        ArgumentNullException.ThrowIfNull(placements);
         ArgumentNullException.ThrowIfNull(profile);
         profile.Validate();
         var materialized = placements.ToList();
         if (materialized.Count == 0) throw new InvalidOperationException("At least one placed board is required for Wegstr export.");
 
         var warnings = new List<string>();
-        var entries = new List<string>();
+        var programs = new List<WegstrProgram>();
         var isolation = BuildIsolationProgram(materialized, profile, warnings);
         var drilling = profile.IncludeDrilling ? BuildDrillingProgram(materialized, profile, warnings) : null;
         var outline = profile.IncludeOutline ? BuildOutlineProgram(materialized, profile, warnings) : null;
-        if (isolation is null && drilling is null && outline is null) throw new InvalidOperationException("The panel contains no supported copper, profile paths, or drill hits for Wegstr export.");
-
-        Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(archivePath))!);
-        using var archive = ZipFile.Open(archivePath, ZipArchiveMode.Create);
-        AddProgram(archive, entries, "01-copper-isolation.txt", isolation);
-        AddProgram(archive, entries, "02-drill.txt", drilling);
-        AddProgram(archive, entries, "03-board-outline.txt", outline);
-        return new WegstrExportResult(archivePath, entries, warnings);
+        if (isolation is not null) programs.Add(new("01-copper-isolation.txt", "Copper isolation", isolation));
+        if (drilling is not null) programs.Add(new("02-drill.txt", "Drilling", drilling));
+        if (outline is not null) programs.Add(new("03-board-outline.txt", "Board outline", outline));
+        if (programs.Count == 0) throw new InvalidOperationException("The panel contains no supported copper, profile paths, or drill hits for Wegstr export.");
+        return new WegstrProgramSet(programs, warnings);
     }
 
     private static string? BuildIsolationProgram(IReadOnlyList<BoardPlacement> placements, WegstrMachineProfile profile, ICollection<string> warnings)

@@ -54,4 +54,10 @@ public partial class MainWindow : Window
 
         e.Cancel = confirmation != MessageBoxResult.Yes;
     }
+
+    protected override async void OnClosed(EventArgs e)
+    {
+        if (DataContext is MainViewModel viewModel) await viewModel.WegstrMachine.DisposeAsync();
+        base.OnClosed(e);
+    }
 }

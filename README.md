@@ -17,9 +17,9 @@ Gerber Panelizer is a lightweight Windows desktop application for preparing prin
 
 The application is implemented as a self-contained Windows x64 executable. It processes common metric and inch RS-274X Gerber and Excellon input locally without requiring a cloud service.
 
-## Latest update — 2026-10-23
+## Latest update — 2026-10-26
 
-Version 0.2.4 fixes the Setup EXE updater by closing the temporary download before atomically replacing the final file. Both the user-selected download and Download and install paths therefore work without the Windows file-lock error.
+Version 0.3.0 adds a dedicated **Direct Wegstr control** tab. It prepares isolation, drilling, and outline operations directly from the current panel, compiles them to the verified Wegstr 3.2.0 serial protocol in memory, and runs them through a safe-by-default simulator or an explicitly confirmed 9600 8N1 serial connection. Manual X/Y/Z positioning follows the original application's press-and-hold and one-click stepping behavior, with a 100% rapid button for moving to a board position; this manual setting does not change machining feeds.
 
 Version 0.2.3 stores named work-area presets for multiple machines. The active work area can be switched in the drop-down directly in the layer panel and is immediately used by preview, panelization, printing, and every export. Layer filters are colour buttons that turn grey when disabled. A new TrackMaker export creates a flat ZIP with standard Gerber and Excellon files using conventional layer extensions for importing the complete board in TrackMaker.
 
@@ -47,6 +47,7 @@ Settings provide the interface language, named machine work-area presets, safety
 - Separate TrackMaker export as a flat ZIP with conventional Gerber layer extensions and Excellon drilling data, intended for importing the complete board rather than importing layers one by one.
 - Legacy inch `M72`/`.drd` drilling support and explicit decimal metric Excellon output for reliable TrackMaker import.
 - Separate Wegstr ZIP export with `01-copper-isolation.txt`, optional `02-drill.txt`, and optional `03-board-outline.txt`; it uses negative Y from the top-left origin as in the supplied Wegstr samples and exposes depths, isolation offset, outline-cutter diameter, feeds, spindle speed, and tool number in Settings. By default, `01-copper-isolation.txt` also traces every closed board profile at isolation depth so its outline can be marked without generating a separate cut.
+- Direct Wegstr control from the current panel, with simulator-first connection, serial status and acknowledgement checks, start/pause/continue/STOP, tool-change pauses, packet progress, spindle control, editable work coordinates, zeroing, safe-Z return to zero, and manual X/Y/Z stepping or press-and-hold positioning rapid. Physical-machine acceptance is still required before production use, and auto-level probing remains in the original Wegstr application.
 - Incremental import, board duplication/deletion, portable saved projects, detailed status diagnostics, Czech, English, German, and French UI, panel-only print preview, and printing.
 - Custom PCB application icon embedded in the executable, title bar, and taskbar, a localized confirmation before exit, automatic GitHub Release checking after startup with direct Setup EXE download or download-and-install choices, and a retained manual update-check button beside Settings.
 - Rotating `gerber-panelizer.log` diagnostics beside the launched executable; when the installation folder is not writable, the log falls back to `%LOCALAPPDATA%\GerberPanelizer\logs`.
@@ -55,13 +56,14 @@ Settings provide the interface language, named machine work-area presets, safety
 
 - [User guide](docs/en/USER_GUIDE.md)
 - [Wegstr G-code commands, examples, and limitations](docs/en/WEGSTR_GCODE.md)
+- [Direct Wegstr control, verified protocol, and safety checklist](docs/en/WEGSTR_DIRECT_CONTROL.md)
 - [Uživatelská příručka](docs/cs/PRIRUCKA_UZIVATELE.md)
 - [Technical architecture](docs/en/ARCHITECTURE.md)
 - [Technická architektura](docs/cs/ARCHITEKTURA.md)
 
 ## Wegstr safety boundary
 
-The Wegstr exporter unions supported circular traces and circle, rectangle, or obround flashes from the selected copper layer, then offsets the resulting copper boundary by the configured tool-centre clearance. It rejects unsupported Gerber arcs and regions instead of silently approximating them, and skips unsupported trace apertures with a warning. Inspect every G-code program in the controller, confirm the work origin, tool-length offsets, cutter diameters, feeds, spindle speed, and depths, and perform a dry run above a sacrificial workpiece before machining.
+The Wegstr exporter and direct-control compiler union supported circular traces and circle, rectangle, or obround flashes from the selected copper layer, then offset the resulting copper boundary by the configured tool-centre clearance. Unsupported Gerber arcs and regions are rejected instead of silently approximated. Direct control never has more than one packet awaiting acknowledgement, stops on overload/release/timeout, and requests spindle-off on stop, disconnect, and shutdown, but software safeguards do not replace a physical emergency stop. Confirm the work origin, calibration, tool, clamping, safe Z, spindle clearance, and depths, then complete the documented simulator and raised-tool acceptance checklist before machining.
 
 ## Build
 

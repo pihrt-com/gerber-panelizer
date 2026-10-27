@@ -25,8 +25,8 @@
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Border" Property="Background" Value="#D8ECE8" /></Trigger>
-                            <Trigger Property="IsPressed" Value="True"><Setter TargetName="Border" Property="Background" Value="#C4E2DD" /></Trigger>
+                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Border" Property="Opacity" Value="0.90" /></Trigger>
+                            <Trigger Property="IsPressed" Value="True"><Setter TargetName="Border" Property="Opacity" Value="0.78" /></Trigger>
                             <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Border" Property="Opacity" Value="0.48" /></Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>

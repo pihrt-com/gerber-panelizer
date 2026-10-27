@@ -1,5 +1,13 @@
 # Change log
 
+## 0.3.0 - 2026-10-27
+
+- Add a separate direct Wegstr control tab that compiles the current panel operations in memory and sends the verified Wegstr 3.2.0 seven-byte protocol through either the safe simulator or an explicitly confirmed 9600 8N1 serial connection.
+- Add manual X/Y/Z press-and-hold movement, exact one-click stepping, a 100% positioning rapid, editable work coordinates, per-axis/all-axis zeroing, safe-Z return to zero, and spindle control without changing production feed behavior.
+- Add start, pause/continue, stop-after-acknowledgement, spindle-off shutdown, tool-change pauses, packet progress, controller-status handling, calibration settings, localized safety prompts, and protocol/compiler regression tests.
+- Add a clear rounded Panel/Wegstr navigation switch and use consistent rounded controls for connection, manual movement, spindle, rapid positioning, production, and STOP actions.
+- Document the reverse-engineered protocol evidence, original-app parity, safety boundary, and the requirement for physical machine acceptance before production use; auto-level probing remains in the original Wegstr application until its probe behavior can be verified on hardware.
+
 ## 0.2.4 - 2026-10-23
 
 - Fix the Setup EXE updater: it now closes the `*.partial` download file before replacing the selected destination, so both Download and Download and install work on Windows without a file-lock error.

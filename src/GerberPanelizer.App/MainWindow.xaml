@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:GerberPanelizer.App"
         Title="Gerber Panelizer" Icon="pack://application:,,,/Assets/gerber-panelizer-icon.png" Width="1360" Height="850" MinWidth="1050" MinHeight="680" WindowStartupLocation="CenterScreen" Background="#F3F7F6">
     <Window.Resources>
-        <Style x:Key="HeaderButton" TargetType="Button">
+        <Style x:Key="HeaderButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Foreground" Value="#E6F3F1" />
             <Setter Property="BorderBrush" Value="#4D8580" />
@@ -23,7 +23,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="SmallActionButton" TargetType="Button">
+        <Style x:Key="SmallActionButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Background" Value="#E5F1EF" />
             <Setter Property="Foreground" Value="#145C57" />
             <Setter Property="BorderBrush" Value="#C8E0DD" />
@@ -33,7 +33,7 @@
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="FontSize" Value="12" />
         </Style>
-        <Style x:Key="PrimaryButton" TargetType="Button">
+        <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Background" Value="#0B766E" />
             <Setter Property="Foreground" Value="White" />
             <Setter Property="BorderThickness" Value="0" />
@@ -62,6 +62,51 @@
             <Style.Triggers>
                 <Trigger Property="IsChecked" Value="False"><Setter Property="Background" Value="#C6D0CE" /><Setter Property="Foreground" Value="#647573" /></Trigger>
             </Style.Triggers>
+        </Style>
+        <Style x:Key="MainNavigationTab" TargetType="TabItem">
+            <Setter Property="MinWidth" Value="150" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+            <Setter Property="Padding" Value="20,10" />
+            <Setter Property="Background" Value="#E4EEEC" />
+            <Setter Property="Foreground" Value="#245651" />
+            <Setter Property="BorderBrush" Value="#C7DAD7" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border x:Name="NavigationBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="10"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter ContentSource="Header" HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#0B766E" />
+                                <Setter Property="Foreground" Value="White" />
+                                <Setter Property="BorderBrush" Value="#0B766E" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                    <Condition Property="IsSelected" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" Value="#D4E8E4" />
+                                <Setter Property="BorderBrush" Value="#8CBDB7" />
+                            </MultiTrigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="NavigationBorder" Property="Opacity" Value="0.48" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Window.Resources>
     <Window.InputBindings>
@@ -111,7 +156,9 @@
             </DockPanel>
         </Border>
 
-        <Grid Grid.Row="1" Margin="16">
+        <TabControl Grid.Row="1" Margin="16,12,16,16" BorderThickness="0" Background="Transparent" ItemContainerStyle="{StaticResource MainNavigationTab}">
+          <TabItem Header="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[PanelTab]}">
+           <Grid Margin="0,12,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="270" />
                 <ColumnDefinition Width="14" />
@@ -216,7 +263,12 @@
                     </StackPanel>
                 </Grid>
             </Grid>
-        </Grid>
+           </Grid>
+          </TabItem>
+          <TabItem Header="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrDirectTab]}">
+            <local:WegstrMachineView DataContext="{Binding WegstrMachine}" />
+          </TabItem>
+        </TabControl>
 
         <Expander Grid.Row="2" IsExpanded="{Binding IsStatusLogExpanded, Mode=TwoWay}" Background="#F8FBFA" BorderBrush="#D4E1DF" BorderThickness="1,1,0,0">
             <Expander.Header>
