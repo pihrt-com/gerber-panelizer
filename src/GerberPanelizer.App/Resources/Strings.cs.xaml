@@ -52,6 +52,7 @@
     <sys:String x:Key="LayerBottom" xmlns:sys="clr-namespace:System;assembly=mscorlib">Spodní vrstva</sys:String>
     <sys:String x:Key="LayerOutline" xmlns:sys="clr-namespace:System;assembly=mscorlib">Obrys</sys:String>
     <sys:String x:Key="LayerSilkscreen" xmlns:sys="clr-namespace:System;assembly=mscorlib">Potisk</sys:String>
+    <sys:String x:Key="WegstrMachinePositionColor" xmlns:sys="clr-namespace:System;assembly=mscorlib">Poloha hlavy Wegstr</sys:String>
     <sys:String x:Key="InvalidDimensions" xmlns:sys="clr-namespace:System;assembly=mscorlib">Rozměry pracovní plochy musí být větší než nula a mezery nesmí být záporné.</sys:String>
     <sys:String x:Key="InvalidLayerColours" xmlns:sys="clr-namespace:System;assembly=mscorlib">Všechny barvy vrstev musí být v platném hexadecimálním formátu #RRGGBB.</sys:String>
     <sys:String x:Key="SettingsReadFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Soubor s nastavením se nepodařilo načíst.</sys:String>
@@ -159,16 +160,26 @@
     <sys:String x:Key="WegstrDirectTab" xmlns:sys="clr-namespace:System;assembly=mscorlib">Přímé řízení Wegstr</sys:String>
     <sys:String x:Key="WegstrDirectSafetyTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Bezpečnost stroje</sys:String>
     <sys:String x:Key="WegstrDirectSafetyText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Ve výchozím stavu je aktivní simulátor. Před připojením stroje ověřte nulový bod, upnutí materiálu, nástroj, bezpečnou výšku Z a dostupnost nouzového zastavení.</sys:String>
+    <sys:String x:Key="WegstrDirectSafetyDismissHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Kliknutím upozornění potvrďte a skryjte.</sys:String>
     <sys:String x:Key="WegstrConnection" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připojení</sys:String>
     <sys:String x:Key="WegstrSimulator" xmlns:sys="clr-namespace:System;assembly=mscorlib">Simulátor (bezpečný výchozí režim)</sys:String>
+    <sys:String x:Key="WegstrSimulatorLabel" xmlns:sys="clr-namespace:System;assembly=mscorlib">Simulátor</sys:String>
     <sys:String x:Key="WegstrSimulatorName" xmlns:sys="clr-namespace:System;assembly=mscorlib">simulátoru</sys:String>
     <sys:String x:Key="WegstrSerialPort" xmlns:sys="clr-namespace:System;assembly=mscorlib">Sériový port</sys:String>
     <sys:String x:Key="WegstrRefresh" xmlns:sys="clr-namespace:System;assembly=mscorlib">Obnovit</sys:String>
     <sys:String x:Key="WegstrConnect" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připojit</sys:String>
     <sys:String x:Key="WegstrDisconnect" xmlns:sys="clr-namespace:System;assembly=mscorlib">Odpojit</sys:String>
+    <sys:String x:Key="WegstrUsbConnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">USB připojeno</sys:String>
+    <sys:String x:Key="WegstrSimulatorActive" xmlns:sys="clr-namespace:System;assembly=mscorlib">Je aktivní simulátor; ke stroji se neposílají žádné pakety.</sys:String>
+    <sys:String x:Key="WegstrConnectionNotConnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">USB stroj není připojen.</sys:String>
+    <sys:String x:Key="WegstrConnectionReady" xmlns:sys="clr-namespace:System;assembly=mscorlib">USB připojeno: {0}; stroj je připraven.</sys:String>
+    <sys:String x:Key="WegstrConnectionNotReady" xmlns:sys="clr-namespace:System;assembly=mscorlib">USB připojeno: {0}; stroj není připraven.</sys:String>
+    <sys:String x:Key="WegstrRecoverOperation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Obnovit operaci</sys:String>
+    <sys:String x:Key="WegstrRecoverOperationHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vypne vřeteno, vymaže měření a znovu ověří stav řadiče bez pohybu os.</sys:String>
     <sys:String x:Key="WegstrPrepare" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připravit data panelu</sys:String>
     <sys:String x:Key="WegstrPrepareHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vytvoří operace přímo z aktuálního panelu a nastavení Wegstr. Na disk se nic neexportuje.</sys:String>
     <sys:String x:Key="WegstrOperations" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připravené operace</sys:String>
+    <sys:String x:Key="WegstrOperationSummary" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0:N0} paketů • výměn nástroje: {1} • přibl. {2}</sys:String>
     <sys:String x:Key="WegstrCurrentTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Aktuální nástroj</sys:String>
     <sys:String x:Key="WegstrControl" xmlns:sys="clr-namespace:System;assembly=mscorlib">Průběh úlohy</sys:String>
     <sys:String x:Key="WegstrStartContinue" xmlns:sys="clr-namespace:System;assembly=mscorlib">Spustit / Pokračovat</sys:String>
@@ -193,6 +204,8 @@
     <sys:String x:Key="WegstrStatusPortsFound" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nalezeno sériových portů: {0}. Žádný port nebyl otevřen.</sys:String>
     <sys:String x:Key="WegstrStatusPreparing" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připravuji dráhy a pakety Wegstr…</sys:String>
     <sys:String x:Key="WegstrStatusPrepared" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připraveno operací: {0}. Před spuštěním zkontrolujte vybranou operaci.</sys:String>
+    <sys:String x:Key="WegstrStatusPreparedOperationsCleared" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připravené operace byly smazány, protože se změnil projekt.</sys:String>
+    <sys:String x:Key="WegstrStatusPreparingCompensation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připravuji kompenzovanou dráhu obrábění…</sys:String>
     <sys:String x:Key="WegstrStatusWarnings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Varování: {0}</sys:String>
     <sys:String x:Key="WegstrStatusPreparationFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Příprava se nezdařila: {0}</sys:String>
     <sys:String x:Key="WegstrConfirmConnect" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připojit se k {0} rychlostí 9600 8N1?&#10;&#10;Aplikace odešle identifikační paket bez pohybu. Nouzové zastavení musí být dostupné a prostor vřetena volný.</sys:String>
@@ -202,6 +215,21 @@
     <sys:String x:Key="WegstrStatusConnectedReleased" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připojeno k {0}; je aktivní uvolnění stroje nebo nouzový stav.</sys:String>
     <sys:String x:Key="WegstrStatusConnectionFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připojení se nezdařilo: {0}</sys:String>
     <sys:String x:Key="WegstrStatusDisconnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Odpojeno. Před uzavřením portu byl vyžádán povel k vypnutí vřetena.</sys:String>
+    <sys:String x:Key="WegstrStatusRecovered" xmlns:sys="clr-namespace:System;assembly=mscorlib">Operace byla obnovena; {0} hlásí připraveno. Před spuštěním zkontrolujte souřadnice.</sys:String>
+    <sys:String x:Key="WegstrStatusRecoveryFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Operaci nelze obnovit; řadič nehlásí připraveno ({0}).</sys:String>
+    <sys:String x:Key="WegstrStatusRecoveryRequiredAfterReset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Souřadnice byly vynulovány. Řadič po předchozí chybě není připraven; před měřením použijte Obnovit operaci.</sys:String>
+    <sys:String x:Key="WegstrMachinePosition" xmlns:sys="clr-namespace:System;assembly=mscorlib">Hlava stroje: X {0:F2}, Y {1:F2} mm</sys:String>
+    <sys:String x:Key="WegstrErrorNotConnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr není připojen.</sys:String>
+    <sys:String x:Key="WegstrErrorUnexpectedControllerResponse" xmlns:sys="clr-namespace:System;assembly=mscorlib">Řadič vrátil neočekávanou odpověď {0}.</sys:String>
+    <sys:String x:Key="WegstrErrorProbePreflightResponse" xmlns:sys="clr-namespace:System;assembly=mscorlib">Řadič před sondováním vrátil neočekávanou odpověď {0}.</sys:String>
+    <sys:String x:Key="WegstrErrorProbeResponse" xmlns:sys="clr-namespace:System;assembly=mscorlib">Řadič během sondování vrátil neočekávanou odpověď {0}.</sys:String>
+    <sys:String x:Key="WegstrErrorProbeLimit" xmlns:sys="clr-namespace:System;assembly=mscorlib">Sonda se nedotkla povrchu před dosažením limitu Z −10 mm.</sys:String>
+    <sys:String x:Key="WegstrErrorSpindleOverload" xmlns:sys="clr-namespace:System;assembly=mscorlib">Řadič hlásí přetížení vřetena.</sys:String>
+    <sys:String x:Key="WegstrErrorEmergency" xmlns:sys="clr-namespace:System;assembly=mscorlib">Řadič hlásí uvolnění stroje nebo nouzové zastavení.</sys:String>
+    <sys:String x:Key="WegstrErrorAcknowledgementTimeout" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr nepotvrdil paket do dvou sekund.</sys:String>
+    <sys:String x:Key="WegstrErrorSimulatorNotConnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Simulátor Wegstr není připojen.</sys:String>
+    <sys:String x:Key="WegstrErrorSerialPortNotConnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Sériový port Wegstr není připojen.</sys:String>
+    <sys:String x:Key="WegstrErrorPacketAlreadyPending" xmlns:sys="clr-namespace:System;assembly=mscorlib">Předchozí paket Wegstr ještě čeká na odpověď řadiče.</sys:String>
     <sys:String x:Key="WegstrStatusResuming" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pokračuji po potvrzeném paketu.</sys:String>
     <sys:String x:Key="WegstrConfirmStart" xmlns:sys="clr-namespace:System;assembly=mscorlib">Spustit „{0}“ na {1}?&#10;&#10;Paketů: {2:N0}&#10;Odhadovaný čas pohybu: {3}&#10;&#10;Ověřte pracovní počátek, nástroj, upnutí, bezpečné Z a volný prostor vřetena.</sys:String>
     <sys:String x:Key="WegstrConfirmStartTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Spustit úlohu Wegstr</sys:String>
@@ -242,6 +270,9 @@
     <sys:String x:Key="WegstrProbeTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Sonda</sys:String>
     <sys:String x:Key="WegstrStatusSurfaceMeasuring" xmlns:sys="clr-namespace:System;assembly=mscorlib">Měřím bod {0} z {1}; dotyk Z {2:F3} mm.</sys:String>
     <sys:String x:Key="WegstrStatusSurfaceMeasured" xmlns:sys="clr-namespace:System;assembly=mscorlib">Měření dokončeno: {0} bodů, korekce Z {1:F3} až {2:F3} mm. Kompenzace je zapnutá.</sys:String>
+    <sys:String x:Key="WegstrStatusSurfaceReadyToStart" xmlns:sys="clr-namespace:System;assembly=mscorlib">Měření dokončeno: {0} bodů, korekce Z {1:F3} až {2:F3} mm. Kompenzace je zapnutá, vybrána je operace {3}; můžete spustit obrábění.</sys:String>
+    <sys:String x:Key="WegstrStatusProbeDisconnectRequired" xmlns:sys="clr-namespace:System;assembly=mscorlib">Měření zůstalo zachováno. {0} Poté znovu stiskněte Spustit.</sys:String>
+    <sys:String x:Key="WegstrErrorDisconnectProbe" xmlns:sys="clr-namespace:System;assembly=mscorlib">Odpojte sondu od nástroje nebo desky; řadič stále hlásí kontakt sondy.</sys:String>
     <sys:String x:Key="WegstrStatusSurfaceStopped" xmlns:sys="clr-namespace:System;assembly=mscorlib">Měření povrchu bylo zastaveno.</sys:String>
     <sys:String x:Key="WegstrStatusSurfaceFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Měření povrchu bylo bezpečně ukončeno: {0}</sys:String>
 </ResourceDictionary>

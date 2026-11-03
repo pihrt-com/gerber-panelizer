@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Diagnostics;
@@ -6,6 +7,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Threading;
 using GerberPanelizer.Build;
 using GerberPanelizer.Core.Exporting;
 using GerberPanelizer.Core.Geometry;
@@ -23,6 +25,7 @@ public sealed class MainViewModel : ObservableObject
     private const double PreviewWidth = 710;
     private const double PreviewHeight = 462;
     private readonly Window owner;
+    private readonly DispatcherTimer machinePositionTimer;
     private readonly ManufacturingImporter importer = new();
     private readonly ShelfPanelizer panelizer = new();
     private readonly BoardStagingLayout stagingLayout = new();
@@ -40,10 +43,13 @@ public sealed class MainViewModel : ObservableObject
     private double previewWorkspaceWidthMm;
     private double previewWorkspaceHeightMm;
     private WorkAreaPresetChoice? selectedWorkAreaPreset;
+    private bool machinePositionDirty;
 
     public MainViewModel(Window owner)
     {
         this.owner = owner;
+        machinePositionTimer = new DispatcherTimer(DispatcherPriority.Background, owner.Dispatcher) { Interval = TimeSpan.FromMilliseconds(100) };
+        machinePositionTimer.Tick += OnMachinePositionTimerTick;
         settings = AppSettingsService.Load();
         previewWorkspaceWidthMm = settings.WorkAreaWidthMm;
         previewWorkspaceHeightMm = settings.WorkAreaHeightMm;
@@ -68,9 +74,16 @@ public sealed class MainViewModel : ObservableObject
         PrintCommand = new(_ => Print());
         OpenSettingsCommand = new(_ => OpenSettings());
         CheckForUpdatesCommand = new(_ => CheckForUpdates(showCurrentResult: true), _ => !IsCheckingForUpdates);
-        WegstrMachine = new WegstrMachineViewModel(owner, PrepareWegstrPrograms, () => new WegstrDirectSettings(settings.WegstrCalibrationX, settings.WegstrCalibrationY, settings.WegstrCalibrationZ, settings.WegstrSpeedPercent, settings.WegstrSafeZMm, settings.WegstrAutoLevelRasterMm, settings.WegstrAutoLevelSafeZMm, settings.WegstrAutoLevelZBacklashSteps));
+        WegstrMachine = new WegstrMachineViewModel(owner, PrepareWegstrPrograms, () => new WegstrDirectSettings(settings.WegstrCalibrationX, settings.WegstrCalibrationY, settings.WegstrCalibrationZ, settings.WegstrSpeedPercent, settings.WegstrSafeZMm, settings.WegstrAutoLevelRasterMm, settings.WegstrAutoLevelSafeZMm, settings.WegstrAutoLevelZBacklashSteps), () => settings.WegstrSafetyNoticeAcknowledged, AcknowledgeWegstrSafetyNotice);
+        WegstrMachine.PropertyChanged += OnWegstrMachinePropertyChanged;
         owner.Loaded += OnOwnerLoaded;
         AddStatus(StatusSeverity.Information, statusText, [L("DiagnosticsLogPath", AppLog.LogFilePath)]);
+    }
+
+    private void AcknowledgeWegstrSafetyNotice()
+    {
+        settings.WegstrSafetyNoticeAcknowledged = true;
+        AppSettingsService.Save(settings);
     }
 
     public ObservableCollection<LayerItemViewModel> Layers { get; }
@@ -78,6 +91,7 @@ public sealed class MainViewModel : ObservableObject
     public ObservableCollection<ImportedBoardItemViewModel> Boards { get; } = [];
     public ObservableCollection<PlacementPreviewItemViewModel> PlacementPreviews { get; } = [];
     public ObservableCollection<StatusEntryViewModel> StatusEntries { get; } = [];
+    public ObservableCollection<PcbPoint> MachinePositionHistory { get; } = [];
     public RelayCommand ImportCommand { get; }
     public RelayCommand NewProjectCommand { get; }
     public RelayCommand SaveProjectCommand { get; }
@@ -114,6 +128,8 @@ public sealed class MainViewModel : ObservableObject
             OnPropertyChanged(nameof(WorkAreaCaption));
             OnPropertyChanged(nameof(WorkAreaWidthMm));
             OnPropertyChanged(nameof(WorkAreaHeightMm));
+            OnPropertyChanged(nameof(MachinePositionYMillimetres));
+            OnPropertyChanged(nameof(MachinePositionCaption));
             if (Boards.Count == 0) ClearPanelization(); else StageAllBoards();
             AddStatus(StatusSeverity.Information, L("StatusWorkAreaPresetSelected", value.Name, WorkAreaCaption));
         }
@@ -121,6 +137,11 @@ public sealed class MainViewModel : ObservableObject
     public double PreviewWorkspaceWidthMm => previewWorkspaceWidthMm;
     public double PreviewWorkspaceHeightMm => previewWorkspaceHeightMm;
     public IReadOnlyList<BoardPlacement> RenderPlacements => panelization?.Placements ?? Array.Empty<BoardPlacement>();
+    public double MachinePositionXMillimetres => WegstrMachine.PositionXMillimetres;
+    public double MachinePositionYMillimetres => WegstrMachine.PositionYMillimetres + WorkAreaHeightMm;
+    public string MachinePositionCaption => L("WegstrMachinePosition", MachinePositionXMillimetres, MachinePositionYMillimetres);
+    public string MachinePositionColor => settings.WegstrMachinePositionColor;
+    public Visibility MachinePositionVisibility => WegstrMachine.IsRunning ? Visibility.Visible : Visibility.Collapsed;
     public string ManufacturingSide { get => manufacturingSide; private set => SetProperty(ref manufacturingSide, value); }
     public string StatusText { get => statusText; private set => SetProperty(ref statusText, value); }
     public ImportedBoardItemViewModel? SelectedBoard
@@ -141,6 +162,54 @@ public sealed class MainViewModel : ObservableObject
     public Visibility EmptyPreviewVisibility => PlacementPreviews.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
 
     private static string L(string key, params object[] values) => string.Format(CultureInfo.CurrentCulture, LocalizationService.Instance[key], values);
+
+    private void OnWegstrMachinePropertyChanged(object? sender, PropertyChangedEventArgs eventArgs)
+    {
+        if (eventArgs.PropertyName == nameof(WegstrMachineViewModel.PositionXMillimetres))
+        {
+            if (!WegstrMachine.IsRunning) return;
+            machinePositionDirty = true;
+            if (!machinePositionTimer.IsEnabled) machinePositionTimer.Start();
+        }
+        else if (eventArgs.PropertyName == nameof(WegstrMachineViewModel.IsRunning))
+        {
+            if (WegstrMachine.IsRunning)
+            {
+                MachinePositionHistory.Clear();
+                machinePositionDirty = true;
+                PublishMachinePosition();
+                if (!machinePositionTimer.IsEnabled) machinePositionTimer.Start();
+            }
+            else
+            {
+                PublishMachinePosition();
+                machinePositionTimer.Stop();
+            }
+            OnPropertyChanged(nameof(MachinePositionVisibility));
+        }
+    }
+
+    private void OnMachinePositionTimerTick(object? sender, EventArgs eventArgs) => PublishMachinePosition();
+
+    private void PublishMachinePosition()
+    {
+        if (!machinePositionDirty) return;
+        RecordMachinePosition();
+        machinePositionDirty = false;
+        OnPropertyChanged(nameof(MachinePositionXMillimetres));
+        OnPropertyChanged(nameof(MachinePositionYMillimetres));
+        OnPropertyChanged(nameof(MachinePositionCaption));
+    }
+
+    private void RecordMachinePosition()
+    {
+        var position = new PcbPoint(MachinePositionXMillimetres, MachinePositionYMillimetres);
+        if (MachinePositionHistory.Count > 0 && Distance(MachinePositionHistory[^1], position) < .15) return;
+        if (MachinePositionHistory.Count >= 6000) MachinePositionHistory.RemoveAt(0);
+        MachinePositionHistory.Add(position);
+    }
+
+    private static double Distance(PcbPoint first, PcbPoint second) => Math.Sqrt(Math.Pow(first.X - second.X, 2) + Math.Pow(first.Y - second.Y, 2));
 
     private void ImportFiles()
     {
@@ -187,7 +256,7 @@ public sealed class MainViewModel : ObservableObject
     private void NewProject()
     {
         if (Boards.Count > 0 && MessageBox.Show(owner, LocalizationService.Instance["NewProjectConfirm"], LocalizationService.Instance["NewProject"], MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
-        Boards.Clear(); SelectedBoard = null; projectPath = null; ManufacturingSide = "Both"; ClearPanelization(); RefreshBoardCommands();
+        Boards.Clear(); SelectedBoard = null; projectPath = null; ManufacturingSide = "Both"; ClearPanelization(); WegstrMachine.ClearPreparedOperations(); RefreshBoardCommands();
         AddStatus(StatusSeverity.Information, L("StatusNewProject"));
     }
 
@@ -234,7 +303,7 @@ public sealed class MainViewModel : ObservableObject
 
     private void LoadProjectBoards(PanelProject project, string directory)
     {
-        Boards.Clear(); ClearPanelization();
+        Boards.Clear(); ClearPanelization(); WegstrMachine.ClearPreparedOperations();
         var missing = new List<string>(); var failures = new List<string>();
         foreach (var entry in project.Boards)
         {
@@ -624,6 +693,7 @@ public sealed class MainViewModel : ObservableObject
         if (dialog.ShowDialog() != true) return;
         settings = AppSettingsService.Load();
         ApplyLayerColors();
+        OnPropertyChanged(nameof(MachinePositionColor));
         OnPropertyChanged(nameof(WorkAreaCaption));
         OnPropertyChanged(nameof(WorkAreaWidthMm));
         OnPropertyChanged(nameof(WorkAreaHeightMm));
@@ -658,7 +728,7 @@ public sealed class MainViewModel : ObservableObject
         if (severity == StatusSeverity.Error) AppLog.Error(logMessage, exception);
         while (StatusEntries.Count > 100) StatusEntries.RemoveAt(StatusEntries.Count - 1);
     }
-    private void ClearPanelization() { panelization = null; PlacementPreviews.Clear(); previewWorkspaceWidthMm = settings.WorkAreaWidthMm; previewWorkspaceHeightMm = settings.WorkAreaHeightMm; OnPropertyChanged(nameof(PreviewWorkspaceWidthMm)); OnPropertyChanged(nameof(PreviewWorkspaceHeightMm)); OnPropertyChanged(nameof(BoardPreviewVisibility)); OnPropertyChanged(nameof(EmptyPreviewVisibility)); OnPropertyChanged(nameof(RenderPlacements)); RefreshExportCommands(); }
+    private void ClearPanelization() { panelization = null; PlacementPreviews.Clear(); MachinePositionHistory.Clear(); previewWorkspaceWidthMm = settings.WorkAreaWidthMm; previewWorkspaceHeightMm = settings.WorkAreaHeightMm; OnPropertyChanged(nameof(PreviewWorkspaceWidthMm)); OnPropertyChanged(nameof(PreviewWorkspaceHeightMm)); OnPropertyChanged(nameof(BoardPreviewVisibility)); OnPropertyChanged(nameof(EmptyPreviewVisibility)); OnPropertyChanged(nameof(RenderPlacements)); RefreshExportCommands(); }
     private void RefreshExportCommands() { ExportCommand.RaiseCanExecuteChanged(); ExportWegstrCommand.RaiseCanExecuteChanged(); ExportTrackMakerCommand.RaiseCanExecuteChanged(); }
     private void RefreshBoardCommands() { PanelizeCommand.RaiseCanExecuteChanged(); DeleteBoardCommand.RaiseCanExecuteChanged(); CloneBoardCommand.RaiseCanExecuteChanged(); }
     private static PcbBounds GetUsedBounds(IEnumerable<BoardPlacement> placements) => placements.Aggregate(PcbBounds.Empty, (bounds, placement) => bounds.Include(placement.Bounds));

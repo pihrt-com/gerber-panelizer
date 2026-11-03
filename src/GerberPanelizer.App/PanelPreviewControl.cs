@@ -21,12 +21,19 @@ public sealed class PanelPreviewControl : FrameworkElement
     public static readonly DependencyProperty WorkspaceWidthMmProperty = DependencyProperty.Register(nameof(WorkspaceWidthMm), typeof(double), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(200d, FrameworkPropertyMetadataOptions.AffectsRender));
     public static readonly DependencyProperty WorkspaceHeightMmProperty = DependencyProperty.Register(nameof(WorkspaceHeightMm), typeof(double), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(130d, FrameworkPropertyMetadataOptions.AffectsRender));
     public static readonly DependencyProperty StagingAreaLabelProperty = DependencyProperty.Register(nameof(StagingAreaLabel), typeof(string), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.AffectsRender));
+    public static readonly DependencyProperty MachinePositionXMillimetresProperty = DependencyProperty.Register(nameof(MachinePositionXMillimetres), typeof(double), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.AffectsRender));
+    public static readonly DependencyProperty MachinePositionYMillimetresProperty = DependencyProperty.Register(nameof(MachinePositionYMillimetres), typeof(double), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.AffectsRender));
+    public static readonly DependencyProperty ShowMachinePositionProperty = DependencyProperty.Register(nameof(ShowMachinePosition), typeof(bool), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
+    public static readonly DependencyProperty MachinePositionLabelProperty = DependencyProperty.Register(nameof(MachinePositionLabel), typeof(string), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.AffectsRender));
+    public static readonly DependencyProperty MachinePositionColorProperty = DependencyProperty.Register(nameof(MachinePositionColor), typeof(string), typeof(PanelPreviewControl), new FrameworkPropertyMetadata("#B42318", FrameworkPropertyMetadataOptions.AffectsRender));
+    public static readonly DependencyProperty MachinePathProperty = DependencyProperty.Register(nameof(MachinePath), typeof(IEnumerable<PcbPoint>), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender, OnMachinePathChanged));
     public static readonly DependencyProperty MovePlacementCommandProperty = DependencyProperty.Register(nameof(MovePlacementCommand), typeof(ICommand), typeof(PanelPreviewControl));
     public static readonly DependencyProperty DeletePlacementCommandProperty = DependencyProperty.Register(nameof(DeletePlacementCommand), typeof(ICommand), typeof(PanelPreviewControl));
     public static readonly DependencyProperty SelectedPlacementProperty = DependencyProperty.Register(nameof(SelectedPlacement), typeof(BoardPlacement), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
 
     private readonly Dictionary<BoardPlacement, PcbPoint> transientOffsets = new();
     private INotifyCollectionChanged? observableLayers;
+    private INotifyCollectionChanged? observableMachinePath;
     private double zoom = 1;
     private Vector pan;
     private bool isPanning;
@@ -48,6 +55,12 @@ public sealed class PanelPreviewControl : FrameworkElement
     public double WorkspaceWidthMm { get => (double)GetValue(WorkspaceWidthMmProperty); set => SetValue(WorkspaceWidthMmProperty, value); }
     public double WorkspaceHeightMm { get => (double)GetValue(WorkspaceHeightMmProperty); set => SetValue(WorkspaceHeightMmProperty, value); }
     public string StagingAreaLabel { get => (string)GetValue(StagingAreaLabelProperty); set => SetValue(StagingAreaLabelProperty, value); }
+    public double MachinePositionXMillimetres { get => (double)GetValue(MachinePositionXMillimetresProperty); set => SetValue(MachinePositionXMillimetresProperty, value); }
+    public double MachinePositionYMillimetres { get => (double)GetValue(MachinePositionYMillimetresProperty); set => SetValue(MachinePositionYMillimetresProperty, value); }
+    public bool ShowMachinePosition { get => (bool)GetValue(ShowMachinePositionProperty); set => SetValue(ShowMachinePositionProperty, value); }
+    public string MachinePositionLabel { get => (string)GetValue(MachinePositionLabelProperty); set => SetValue(MachinePositionLabelProperty, value); }
+    public string MachinePositionColor { get => (string)GetValue(MachinePositionColorProperty); set => SetValue(MachinePositionColorProperty, value); }
+    public IEnumerable<PcbPoint>? MachinePath { get => (IEnumerable<PcbPoint>?)GetValue(MachinePathProperty); set => SetValue(MachinePathProperty, value); }
     public ICommand? MovePlacementCommand { get => (ICommand?)GetValue(MovePlacementCommandProperty); set => SetValue(MovePlacementCommandProperty, value); }
     public ICommand? DeletePlacementCommand { get => (ICommand?)GetValue(DeletePlacementCommandProperty); set => SetValue(DeletePlacementCommandProperty, value); }
     public BoardPlacement? SelectedPlacement { get => (BoardPlacement?)GetValue(SelectedPlacementProperty); set => SetValue(SelectedPlacementProperty, value); }
@@ -73,6 +86,17 @@ public sealed class PanelPreviewControl : FrameworkElement
         control.AttachLayerEvents(eventArgs.NewValue as IEnumerable<LayerItemViewModel>);
         control.InvalidateVisual();
     }
+
+    private static void OnMachinePathChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs eventArgs)
+    {
+        var control = (PanelPreviewControl)dependencyObject;
+        if (control.observableMachinePath is not null) control.observableMachinePath.CollectionChanged -= control.OnMachinePathChanged;
+        control.observableMachinePath = eventArgs.NewValue as INotifyCollectionChanged;
+        if (control.observableMachinePath is not null) control.observableMachinePath.CollectionChanged += control.OnMachinePathChanged;
+        control.InvalidateVisual();
+    }
+
+    private void OnMachinePathChanged(object? sender, NotifyCollectionChangedEventArgs eventArgs) => InvalidateVisual();
 
     private void AttachLayerEvents(IEnumerable<LayerItemViewModel>? layers)
     {
@@ -112,6 +136,8 @@ public sealed class PanelPreviewControl : FrameworkElement
         DrawPanelSubstrate(drawingContext);
         foreach (var placement in Placements ?? Enumerable.Empty<BoardPlacement>()) DrawBoard(drawingContext, GetEffectivePlacement(placement));
         if (SelectedPlacement is { } selected) DrawSelection(drawingContext, GetEffectivePlacement(selected).Bounds);
+        DrawMachinePath(drawingContext);
+        if (ShowMachinePosition) DrawMachinePosition(drawingContext);
         drawingContext.Pop();
     }
 
@@ -373,7 +399,48 @@ public sealed class PanelPreviewControl : FrameworkElement
         context.DrawText(text, new Point(stagingBounds.Left + 8, stagingBounds.Top + 6));
     }
 
+    private void DrawMachinePosition(DrawingContext context)
+    {
+        var point = ToScreen(new PcbPoint(MachinePositionXMillimetres, MachinePositionYMillimetres));
+        var radius = Math.Max(7, PixelsPerMillimetre * 1.5);
+        var accent = CreateMachinePositionBrush();
+        var halo = new SolidColorBrush(Color.FromArgb(72, accent.Color.R, accent.Color.G, accent.Color.B));
+        context.DrawEllipse(halo, null, point, radius * 1.8, radius * 1.8);
+        context.DrawEllipse(Brushes.White, new Pen(accent, 2), point, radius, radius);
+        context.DrawLine(new Pen(accent, 2), new Point(point.X - radius * 1.6, point.Y), new Point(point.X + radius * 1.6, point.Y));
+        context.DrawLine(new Pen(accent, 2), new Point(point.X, point.Y - radius * 1.6), new Point(point.X, point.Y + radius * 1.6));
+        if (string.IsNullOrWhiteSpace(MachinePositionLabel)) return;
+        var text = new FormattedText(MachinePositionLabel, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface("Segoe UI"), 12, accent, VisualTreeHelper.GetDpi(this).PixelsPerDip);
+        var origin = new Point(Math.Clamp(point.X + radius + 5, 4, Math.Max(4, ActualWidth - text.Width - 4)), Math.Clamp(point.Y - radius - text.Height - 4, 4, Math.Max(4, ActualHeight - text.Height - 4)));
+        context.DrawRoundedRectangle(Brushes.White, new Pen(accent, 1), new Rect(origin.X - 4, origin.Y - 2, text.Width + 8, text.Height + 4), 3, 3);
+        context.DrawText(text, origin);
+    }
+
+    private void DrawMachinePath(DrawingContext context)
+    {
+        if (MachinePath is null) return;
+        var accent = CreateMachinePositionBrush();
+        var trace = new Pen(new SolidColorBrush(Color.FromArgb(185, accent.Color.R, accent.Color.G, accent.Color.B)), Math.Max(1.5, PixelsPerMillimetre * .24)) { LineJoin = PenLineJoin.Round, StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
+        Point? previous = null;
+        foreach (var position in MachinePath)
+        {
+            var point = ToScreen(position);
+            if (previous is not null) context.DrawLine(trace, previous.Value, point);
+            previous = point;
+        }
+    }
+
     private static bool IsMajorGridLine(double value) => Math.Abs(value % 25) < .001 || Math.Abs(value % 25 - 25) < .001;
+
+    private SolidColorBrush CreateMachinePositionBrush()
+    {
+        try
+        {
+            if (ColorConverter.ConvertFromString(MachinePositionColor) is Color color) return new SolidColorBrush(color);
+        }
+        catch (FormatException) { }
+        return new SolidColorBrush(Color.FromRgb(180, 35, 24));
+    }
 
     private void DrawExcellon(DrawingContext context, string content, BoardPlacement placement, Brush brush)
     {

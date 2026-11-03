@@ -1,5 +1,26 @@
 # Change log
 
+## 0.3.2 - 2026-11-03
+
+- Add an explicit USB connection state, a one-click acknowledgment that hides the machine-safety notice persistently, and a recovery action that switches the spindle off, clears surface measurement, and checks the controller again without moving an axis.
+- Log each armed surface-probe packet and its controller response, including a reported touch Z position, to the diagnostics log.
+- Add a no-motion surface-probe preflight for an already closed probe, localize prepared-operation summaries, make the machine-safety notice compact, and place recovery beside STOP.
+- Cancel a waiting run exchange when STOP is pressed so that a failed or interrupted operation returns control promptly after the current serial activity ends; pause also switches the spindle off and resume switches it on before machining continues.
+- Keep the controller-reported absolute probe counter separate from the user work Z coordinate, start a new surface measurement after successful recovery, and localize remaining controller-link errors.
+- Display a live head marker and the completed motion trail in the panel preview while measuring or milling; surface sampling remains restricted to raster cells crossed by cutting paths and excludes safe travel from 0,0 to the board.
+- Exclude the generated safe-Z rapid after spindle start from the probing plan; a point now requires XY motion with the spindle on below work Z0.
+- Keep the spindle off throughout surface probing, re-evaluate the Measure surface command immediately after preparing operations, and make the live-head marker plus completed path colour configurable in Settings.
+- After successful probing, retain the surface map, select `01-copper-isolation.txt`, reset progress to zero, and re-enable Start so machining begins without recovery or another measurement.
+- Reassert controller readiness and the Copper isolation selection after the final successful probing response, and log every Start request plus accepted program start for physical-machine diagnosis.
+- Throttle the live head preview to ten updates per second, retain a compact completed-motion trail, and avoid copying the complete trail for every panel redraw so measurement remains responsive while the Panel tab is open.
+- Prepare the level-compensated machining packets on a cancellable worker task, retaining a responsive UI and explicit preparation status before the first machining packet is sent.
+- Keep manual positioning at the verified 1–100% range after physical hardware testing showed that queued packets above 100% can freeze the controller.
+- Apply level compensation only to spindle-on XY cutting moves below work Z0 and retain byte-identical program packets for every other movement, including initial approach, Z plunge, safe travel, and return.
+- Keep a completed surface map when the operator changes only the Z work origin after a tool change; changing X, Y, all axes, prepared operations, or explicitly clearing the measurement still invalidates it.
+- Return safely to X/Y work zero and one probing-safe-Z clearance above the board after leveling, then precompute the compensated Copper isolation packets before enabling Start.
+- Raise the head to at least 20 mm after each completed operation for tool replacement; level compensation is intentionally limited to the measured Copper isolation operation and is not required for drilling or board outline.
+- Permit a selected prepared operation to start without surface measurement while retaining the no-motion controller preflight, and clear prepared Wegstr operations, surface data, and the Panel head-path history when a new project is created or another project is opened.
+
 ## 0.3.1 - 2026-10-27
 
 - Add automatic Wegstr surface probing for the raster cells crossed by the prepared machining paths, using response `4` and its signed absolute-Z position from the controller.

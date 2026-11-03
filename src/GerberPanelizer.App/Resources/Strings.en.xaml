@@ -52,6 +52,7 @@
     <sys:String x:Key="LayerBottom" xmlns:sys="clr-namespace:System;assembly=mscorlib">Bottom layer</sys:String>
     <sys:String x:Key="LayerOutline" xmlns:sys="clr-namespace:System;assembly=mscorlib">Outline</sys:String>
     <sys:String x:Key="LayerSilkscreen" xmlns:sys="clr-namespace:System;assembly=mscorlib">Silkscreen</sys:String>
+    <sys:String x:Key="WegstrMachinePositionColor" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr head position</sys:String>
     <sys:String x:Key="InvalidDimensions" xmlns:sys="clr-namespace:System;assembly=mscorlib">Work-area dimensions must be positive and spacing values cannot be negative.</sys:String>
     <sys:String x:Key="InvalidLayerColours" xmlns:sys="clr-namespace:System;assembly=mscorlib">All layer colours must use the valid hexadecimal format #RRGGBB.</sys:String>
     <sys:String x:Key="SettingsReadFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">The settings file could not be read.</sys:String>
@@ -159,16 +160,26 @@
     <sys:String x:Key="WegstrDirectTab" xmlns:sys="clr-namespace:System;assembly=mscorlib">Direct Wegstr control</sys:String>
     <sys:String x:Key="WegstrDirectSafetyTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Machine safety</sys:String>
     <sys:String x:Key="WegstrDirectSafetyText" xmlns:sys="clr-namespace:System;assembly=mscorlib">The simulator is enabled by default. Before connecting hardware, verify the work origin, clamping, tool, safe Z height, and access to the emergency stop.</sys:String>
+    <sys:String x:Key="WegstrDirectSafetyDismissHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Click this notice to acknowledge and hide it.</sys:String>
     <sys:String x:Key="WegstrConnection" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connection</sys:String>
     <sys:String x:Key="WegstrSimulator" xmlns:sys="clr-namespace:System;assembly=mscorlib">Simulator (safe default)</sys:String>
+    <sys:String x:Key="WegstrSimulatorLabel" xmlns:sys="clr-namespace:System;assembly=mscorlib">Simulator</sys:String>
     <sys:String x:Key="WegstrSimulatorName" xmlns:sys="clr-namespace:System;assembly=mscorlib">simulator</sys:String>
     <sys:String x:Key="WegstrSerialPort" xmlns:sys="clr-namespace:System;assembly=mscorlib">Serial port</sys:String>
     <sys:String x:Key="WegstrRefresh" xmlns:sys="clr-namespace:System;assembly=mscorlib">Refresh</sys:String>
     <sys:String x:Key="WegstrConnect" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connect</sys:String>
     <sys:String x:Key="WegstrDisconnect" xmlns:sys="clr-namespace:System;assembly=mscorlib">Disconnect</sys:String>
+    <sys:String x:Key="WegstrUsbConnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">USB connected</sys:String>
+    <sys:String x:Key="WegstrSimulatorActive" xmlns:sys="clr-namespace:System;assembly=mscorlib">The simulator is active; no packets are sent to the machine.</sys:String>
+    <sys:String x:Key="WegstrConnectionNotConnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">The USB machine is not connected.</sys:String>
+    <sys:String x:Key="WegstrConnectionReady" xmlns:sys="clr-namespace:System;assembly=mscorlib">USB connected: {0}; the machine is ready.</sys:String>
+    <sys:String x:Key="WegstrConnectionNotReady" xmlns:sys="clr-namespace:System;assembly=mscorlib">USB connected: {0}; the machine is not ready.</sys:String>
+    <sys:String x:Key="WegstrRecoverOperation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Recover operation</sys:String>
+    <sys:String x:Key="WegstrRecoverOperationHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Switches the spindle off, clears measurement, and checks the controller state again without moving axes.</sys:String>
     <sys:String x:Key="WegstrPrepare" xmlns:sys="clr-namespace:System;assembly=mscorlib">Prepare panel data</sys:String>
     <sys:String x:Key="WegstrPrepareHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Builds operations directly from the current panel and Wegstr settings. Nothing is exported to disk.</sys:String>
     <sys:String x:Key="WegstrOperations" xmlns:sys="clr-namespace:System;assembly=mscorlib">Prepared operations</sys:String>
+    <sys:String x:Key="WegstrOperationSummary" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0:N0} packets • tool changes: {1} • approx. {2}</sys:String>
     <sys:String x:Key="WegstrCurrentTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Current tool</sys:String>
     <sys:String x:Key="WegstrControl" xmlns:sys="clr-namespace:System;assembly=mscorlib">Job control</sys:String>
     <sys:String x:Key="WegstrStartContinue" xmlns:sys="clr-namespace:System;assembly=mscorlib">Start / Continue</sys:String>
@@ -193,6 +204,8 @@
     <sys:String x:Key="WegstrStatusPortsFound" xmlns:sys="clr-namespace:System;assembly=mscorlib">Found {0} serial port(s). No port has been opened.</sys:String>
     <sys:String x:Key="WegstrStatusPreparing" xmlns:sys="clr-namespace:System;assembly=mscorlib">Preparing Wegstr toolpaths and packets…</sys:String>
     <sys:String x:Key="WegstrStatusPrepared" xmlns:sys="clr-namespace:System;assembly=mscorlib">Prepared {0} operation(s). Review the selected operation before starting.</sys:String>
+    <sys:String x:Key="WegstrStatusPreparedOperationsCleared" xmlns:sys="clr-namespace:System;assembly=mscorlib">Prepared operations were cleared because the project changed.</sys:String>
+    <sys:String x:Key="WegstrStatusPreparingCompensation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Preparing the compensated machining path…</sys:String>
     <sys:String x:Key="WegstrStatusWarnings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Warnings: {0}</sys:String>
     <sys:String x:Key="WegstrStatusPreparationFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Preparation failed: {0}</sys:String>
     <sys:String x:Key="WegstrConfirmConnect" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connect to {0} at 9600 8N1?&#10;&#10;The application will send a zero-motion identification packet. Make sure the emergency stop is reachable and the spindle is clear.</sys:String>
@@ -202,6 +215,21 @@
     <sys:String x:Key="WegstrStatusConnectedReleased" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connected to {0}; machine release/emergency state is active.</sys:String>
     <sys:String x:Key="WegstrStatusConnectionFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connection failed: {0}</sys:String>
     <sys:String x:Key="WegstrStatusDisconnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Disconnected. Spindle-off was requested before closing the port.</sys:String>
+    <sys:String x:Key="WegstrStatusRecovered" xmlns:sys="clr-namespace:System;assembly=mscorlib">Operation recovered; {0} reports ready. Verify coordinates before starting.</sys:String>
+    <sys:String x:Key="WegstrStatusRecoveryFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">The operation cannot be recovered; the controller does not report ready ({0}).</sys:String>
+    <sys:String x:Key="WegstrStatusRecoveryRequiredAfterReset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Coordinates were zeroed. The controller is not ready after the previous error; use Recover operation before measuring.</sys:String>
+    <sys:String x:Key="WegstrMachinePosition" xmlns:sys="clr-namespace:System;assembly=mscorlib">Machine head: X {0:F2}, Y {1:F2} mm</sys:String>
+    <sys:String x:Key="WegstrErrorNotConnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr is not connected.</sys:String>
+    <sys:String x:Key="WegstrErrorUnexpectedControllerResponse" xmlns:sys="clr-namespace:System;assembly=mscorlib">The controller returned unexpected response {0}.</sys:String>
+    <sys:String x:Key="WegstrErrorProbePreflightResponse" xmlns:sys="clr-namespace:System;assembly=mscorlib">The controller returned unexpected response {0} before probing.</sys:String>
+    <sys:String x:Key="WegstrErrorProbeResponse" xmlns:sys="clr-namespace:System;assembly=mscorlib">The controller returned unexpected response {0} while probing.</sys:String>
+    <sys:String x:Key="WegstrErrorProbeLimit" xmlns:sys="clr-namespace:System;assembly=mscorlib">The probe did not touch the surface before the Z −10 mm limit.</sys:String>
+    <sys:String x:Key="WegstrErrorSpindleOverload" xmlns:sys="clr-namespace:System;assembly=mscorlib">The controller reported spindle overload.</sys:String>
+    <sys:String x:Key="WegstrErrorEmergency" xmlns:sys="clr-namespace:System;assembly=mscorlib">The controller reported machine release or emergency stop.</sys:String>
+    <sys:String x:Key="WegstrErrorAcknowledgementTimeout" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr did not acknowledge the packet within two seconds.</sys:String>
+    <sys:String x:Key="WegstrErrorSimulatorNotConnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">The Wegstr simulator is not connected.</sys:String>
+    <sys:String x:Key="WegstrErrorSerialPortNotConnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">The Wegstr serial port is not connected.</sys:String>
+    <sys:String x:Key="WegstrErrorPacketAlreadyPending" xmlns:sys="clr-namespace:System;assembly=mscorlib">The previous Wegstr packet is still awaiting a controller response.</sys:String>
     <sys:String x:Key="WegstrStatusResuming" xmlns:sys="clr-namespace:System;assembly=mscorlib">Resuming after the acknowledged packet.</sys:String>
     <sys:String x:Key="WegstrConfirmStart" xmlns:sys="clr-namespace:System;assembly=mscorlib">Start '{0}' on {1}?&#10;&#10;Packets: {2:N0}&#10;Estimated motion time: {3}&#10;&#10;Verify the work origin, tool, clamping, safe Z and spindle clearance.</sys:String>
     <sys:String x:Key="WegstrConfirmStartTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Start Wegstr job</sys:String>
@@ -242,6 +270,9 @@
     <sys:String x:Key="WegstrProbeTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Probe</sys:String>
     <sys:String x:Key="WegstrStatusSurfaceMeasuring" xmlns:sys="clr-namespace:System;assembly=mscorlib">Measuring point {0} of {1}; touch Z {2:F3} mm.</sys:String>
     <sys:String x:Key="WegstrStatusSurfaceMeasured" xmlns:sys="clr-namespace:System;assembly=mscorlib">Measurement complete: {0} points, Z correction {1:F3} to {2:F3} mm. Compensation is enabled.</sys:String>
+    <sys:String x:Key="WegstrStatusSurfaceReadyToStart" xmlns:sys="clr-namespace:System;assembly=mscorlib">Measurement complete: {0} points, Z correction {1:F3} to {2:F3} mm. Compensation is enabled, {3} is selected, and machining can start.</sys:String>
+    <sys:String x:Key="WegstrStatusProbeDisconnectRequired" xmlns:sys="clr-namespace:System;assembly=mscorlib">The measurement was preserved. {0} Then press Start again.</sys:String>
+    <sys:String x:Key="WegstrErrorDisconnectProbe" xmlns:sys="clr-namespace:System;assembly=mscorlib">Disconnect the probe from the tool or board; the controller still reports probe contact.</sys:String>
     <sys:String x:Key="WegstrStatusSurfaceStopped" xmlns:sys="clr-namespace:System;assembly=mscorlib">Surface probing was stopped.</sys:String>
     <sys:String x:Key="WegstrStatusSurfaceFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Surface probing stopped safely: {0}</sys:String>
 </ResourceDictionary>

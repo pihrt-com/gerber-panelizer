@@ -1,5 +1,11 @@
 # Gerber Panelizer
 
+## Verze 0.3.2 - 2026-11-03
+
+Verze 0.3.2 jasně zobrazuje stav USB připojení Wegstru, po kliknutí trvale skryje přečtené bezpečnostní upozornění a přidává tlačítko **Obnovit operaci** vedle STOP. Obnovení bez pohybu os vypne vřeteno, vymaže neplatné měření a znovu ověří připravenost řadiče; pokud je řadič připravený, rovnou nabídne nové měření povrchu. Diagnostický log zapisuje každý paket měření povrchu a odpověď řadiče včetně polohy dotyku Z. Čítač Z vrácený řadičem se používá pouze pro mapu povrchu, nikdy nepřepíše pracovní souřadnici Z. Při měření povrchu zůstává vřeteno vypnuté. Plán měření vybírá z připravené obráběcí dráhy pouze rastrové buňky s pohybem X/Y pod pracovní rovinou Z0; bezpečný přejezd z 0,0 k desce se tedy nikdy neměří. Po dokončení měření se stroj vrátí na pracovní X/Y nulu v bezpečné výšce sondování nad deskou, zachová mapu nivelace, vybere `01-copper-isolation.txt`, nastaví průběh na nulu a povolí Start bez nutnosti obnovy operace. Změna nuly pouze osy Z po výměně nástroje mapu zachová; změna počátku X/Y, výslovné smazání měření, nově připravené operace nebo nový či otevřený projekt ji zruší. Po dokončení operace hlava vyjede nejméně 20 mm pro výměnu nástroje. Kompenzace nivelace se používá jen pro změřenou izolaci mědi; vrtání i ořez obrysu lze spustit bez měření povrchu. Náhled panelu při měření a frézování ukazuje živou polohu hlavy a stopu již provedeného pohybu s uživatelsky volitelnou barvou; obnovuje se nejvýše desetkrát za sekundu a nezpomaluje pohyb stroje. Příprava kompenzované dráhy probíhá mimo vlákno okna, lze ji zastavit a před zahájením frézování ukáže stav přípravy. Ruční rychloposuv zůstává v ověřeném rozsahu 1–100 %, protože test na COM6 ukázal, že frontování paketů nad 100 % může řadič zastavit. Souhrny připravených operací i chybové zprávy řadiče jsou přeložené, upozornění na bezpečnost je kompaktní a pauza vypíná vřeteno, které pokračování znovu zapne před obráběním. STOP nyní ruší také čekající sériový paket.
+
+Kompenzace nivelace mění Z pouze během frézovacího pohybu X/Y se zapnutým vřetenem pod pracovní rovinou Z0. Úvodní najetí, zanoření, bezpečné přejezdy a návrat na nulu zůstávají bajtově stejné jako ověřený program bez kompenzace.
+
 ## Verze 0.3.1 - 2026-10-27
 
 ## Aktuální změny — 2026-10-27

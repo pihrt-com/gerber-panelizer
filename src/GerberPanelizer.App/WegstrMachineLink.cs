@@ -1,6 +1,6 @@
-using System.IO.Ports;
 using System.IO;
 using GerberPanelizer.Core.Machines.Wegstr;
+using RJCP.IO.Ports;
 
 namespace GerberPanelizer.App;
 
@@ -33,7 +33,7 @@ internal sealed class SimulatedWegstrMachineLink : IWegstrMachineLink
     public Task OpenAsync(CancellationToken cancellationToken) { IsOpen = true; return Task.CompletedTask; }
     public async Task<WegstrControllerResponse> ExchangeAsync(byte[] packet, bool probeArmed, CancellationToken cancellationToken)
     {
-        if (!IsOpen) throw new InvalidOperationException("Simulator is not connected.");
+        if (!IsOpen) throw new InvalidOperationException(LocalizationService.Instance["WegstrErrorSimulatorNotConnected"]);
         if (packet.Length != WegstrPacketCodec.PacketLength) throw new ArgumentException("Invalid Wegstr packet length.", nameof(packet));
         await Task.Delay(59, cancellationToken);
         foreach (var step in WegstrPacketCodec.Decode(packet))
@@ -67,9 +67,8 @@ internal sealed class SimulatedWegstrMachineLink : IWegstrMachineLink
 
 internal sealed class SerialWegstrMachineLink(string portName) : IWegstrMachineLink
 {
-    private readonly SerialPort port = new(portName, 9600, Parity.None, 8, StopBits.One)
+    private readonly WinSerialPortStream port = new(portName, 9600, 8, Parity.None, StopBits.One)
     {
-        Handshake = Handshake.None,
         DtrEnable = false,
         RtsEnable = false,
         ReadTimeout = 2000,
@@ -92,26 +91,30 @@ internal sealed class SerialWegstrMachineLink(string portName) : IWegstrMachineL
 
     public async Task<WegstrControllerResponse> ExchangeAsync(byte[] packet, bool probeArmed, CancellationToken cancellationToken)
     {
-        if (!port.IsOpen) throw new InvalidOperationException("Serial port is not connected.");
+        if (!port.IsOpen) throw new InvalidOperationException(LocalizationService.Instance["WegstrErrorSerialPortNotConnected"]);
         if (packet.Length != WegstrPacketCodec.PacketLength) throw new ArgumentException("Invalid Wegstr packet length.", nameof(packet));
         TaskCompletionSource<WegstrControllerResponse> response;
         lock (sync)
         {
-            if (pendingResponse is not null) throw new InvalidOperationException("Only one Wegstr packet may be in flight.");
-            receiveBuffer.Clear();
-            port.DiscardInBuffer();
+            if (pendingResponse is not null) throw new InvalidOperationException(LocalizationService.Instance["WegstrErrorPacketAlreadyPending"]);
             pendingResponse = response = new(TaskCreationOptions.RunContinuationsAsynchronously);
         }
         try
         {
-            port.Write(packet, 0, packet.Length);
+            if (probeArmed) AppLog.Information($"Wegstr probe TX: {Convert.ToHexString(packet)}.");
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             timeout.CancelAfter(TimeSpan.FromSeconds(2));
-            return await response.Task.WaitAsync(timeout.Token).ConfigureAwait(false);
+            // System.IO.Ports blocks in the USB driver on COM6 immediately after probing.
+            // SerialPortStream buffers this short frame on its own I/O worker, then uses
+            // Win32 overlapped I/O to deliver it without blocking the control sequence.
+            await port.WriteAsync(packet.AsMemory(), timeout.Token).ConfigureAwait(false);
+            var controllerResponse = await response.Task.WaitAsync(timeout.Token).ConfigureAwait(false);
+            if (probeArmed) AppLog.Information($"Wegstr probe RX: status={(byte)controllerResponse.Status}; touchZ={(controllerResponse.ProbePositionSteps?.ToString() ?? "none")}.");
+            return controllerResponse;
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
-            throw new TimeoutException("Wegstr did not acknowledge the packet within two seconds.");
+            throw new TimeoutException(LocalizationService.Instance["WegstrErrorAcknowledgementTimeout"]);
         }
         finally
         {
@@ -119,7 +122,7 @@ internal sealed class SerialWegstrMachineLink(string portName) : IWegstrMachineL
         }
     }
 
-    private void OnDataReceived(object sender, SerialDataReceivedEventArgs eventArgs)
+    private void OnDataReceived(object? sender, SerialDataReceivedEventArgs eventArgs)
     {
         try
         {
@@ -129,16 +132,10 @@ internal sealed class SerialWegstrMachineLink(string portName) : IWegstrMachineL
             {
                 while (port.IsOpen && port.BytesToRead > 0) receiveBuffer.Add((byte)port.ReadByte());
                 if (pendingResponse is null || receiveBuffer.Count == 0) return;
-
                 if (!WegstrResponseCodec.TryDecode(receiveBuffer, out var response, out var responseLength)) return;
                 receiveBuffer.RemoveRange(0, responseLength);
                 completedResponse = pendingResponse;
                 completedResponseValue = response;
-                if (receiveBuffer.Count > 0)
-                {
-                    receiveBuffer.Clear();
-                    port.DiscardInBuffer();
-                }
             }
             completedResponse.TrySetResult(completedResponseValue);
         }

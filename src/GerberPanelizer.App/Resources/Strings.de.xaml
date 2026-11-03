@@ -52,6 +52,7 @@
     <sys:String x:Key="LayerBottom" xmlns:sys="clr-namespace:System;assembly=mscorlib">Unterseite</sys:String>
     <sys:String x:Key="LayerOutline" xmlns:sys="clr-namespace:System;assembly=mscorlib">Kontur</sys:String>
     <sys:String x:Key="LayerSilkscreen" xmlns:sys="clr-namespace:System;assembly=mscorlib">Bestückungsdruck</sys:String>
+    <sys:String x:Key="WegstrMachinePositionColor" xmlns:sys="clr-namespace:System;assembly=mscorlib">Position des Wegstr-Kopfs</sys:String>
     <sys:String x:Key="ExportSettings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Einstellungen exportieren</sys:String>
     <sys:String x:Key="ImportSettings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Einstellungen importieren</sys:String>
     <sys:String x:Key="BottomMirrorPolicy" xmlns:sys="clr-namespace:System;assembly=mscorlib">Spiegelung der Unterseite</sys:String>
@@ -118,16 +119,26 @@
     <sys:String x:Key="WegstrDirectTab" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr direkt steuern</sys:String>
     <sys:String x:Key="WegstrDirectSafetyTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Maschinensicherheit</sys:String>
     <sys:String x:Key="WegstrDirectSafetyText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Der Simulator ist standardmäßig aktiv. Vor dem Verbinden Nullpunkt, Werkstückspannung, Werkzeug, sichere Z-Höhe und Not-Aus prüfen.</sys:String>
+    <sys:String x:Key="WegstrDirectSafetyDismissHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Klicken Sie auf diesen Hinweis, um ihn zu bestätigen und auszublenden.</sys:String>
     <sys:String x:Key="WegstrConnection" xmlns:sys="clr-namespace:System;assembly=mscorlib">Verbindung</sys:String>
     <sys:String x:Key="WegstrSimulator" xmlns:sys="clr-namespace:System;assembly=mscorlib">Simulator (sichere Vorgabe)</sys:String>
+    <sys:String x:Key="WegstrSimulatorLabel" xmlns:sys="clr-namespace:System;assembly=mscorlib">Simulator</sys:String>
     <sys:String x:Key="WegstrSimulatorName" xmlns:sys="clr-namespace:System;assembly=mscorlib">Simulator</sys:String>
     <sys:String x:Key="WegstrSerialPort" xmlns:sys="clr-namespace:System;assembly=mscorlib">Serieller Port</sys:String>
     <sys:String x:Key="WegstrRefresh" xmlns:sys="clr-namespace:System;assembly=mscorlib">Aktualisieren</sys:String>
     <sys:String x:Key="WegstrConnect" xmlns:sys="clr-namespace:System;assembly=mscorlib">Verbinden</sys:String>
     <sys:String x:Key="WegstrDisconnect" xmlns:sys="clr-namespace:System;assembly=mscorlib">Trennen</sys:String>
+    <sys:String x:Key="WegstrUsbConnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">USB verbunden</sys:String>
+    <sys:String x:Key="WegstrSimulatorActive" xmlns:sys="clr-namespace:System;assembly=mscorlib">Der Simulator ist aktiv; es werden keine Pakete an die Maschine gesendet.</sys:String>
+    <sys:String x:Key="WegstrConnectionNotConnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Die USB-Maschine ist nicht verbunden.</sys:String>
+    <sys:String x:Key="WegstrConnectionReady" xmlns:sys="clr-namespace:System;assembly=mscorlib">USB verbunden: {0}; Maschine ist bereit.</sys:String>
+    <sys:String x:Key="WegstrConnectionNotReady" xmlns:sys="clr-namespace:System;assembly=mscorlib">USB verbunden: {0}; Maschine ist nicht bereit.</sys:String>
+    <sys:String x:Key="WegstrRecoverOperation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vorgang wiederherstellen</sys:String>
+    <sys:String x:Key="WegstrRecoverOperationHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Schaltet die Spindel aus, löscht die Messung und prüft den Controllerstatus ohne Achsbewegung erneut.</sys:String>
     <sys:String x:Key="WegstrPrepare" xmlns:sys="clr-namespace:System;assembly=mscorlib">Paneldaten vorbereiten</sys:String>
     <sys:String x:Key="WegstrPrepareHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Erstellt Operationen direkt aus dem aktuellen Panel und den Wegstr-Einstellungen, ohne Dateiexport.</sys:String>
     <sys:String x:Key="WegstrOperations" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vorbereitete Operationen</sys:String>
+    <sys:String x:Key="WegstrOperationSummary" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0:N0} Pakete • Werkzeugwechsel: {1} • ca. {2}</sys:String>
     <sys:String x:Key="WegstrCurrentTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Aktuelles Werkzeug</sys:String>
     <sys:String x:Key="WegstrControl" xmlns:sys="clr-namespace:System;assembly=mscorlib">Auftragssteuerung</sys:String>
     <sys:String x:Key="WegstrStartContinue" xmlns:sys="clr-namespace:System;assembly=mscorlib">Start / Weiter</sys:String>
@@ -161,6 +172,24 @@
     <sys:String x:Key="WegstrProbeTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Taster</sys:String>
     <sys:String x:Key="WegstrStatusSurfaceMeasuring" xmlns:sys="clr-namespace:System;assembly=mscorlib">Messpunkt {0} von {1}; Kontakt Z {2:F3} mm.</sys:String>
     <sys:String x:Key="WegstrStatusSurfaceMeasured" xmlns:sys="clr-namespace:System;assembly=mscorlib">Messung abgeschlossen: {0} Punkte, Z-Korrektur {1:F3} bis {2:F3} mm. Kompensation ist aktiv.</sys:String>
+    <sys:String x:Key="WegstrStatusSurfaceReadyToStart" xmlns:sys="clr-namespace:System;assembly=mscorlib">Messung abgeschlossen: {0} Punkte, Z-Korrektur {1:F3} bis {2:F3} mm. Kompensation ist aktiv, {3} ist ausgewählt und die Bearbeitung kann starten.</sys:String>
+    <sys:String x:Key="WegstrStatusProbeDisconnectRequired" xmlns:sys="clr-namespace:System;assembly=mscorlib">Die Messung bleibt erhalten. {0} Danach erneut Start drücken.</sys:String>
+    <sys:String x:Key="WegstrErrorDisconnectProbe" xmlns:sys="clr-namespace:System;assembly=mscorlib">Taster von Werkzeug oder Platine trennen; der Controller meldet weiterhin Tasterkontakt.</sys:String>
     <sys:String x:Key="WegstrStatusSurfaceStopped" xmlns:sys="clr-namespace:System;assembly=mscorlib">Oberflächenmessung wurde gestoppt.</sys:String>
     <sys:String x:Key="WegstrStatusSurfaceFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Oberflächenmessung sicher beendet: {0}</sys:String>
+    <sys:String x:Key="WegstrStatusRecovered" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vorgang wiederhergestellt; {0} meldet bereit. Prüfen Sie vor dem Start die Koordinaten.</sys:String>
+    <sys:String x:Key="WegstrStatusRecoveryFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Der Vorgang kann nicht wiederhergestellt werden; der Controller meldet nicht bereit ({0}).</sys:String>
+    <sys:String x:Key="WegstrStatusRecoveryRequiredAfterReset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Koordinaten wurden genullt. Der Controller ist nach dem vorherigen Fehler nicht bereit; vor der Messung Vorgang wiederherstellen verwenden.</sys:String>
+    <sys:String x:Key="WegstrMachinePosition" xmlns:sys="clr-namespace:System;assembly=mscorlib">Maschinenkopf: X {0:F2}, Y {1:F2} mm</sys:String>
+    <sys:String x:Key="WegstrErrorNotConnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr ist nicht verbunden.</sys:String>
+    <sys:String x:Key="WegstrErrorUnexpectedControllerResponse" xmlns:sys="clr-namespace:System;assembly=mscorlib">Der Controller meldete die unerwartete Antwort {0}.</sys:String>
+    <sys:String x:Key="WegstrErrorProbePreflightResponse" xmlns:sys="clr-namespace:System;assembly=mscorlib">Der Controller meldete vor dem Antasten die unerwartete Antwort {0}.</sys:String>
+    <sys:String x:Key="WegstrErrorProbeResponse" xmlns:sys="clr-namespace:System;assembly=mscorlib">Der Controller meldete beim Antasten die unerwartete Antwort {0}.</sys:String>
+    <sys:String x:Key="WegstrErrorProbeLimit" xmlns:sys="clr-namespace:System;assembly=mscorlib">Die Sonde berührte die Oberfläche nicht vor dem Z-Limit von −10 mm.</sys:String>
+    <sys:String x:Key="WegstrErrorSpindleOverload" xmlns:sys="clr-namespace:System;assembly=mscorlib">Der Controller meldet Spindelüberlast.</sys:String>
+    <sys:String x:Key="WegstrErrorEmergency" xmlns:sys="clr-namespace:System;assembly=mscorlib">Der Controller meldet Maschinenfreigabe oder Not-Halt.</sys:String>
+    <sys:String x:Key="WegstrErrorAcknowledgementTimeout" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr hat das Paket nicht innerhalb von zwei Sekunden bestätigt.</sys:String>
+    <sys:String x:Key="WegstrErrorSimulatorNotConnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Der Wegstr-Simulator ist nicht verbunden.</sys:String>
+    <sys:String x:Key="WegstrErrorSerialPortNotConnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Der serielle Wegstr-Port ist nicht verbunden.</sys:String>
+    <sys:String x:Key="WegstrErrorPacketAlreadyPending" xmlns:sys="clr-namespace:System;assembly=mscorlib">Das vorherige Wegstr-Paket wartet noch auf die Antwort der Steuerung.</sys:String>
 </ResourceDictionary>

@@ -18,6 +18,7 @@ public sealed class AppSettings
     public string BottomLayerColor { get; set; } = "#3478C5";
     public string OutlineColor { get; set; } = "#34434B";
     public string SilkscreenColor { get; set; } = "#F6F1D6";
+    public string WegstrMachinePositionColor { get; set; } = "#B42318";
     public string BottomMirrorPolicy { get; set; } = "Off";
     public double WegstrMaterialThicknessMm { get; set; } = 1.5;
     public double WegstrSafeZMm { get; set; } = 2;
@@ -37,6 +38,7 @@ public sealed class AppSettings
     public double WegstrAutoLevelRasterMm { get; set; } = 1;
     public double WegstrAutoLevelSafeZMm { get; set; } = 1;
     public int WegstrAutoLevelZBacklashSteps { get; set; } = 4;
+    public bool WegstrSafetyNoticeAcknowledged { get; set; }
     public bool WegstrIncludeDrilling { get; set; } = true;
     public bool WegstrIncludeOutline { get; set; }
     public bool WegstrIncludeOutlineInCopper { get; set; } = true;

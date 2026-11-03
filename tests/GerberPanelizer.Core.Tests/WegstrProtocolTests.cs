@@ -175,6 +175,32 @@ public sealed class WegstrProtocolTests
     }
 
     [Fact]
+    public void SurfaceProbePlanExcludesSafeTravelAfterSpindleStarts()
+    {
+        var program = new WegstrGCodeCompiler().Compile("travel", """
+            G21G90
+            T1M06
+            G00X0Y0Z2
+            S12000M03
+            G00X20Y-30Z2
+            G00Z0
+            G01Z-0.080F170
+            G01X22Y-30
+            G00Z2
+            M30
+            """);
+
+        var plan = new WegstrSurfaceLeveler().CreateProbePlan([program], 1, 2500, 2500);
+
+        Assert.NotEmpty(plan.Points);
+        Assert.All(plan.Points, point =>
+        {
+            Assert.InRange(point.XSteps, 5000, 5500);
+            Assert.InRange(point.YSteps, -7500, -7500);
+        });
+    }
+
+    [Fact]
     public void SurfaceMapUsesFirstTouchAsReference()
     {
         var leveler = new WegstrSurfaceLeveler();
@@ -210,10 +236,13 @@ public sealed class WegstrProtocolTests
 
     private static WegstrCompiledProgram CompileLShapedCut() => new WegstrGCodeCompiler().Compile("surface", """
         G21G90
-        G00X0Y0Z0
+        G00X0Y0Z2
         M03
+        G00Z0
+        G01Z-0.080F170
         G01X2Y0F170
         G01X2Y2
+        G00Z2
         M05
         M30
         """);

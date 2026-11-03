@@ -68,6 +68,7 @@ public sealed class WegstrSurfaceLeveler
             ArgumentNullException.ThrowIfNull(program);
             var x = 0;
             var y = 0;
+            var z = 0;
             foreach (var block in program.Blocks)
             {
                 foreach (var packet in block.Packets)
@@ -76,7 +77,11 @@ public sealed class WegstrSurfaceLeveler
                     {
                         x += step.X;
                         y += step.Y;
-                        if (step.SpindleOn) cuttingPositions.Add((x, y));
+                        z += step.Z;
+                        // The generated Wegstr program starts the spindle before its safe-Z
+                        // rapid to a board. That travel must never become a probing location:
+                        // only an XY move while the cutter is below the work Z plane is material cutting.
+                        if (step.SpindleOn && z < 0 && (step.X != 0 || step.Y != 0)) cuttingPositions.Add((x, y));
                     }
                 }
             }
@@ -114,7 +119,7 @@ public sealed class WegstrSurfaceLeveler
         return new WegstrSurfaceMap(plan, corrections);
     }
 
-    public WegstrCompiledProgram Apply(WegstrCompiledProgram program, WegstrSurfaceMap surfaceMap, int zBacklashSteps)
+    public WegstrCompiledProgram Apply(WegstrCompiledProgram program, WegstrSurfaceMap surfaceMap, int zBacklashSteps, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(program);
         ArgumentNullException.ThrowIfNull(surfaceMap);
@@ -122,6 +127,7 @@ public sealed class WegstrSurfaceLeveler
 
         var x = 0;
         var y = 0;
+        var zPosition = 0;
         var appliedCorrection = 0;
         var direction = ZDirection.Down;
         var positiveRun = 0;
@@ -129,20 +135,28 @@ public sealed class WegstrSurfaceLeveler
         var transformedBlocks = new List<WegstrCompiledBlock>(program.Blocks.Count);
         foreach (var block in program.Blocks)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var packets = new List<byte[]>(block.Packets.Count);
             foreach (var packet in block.Packets)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 var transformed = new List<WegstrStep>(3);
+                var changed = false;
                 foreach (var sourceStep in WegstrPacketCodec.Decode(packet))
                 {
-                    var targetCorrection = surfaceMap.TryGetCorrection(x, y, out var correction) ? correction : 0;
+                    cancellationToken.ThrowIfCancellationRequested();
+                    // Apply the map only while the cutter is traversing material. The same
+                    // spindle flag also appears during safe travel and vertical approaches,
+                    // where changing a packet can make a proven machine move unrecognizable.
+                    var isCuttingMove = sourceStep.SpindleOn && zPosition < 0 && (sourceStep.X != 0 || sourceStep.Y != 0);
+                    var targetCorrection = isCuttingMove && surfaceMap.TryGetCorrection(x, y, out var correction) ? correction : appliedCorrection;
                     var z = sourceStep.Z;
-                    if (targetCorrection > appliedCorrection && z < 14)
+                    if (isCuttingMove && targetCorrection > appliedCorrection && z < 14)
                     {
                         z++;
                         appliedCorrection++;
                     }
-                    else if (targetCorrection < appliedCorrection && z > -14)
+                    else if (isCuttingMove && targetCorrection < appliedCorrection && z > -14)
                     {
                         z--;
                         appliedCorrection--;
@@ -172,8 +186,10 @@ public sealed class WegstrSurfaceLeveler
                     transformed.Add(new WegstrStep(sourceStep.X, sourceStep.Y, z, sourceStep.SpindleOn));
                     x += sourceStep.X;
                     y += sourceStep.Y;
+                    zPosition += sourceStep.Z;
+                    changed |= z != sourceStep.Z;
                 }
-                packets.Add(packet[0] == WegstrPacketCodec.ManualHeader
+                packets.Add(!changed ? packet.ToArray() : packet[0] == WegstrPacketCodec.ManualHeader
                     ? WegstrPacketCodec.EncodeManual(transformed)
                     : WegstrPacketCodec.EncodeProgram(transformed));
             }

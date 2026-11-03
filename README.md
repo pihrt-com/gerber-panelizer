@@ -10,6 +10,12 @@
 
 Gerber Panelizer is a lightweight Windows desktop application for preparing printed-circuit-board manufacturing panels. It imports manufacturing data exported from tools such as Autodesk Fusion, renders and filters the board layers, arranges multiple boards on a milling-machine work area, and exports one production ZIP package containing Gerber and Excellon files.
 
+## Version 0.3.2 - 2026-11-03
+
+The live Wegstr head preview is throttled to ten updates per second and keeps a compact finished-motion trail, so opening the Panel tab no longer slows surface probing or prevents switching tabs. Preparing a level-compensated machining path now runs on a cancellable worker task and reports its state before the first machining packet is sent. Manual rapid remains within the verified 1–100% range after physical testing showed that queued packets above 100% can freeze the controller.
+
+Level compensation changes Z only during spindle-on XY cutting moves below work Z0. Initial approach, Z plunge, safe travel, and return-to-zero packets remain byte-identical to the verified uncompensated program.
+
 > [!WARNING]
 > **Current releases are not code-signed.** Windows SmartScreen may therefore display a warning for both the portable EXE and the MSI installer. Download only from this repository's [GitHub Releases](https://github.com/pihrt-com/gerber-panelizer/releases), verify the published SHA-256 checksum, and run it only if you trust that release. A publicly trusted code-signing certificate is required to resolve this properly; even a newly signed publisher can need time to establish SmartScreen reputation. See the [security and installation notice](SECURITY.md).
 
@@ -17,7 +23,9 @@ Gerber Panelizer is a lightweight Windows desktop application for preparing prin
 
 The application is implemented as a self-contained Windows x64 executable. It processes common metric and inch RS-274X Gerber and Excellon input locally without requiring a cloud service.
 
-## Latest update — 2026-10-27
+## Latest update — 2026-11-03
+
+Version 0.3.2 makes the Wegstr USB connection state explicit, permanently dismisses the read machine-safety notice after a click, and adds **Recover operation** beside STOP. Recovery switches the spindle off, clears invalid surface measurement, checks controller readiness again without axis motion, then offers a new surface measurement when the controller is ready. The diagnostics log records every surface-probe packet and controller response, including a reported Z touch position; the controller's absolute touch counter is used only for the surface map and never replaces the work Z coordinate. The spindle remains off during surface probing. Its plan selects only raster cells from prepared XY cutting motion below the Z0 work plane, never the safe travel from 0,0 to a board. Once measurement ends, the machine returns to X/Y work zero at the probing-safe Z clearance above the board, retains the level map, selects `01-copper-isolation.txt`, resets progress to zero, and enables Start without recovery. A Z-only zero after tool replacement preserves the level map; X/Y origin changes, explicit clear, newly prepared operations, or a new/opened project discard it. Each completed operation lifts the head to at least 20 mm for tool replacement. Level compensation applies only to the measured Copper isolation program; drilling and board outline can run without measuring the surface. During measurement and milling, panel preview displays a live head marker and a user-selectable-colour trail of completed motion. Prepared-operation summaries and controller errors are localized, pause turns the spindle off while resume turns it on before machining continues, and STOP also cancels a pending serial exchange.
 
 Version 0.3.1 adds automatic Wegstr surface probing and level compensation. It measures only raster cells crossed by prepared toolpaths, uses the first touch as the Z reference, and approaches each cell correction one Z step per motion sample with configurable backlash compensation. The simulator provides a deterministic uneven surface for a complete software-only rehearsal; a real controller, probe wiring, axis directions, and clearances still require physical acceptance before production use.
 

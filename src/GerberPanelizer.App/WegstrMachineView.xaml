@@ -71,19 +71,20 @@
     </UserControl.Resources>
     <Grid Margin="18">
         <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="14" /><RowDefinition Height="*" /><RowDefinition Height="14" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-        <Border Grid.Row="0" Background="#FFF8E7" BorderBrush="#E8C66B" BorderThickness="1" CornerRadius="7" Padding="14">
-            <StackPanel>
-                <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrDirectSafetyTitle]}" FontWeight="SemiBold" Foreground="#73520A" />
-                <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrDirectSafetyText]}" TextWrapping="Wrap" Foreground="#73520A" Margin="0,4,0,0" />
-            </StackPanel>
-        </Border>
+        <Button Grid.Row="0" Command="{Binding DismissSafetyNoticeCommand}" Visibility="{Binding SafetyNoticeVisibility}" Background="#FFF8E7" BorderBrush="#E8C66B" BorderThickness="1" Padding="10,7" HorizontalContentAlignment="Stretch" ToolTip="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrDirectSafetyText]}">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Left" Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrDirectSafetyTitle]}" FontWeight="SemiBold" Foreground="#73520A" />
+                <TextBlock DockPanel.Dock="Left" Text=":" Foreground="#73520A" Margin="0,0,6,0" />
+                <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrDirectSafetyDismissHint]}" HorizontalAlignment="Right" Foreground="#73520A" />
+            </DockPanel>
+        </Button>
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions><ColumnDefinition Width="270" /><ColumnDefinition Width="14" /><ColumnDefinition Width="*" /><ColumnDefinition Width="14" /><ColumnDefinition Width="270" /></Grid.ColumnDefinitions>
             <Border Grid.Column="0" Background="White" BorderBrush="#D4E1DF" BorderThickness="1" CornerRadius="8" Padding="16">
                 <StackPanel>
                     <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrConnection]}" FontSize="16" FontWeight="SemiBold" Foreground="#244542" />
-                    <CheckBox Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrSimulator]}" IsChecked="{Binding UseSimulator}" IsEnabled="{Binding ConnectionModeEnabled}" Margin="0,14,0,10" FontWeight="SemiBold" />
+                    <CheckBox Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrSimulatorLabel]}" ToolTip="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrSimulator]}" IsChecked="{Binding UseSimulator}" IsEnabled="{Binding ConnectionModeEnabled}" Margin="0,14,0,10" FontWeight="SemiBold" />
                     <StackPanel Visibility="{Binding HardwareControlsVisibility}">
                         <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrSerialPort]}" Foreground="#486764" />
                         <DockPanel Margin="0,5,0,12">
@@ -91,7 +92,8 @@
                             <ComboBox ItemsSource="{Binding Ports}" SelectedItem="{Binding SelectedPort}" MinWidth="130" />
                         </DockPanel>
                     </StackPanel>
-                    <Button Command="{Binding ConnectCommand}" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrConnect]}" Style="{StaticResource WegstrPrimaryButton}" Padding="12,8" Margin="0,0,0,7" />
+                    <Button Command="{Binding ConnectCommand}" Content="{Binding ConnectionButtonText}" Style="{StaticResource WegstrPrimaryButton}" Padding="12,8" Margin="0,0,0,7" />
+                    <TextBlock Text="{Binding ConnectionCaption}" TextWrapping="Wrap" Foreground="#486764" FontSize="11" Margin="0,0,0,7" />
                     <Button Command="{Binding DisconnectCommand}" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrDisconnect]}" Padding="12,7" />
                     <Separator Margin="0,16" />
                     <Button Command="{Binding PrepareCommand}" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrPrepare]}" Padding="12,9" FontWeight="SemiBold" />
@@ -176,9 +178,23 @@
                             <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
                             <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrOperations]}" FontSize="16" FontWeight="SemiBold" Foreground="#244542" />
                             <ListBox Grid.Row="1" ItemsSource="{Binding Programs}" SelectedItem="{Binding SelectedProgram}" Margin="0,12" BorderThickness="0" MaxHeight="220">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="Padding" Value="0" />
+                                        <Setter Property="Margin" Value="0" />
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <Style.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Background" Value="#0B766E" />
+                                                <Setter Property="Foreground" Value="White" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
                                 <ListBox.ItemTemplate><DataTemplate>
-                                    <Border Background="#F3F8F7" Padding="11" Margin="0,0,0,7" CornerRadius="5">
-                                        <StackPanel><TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" Foreground="#184E49" /><TextBlock Text="{Binding FileName}" Foreground="#6A8582" FontSize="11" /><TextBlock Text="{Binding Summary}" Foreground="#486764" Margin="0,4,0,0" /></StackPanel>
+                                    <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Padding="11" Margin="0,0,0,7" CornerRadius="5">
+                                        <StackPanel><TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" /><TextBlock Text="{Binding FileName}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Opacity="0.78" FontSize="11" /><TextBlock Text="{Binding Summary}" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Opacity="0.9" Margin="0,4,0,0" /></StackPanel>
                                     </Border>
                                 </DataTemplate></ListBox.ItemTemplate>
                             </ListBox>
@@ -196,6 +212,8 @@
                     <Button Command="{Binding StartCommand}" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrStartContinue]}" Style="{StaticResource WegstrPrimaryButton}" Padding="12,10" Margin="0,18,0,7" FontWeight="SemiBold" />
                     <Button Command="{Binding PauseCommand}" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrPause]}" Padding="12,8" Margin="0,0,0,7" />
                     <Button Command="{Binding StopCommand}" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrStop]}" Style="{StaticResource WegstrDangerButton}" Padding="12,10" FontWeight="SemiBold" />
+                    <Button Command="{Binding RecoverCommand}" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrRecoverOperation]}" Padding="12,8" Margin="0,7,0,0" />
+                    <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrRecoverOperationHint]}" TextWrapping="Wrap" Foreground="#5B7774" FontSize="11" Margin="0,7,0,0" />
                     <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[WegstrManualHint]}" TextWrapping="Wrap" Foreground="#5B7774" FontSize="11" Margin="0,15,0,0" />
                 </StackPanel>
             </Border>

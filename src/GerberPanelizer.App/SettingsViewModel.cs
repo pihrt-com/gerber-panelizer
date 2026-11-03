@@ -10,6 +10,7 @@ namespace GerberPanelizer.App;
 public sealed class SettingsViewModel : ObservableObject
 {
     private readonly Window window;
+    private readonly bool wegstrSafetyNoticeAcknowledged;
     private string language;
     private double boardSpacingMm;
     private double safetyMarginMm;
@@ -41,6 +42,7 @@ public sealed class SettingsViewModel : ObservableObject
     public SettingsViewModel(AppSettings settings, Window window)
     {
         this.window = window;
+        wegstrSafetyNoticeAcknowledged = settings.WegstrSafetyNoticeAcknowledged;
         AppSettingsService.NormalizeWorkAreaPresets(settings);
         language = settings.Language;
         boardSpacingMm = settings.BoardSpacingMm;
@@ -53,6 +55,7 @@ public sealed class SettingsViewModel : ObservableObject
             new("LayerBottom", settings.BottomLayerColor, "#3478C5"),
             new("LayerOutline", settings.OutlineColor, "#34434B"),
             new("LayerSilkscreen", settings.SilkscreenColor, "#F6F1D6"),
+            new("WegstrMachinePositionColor", settings.WegstrMachinePositionColor, "#B42318"),
         };
         bottomMirrorPolicy = settings.BottomMirrorPolicy;
         wegstrMaterialThicknessMm = settings.WegstrMaterialThicknessMm;
@@ -172,6 +175,7 @@ public sealed class SettingsViewModel : ObservableObject
         BottomLayerColor = LayerColors[2].Hex,
         OutlineColor = LayerColors[3].Hex,
         SilkscreenColor = LayerColors[4].Hex,
+        WegstrMachinePositionColor = LayerColors[5].Hex,
         BottomMirrorPolicy = BottomMirrorPolicy,
         WegstrMaterialThicknessMm = WegstrMaterialThicknessMm,
         WegstrSafeZMm = WegstrSafeZMm,
@@ -191,6 +195,7 @@ public sealed class SettingsViewModel : ObservableObject
         WegstrAutoLevelRasterMm = WegstrAutoLevelRasterMm,
         WegstrAutoLevelSafeZMm = WegstrAutoLevelSafeZMm,
         WegstrAutoLevelZBacklashSteps = WegstrAutoLevelZBacklashSteps,
+        WegstrSafetyNoticeAcknowledged = wegstrSafetyNoticeAcknowledged,
         WegstrIncludeDrilling = WegstrIncludeDrilling,
         WegstrIncludeOutline = WegstrIncludeOutline,
         WegstrIncludeOutlineInCopper = WegstrIncludeOutlineInCopper,
@@ -251,6 +256,7 @@ public sealed class SettingsViewModel : ObservableObject
             LayerColors[2].Hex = imported.BottomLayerColor;
             LayerColors[3].Hex = imported.OutlineColor;
             LayerColors[4].Hex = imported.SilkscreenColor;
+            LayerColors[5].Hex = imported.WegstrMachinePositionColor;
             BottomMirrorPolicy = imported.BottomMirrorPolicy;
             WegstrMaterialThicknessMm = imported.WegstrMaterialThicknessMm;
             WegstrSafeZMm = imported.WegstrSafeZMm;
