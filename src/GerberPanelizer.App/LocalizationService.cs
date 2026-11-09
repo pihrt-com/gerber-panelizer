@@ -5,6 +5,13 @@ namespace GerberPanelizer.App;
 
 public sealed class LocalizationService : INotifyPropertyChanged
 {
+    private static readonly HashSet<string> DefaultWorkAreaNames = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "Výchozí pracovní plocha",
+        "Default work area",
+        "Standardarbeitsbereich",
+        "Zone de travail par défaut",
+    };
     private ResourceDictionary strings = new();
     private readonly ResourceDictionary fallbackStrings = new() { Source = new Uri("/Resources/Strings.en.xaml", UriKind.Relative) };
     public static LocalizationService Instance { get; } = new();
@@ -12,6 +19,8 @@ public sealed class LocalizationService : INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public string this[string key] => strings[key] as string ?? fallbackStrings[key] as string ?? key;
+    public bool IsDefaultWorkAreaName(string? name) => name is not null && DefaultWorkAreaNames.Contains(name.Trim());
+    public string LocalizeWorkAreaName(string name) => IsDefaultWorkAreaName(name) ? this["DefaultWorkAreaPreset"] : name;
 
     public void SetLanguage(string? language)
     {

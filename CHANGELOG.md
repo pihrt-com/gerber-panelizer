@@ -1,5 +1,12 @@
 # Change log
 
+## 0.3.4 - 2026-11-09
+
+- Complete the Czech, English, German, and French UI resource sets so every language exposes the same controls, labels, hints, statuses, and Wegstr terminology.
+- Apply the selected language before constructing the first window and refresh runtime-computed text after a language change, including the default work-area name, imported-board details, USB connection state, prepared-operation names and summaries, surface status, and manual-motion mode.
+- Add localization regression tests that require matching resource keys, reject known Czech text in foreign resources, and verify that every statically referenced UI key exists.
+- Refresh the README screenshots with the version 0.3.3 interface and state the four supported interface languages.
+
 ## 0.3.3 - 2026-11-09
 
 - Replace the imported-board checkbox with a clear switch, derive a useful board name for loose Gerber/Excellon layers instead of `Imported layers`, hide or restore the corresponding placement immediately, and visibly highlight the selected manufacturing side.

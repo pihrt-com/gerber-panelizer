@@ -1,8 +1,8 @@
 # Gerber Panelizer
 
-## Verze 0.3.3 – 2026-11-09
+## Verze 0.3.4 – 2026-11-09
 
-Seznam načtených desek nyní používá přepínač viditelnosti a pro samostatně načtené výrobní vrstvy odvozuje smysluplný název místo textu `Imported layers`. Vypnutí desky okamžitě odstraní její umístění, vybraná strana výroby je zřetelně zvýrazněná a pravé kliknutí na umístěnou desku ukáže její název i načtené vrstvy. Náhled složitých Gerberů uchovává zpracovanou kresbu a statickou scénu, takže přesun, zoom ani živá dráha hlavy znovu nezpracovávají veškerou zdrojovou geometrii. Přímé řízení Wegstr přidává držení šipek pro X/Y, kláves `+`/`-` pro Z, uběhnutý čas vedle průběhu a výslovné potvrzení před pokračováním při varováních přípravy; nefunkční prostřední tlačítko `XY` bylo odstraněno. Nová panelizace také smaže předchozí stopu hlavy.
+Verze 0.3.4 doplňuje všechny texty českého, anglického, německého a francouzského rozhraní a po změně jazyka ihned obnoví také dopočítávané údaje, například výchozí pracovní plochu, počty načtených souborů, stav USB, souhrny připravených operací, stav povrchu a režim ručního pohybu. Verze 0.3.3 přidala přepínač viditelnosti načtených desek, podrobnosti o umístěné desce, rychlejší vykreslování náhledu, polohování klávesnicí, uběhnutý čas úlohy, potvrzení varování při přípravě a mazání předchozí stopy hlavy při nové panelizaci.
 
 [![Nejnovější vydání](https://img.shields.io/github/v/release/pihrt-com/gerber-panelizer?display_name=tag&sort=semver&label=release)](https://github.com/pihrt-com/gerber-panelizer/releases/latest)
 [![Windows x64](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011%20x64-0078D4?logo=windows&logoColor=white)](https://github.com/pihrt-com/gerber-panelizer/releases/latest)
@@ -12,7 +12,7 @@ Seznam načtených desek nyní používá přepínač viditelnosti a pro samosta
 
 [English](README.md) | **Česky**
 
-Gerber Panelizer je odlehčená aplikace pro Windows pro přípravu výrobních panelů desek plošných spojů. Načte výrobní data exportovaná například z Autodesk Fusionu, zobrazí jejich vrstvy, rozmístí více desek na pracovní plochu frézky a vyexportuje jednu výrobní ZIP sadu Gerber a Excellon souborů.
+Gerber Panelizer je odlehčená aplikace pro Windows pro přípravu výrobních panelů desek plošných spojů. Načte výrobní data exportovaná například z Autodesk Fusionu, zobrazí jejich vrstvy, rozmístí více desek na pracovní plochu frézky a vyexportuje jednu výrobní ZIP sadu Gerber a Excellon souborů. Celé rozhraní je dostupné v češtině, angličtině, němčině a francouzštině.
 
 > [!WARNING]
 > **Aktuální vydání nejsou podepsaná certifikátem pro podepisování kódu.** Windows SmartScreen proto může ukázat upozornění jak u přenosného EXE, tak u instalačního MSI. Stahujte pouze z [GitHub Releases tohoto repozitáře](https://github.com/pihrt-com/gerber-panelizer/releases), ověřte zveřejněný SHA-256 kontrolní součet a spusťte soubor jen tehdy, když danému vydání důvěřujete. K řádnému odstranění upozornění je nutný veřejně důvěryhodný certifikát; i nově podepsaný vydavatel může potřebovat čas na vytvoření reputace SmartScreenu. Viz [bezpečnostní a instalační informace](SECURITY.cs.md).
@@ -23,15 +23,25 @@ Aplikace je připravená jako samostatné Windows x64 EXE. Bez závislosti na cl
 
 ## Snímky aplikace
 
-### České rozhraní
+### Rozhraní verze 0.3.3
 
-![Panelizovaná pracovní plocha DPS v češtině](docs/images/czech-panel-overview.png)
+![Volba jednoho ze čtyř jazyků rozhraní](docs/images/v0.3.3-language-selector.png)
+
+Celé rozhraní lze přepínat mezi češtinou, angličtinou, němčinou a francouzštinou. Následující snímky zachycují české rozhraní verze 0.3.3.
+
+![Panelizovaná pracovní plocha DPS](docs/images/v0.3.3-panelized-cs.png)
 
 Hlavní obrazovka zobrazuje načtené desky, viditelné výrobní vrstvy, pracovní plochu stroje, ovládání panelizace, náhled tisku, export ZIP a podrobnosti stavů.
 
-![Okno Nastavení v češtině](docs/images/czech-settings.png)
+![Přímé řízení stroje Wegstr](docs/images/v0.3.3-wegstr-control-cs.png)
+
+Přímé řízení Wegstr připravuje operace z aktuálního panelu bez mezilehlého exportu a nabízí připojení, polohování, měření povrchu a řízení obrábění.
+
+![Nastavení stroje a panelu](docs/images/v0.3.3-settings-machine-cs.png)
 
 V Nastavení lze zvolit jazyk, pojmenované předvolby pracovních ploch pro více strojů, bezpečný okraj, mezery mezi deskami, pravidlo zrcadlení Bottom, automatické otočení, barvy vrstev a import či export nastavení.
+
+![Náhled tisku panelu](docs/images/v0.3.3-print-preview-cs.png)
 
 ## Klíčové vlastnosti
 

@@ -98,7 +98,7 @@ public static class AppSettingsService
         {
             settings.WorkAreaPresets.Add(new WorkAreaPreset
             {
-                Name = "Výchozí pracovní plocha",
+                Name = "Default work area",
                 WidthMm = settings.WorkAreaWidthMm > 0 ? settings.WorkAreaWidthMm : 200,
                 HeightMm = settings.WorkAreaHeightMm > 0 ? settings.WorkAreaHeightMm : 130,
             });

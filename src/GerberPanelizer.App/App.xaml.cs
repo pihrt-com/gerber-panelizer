@@ -27,8 +27,8 @@ public partial class App : Application
             DispatcherUnhandledException += OnDispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
             TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
-            base.OnStartup(e);
             LocalizationService.Instance.SetLanguage(AppSettingsService.Load().Language);
+            base.OnStartup(e);
         }
         catch (Exception exception)
         {

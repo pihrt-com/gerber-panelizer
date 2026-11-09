@@ -204,9 +204,14 @@ public sealed class SettingsViewModel : ObservableObject
     private void LoadWorkAreaPresets(AppSettings settings)
     {
         AppSettingsService.NormalizeWorkAreaPresets(settings);
+        var activeIndex = settings.WorkAreaPresets.FindIndex(preset => string.Equals(preset.Name, settings.ActiveWorkAreaPresetName, StringComparison.OrdinalIgnoreCase));
         WorkAreaPresets.Clear();
-        foreach (var preset in settings.WorkAreaPresets) WorkAreaPresets.Add(new WorkAreaPresetSettingViewModel(preset));
-        SelectedWorkAreaPreset = WorkAreaPresets.FirstOrDefault(preset => string.Equals(preset.Name, settings.ActiveWorkAreaPresetName, StringComparison.OrdinalIgnoreCase)) ?? WorkAreaPresets.FirstOrDefault();
+        foreach (var preset in settings.WorkAreaPresets)
+        {
+            var localizedName = LocalizationService.Instance.LocalizeWorkAreaName(preset.Name);
+            WorkAreaPresets.Add(new WorkAreaPresetSettingViewModel(new WorkAreaPreset { Name = localizedName, WidthMm = preset.WidthMm, HeightMm = preset.HeightMm }));
+        }
+        SelectedWorkAreaPreset = activeIndex >= 0 && activeIndex < WorkAreaPresets.Count ? WorkAreaPresets[activeIndex] : WorkAreaPresets.FirstOrDefault();
         RemoveWorkAreaPresetCommand?.RaiseCanExecuteChanged();
     }
 

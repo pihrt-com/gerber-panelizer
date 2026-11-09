@@ -658,7 +658,7 @@ public sealed class MainViewModel : ObservableObject
         }
         else
         {
-            var dialog = new SaveFileDialog { FileName = safeFileName, DefaultExt = ".exe", Filter = "Windows installer (*.exe)|*.exe", Title = LocalizationService.Instance["UpdateDownload"] };
+            var dialog = new SaveFileDialog { FileName = safeFileName, DefaultExt = ".exe", Filter = LocalizationService.Instance["WindowsInstallerFilter"], Title = LocalizationService.Instance["UpdateDownload"] };
             if (dialog.ShowDialog(owner) != true) return;
             destination = dialog.FileName;
         }
@@ -790,14 +790,36 @@ public sealed class LayerItemViewModel : ObservableObject
 
     private static Brush CreateBrush(string color) => (Brush)new BrushConverter().ConvertFromString(color)!;
 }
-public sealed record WorkAreaPresetChoice(string Name, double WidthMm, double HeightMm)
+public sealed class WorkAreaPresetChoice : ObservableObject
 {
-    public string DisplayName => $"{Name} ({WidthMm:0.##} × {HeightMm:0.##} mm)";
+    public WorkAreaPresetChoice(string name, double widthMm, double heightMm)
+    {
+        Name = name;
+        WidthMm = widthMm;
+        HeightMm = heightMm;
+        LocalizationService.Instance.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName is "Item[]" or nameof(LocalizationService.Language)) OnPropertyChanged(nameof(DisplayName));
+        };
+    }
+
+    public string Name { get; }
+    public double WidthMm { get; }
+    public double HeightMm { get; }
+    public string DisplayName => $"{LocalizationService.Instance.LocalizeWorkAreaName(Name)} ({WidthMm:0.##} × {HeightMm:0.##} mm)";
 }
 public sealed class ImportedBoardItemViewModel : ObservableObject
 {
     private bool isIncluded;
-    public ImportedBoardItemViewModel(ImportedBoard board, bool isIncluded = true) { Board = board; this.isIncluded = isIncluded; }
+    public ImportedBoardItemViewModel(ImportedBoard board, bool isIncluded = true)
+    {
+        Board = board;
+        this.isIncluded = isIncluded;
+        LocalizationService.Instance.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName is "Item[]" or nameof(LocalizationService.Language)) OnPropertyChanged(nameof(Detail));
+        };
+    }
     public ImportedBoard Board { get; } public string InstanceId => Board.Id; public IReadOnlyList<string> SourcePaths => Board.SourceFilePaths; public string Name => Board.DisplayName;
     public string Detail => Board.Bounds.IsEmpty
         ? string.Format(CultureInfo.CurrentCulture, LocalizationService.Instance["BoardDetailNoOutline"], Board.Files.Count)

@@ -146,6 +146,7 @@
     <sys:String x:Key="StatusWegstrExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr export failed: {0}</sys:String>
     <sys:String x:Key="WegstrExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">The Wegstr G-code ZIP was successfully exported to:&#10;{0}&#10;&#10;Run copper isolation first, then drilling, and cut the outline last. Verify every toolpath on the controller before starting the spindle.</sys:String>
     <sys:String x:Key="WorkAreaPresets" xmlns:sys="clr-namespace:System;assembly=mscorlib">Work-area presets</sys:String>
+    <sys:String x:Key="DefaultWorkAreaPreset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Default work area</sys:String>
     <sys:String x:Key="WorkAreaPresetsHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Name the work areas for individual machines. The selected preset can be switched directly above the panel.</sys:String>
     <sys:String x:Key="WorkAreaPresetName" xmlns:sys="clr-namespace:System;assembly=mscorlib">Name</sys:String>
     <sys:String x:Key="WorkAreaWidthShort" xmlns:sys="clr-namespace:System;assembly=mscorlib">Width mm</sys:String>
@@ -183,7 +184,11 @@
     <sys:String x:Key="WegstrPrepareHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Builds operations directly from the current panel and Wegstr settings. Nothing is exported to disk.</sys:String>
     <sys:String x:Key="WegstrOperations" xmlns:sys="clr-namespace:System;assembly=mscorlib">Prepared operations</sys:String>
     <sys:String x:Key="WegstrOperationSummary" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0:N0} packets • tool changes: {1} • approx. {2}</sys:String>
+    <sys:String x:Key="WegstrOperationCopperIsolation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Copper isolation</sys:String>
+    <sys:String x:Key="WegstrOperationDrilling" xmlns:sys="clr-namespace:System;assembly=mscorlib">Drilling</sys:String>
+    <sys:String x:Key="WegstrOperationBoardOutline" xmlns:sys="clr-namespace:System;assembly=mscorlib">Board outline</sys:String>
     <sys:String x:Key="WegstrCurrentTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Current tool</sys:String>
+    <sys:String x:Key="WindowsInstallerFilter" xmlns:sys="clr-namespace:System;assembly=mscorlib">Windows installer (*.exe)|*.exe</sys:String>
     <sys:String x:Key="WegstrControl" xmlns:sys="clr-namespace:System;assembly=mscorlib">Job control</sys:String>
     <sys:String x:Key="WegstrStartContinue" xmlns:sys="clr-namespace:System;assembly=mscorlib">Start / Continue</sys:String>
     <sys:String x:Key="WegstrPause" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pause</sys:String>

@@ -8,11 +8,11 @@
 
 **English** | [Česky](README.cs.md)
 
-Gerber Panelizer is a lightweight Windows desktop application for preparing printed-circuit-board manufacturing panels. It imports manufacturing data exported from tools such as Autodesk Fusion, renders and filters the board layers, arranges multiple boards on a milling-machine work area, and exports one production ZIP package containing Gerber and Excellon files.
+Gerber Panelizer is a lightweight Windows desktop application for preparing printed-circuit-board manufacturing panels. It imports manufacturing data exported from tools such as Autodesk Fusion, renders and filters the board layers, arranges multiple boards on a milling-machine work area, and exports one production ZIP package containing Gerber and Excellon files. The complete interface is available in Czech, English, German, and French.
 
-## Version 0.3.3 - 2026-11-09
+## Version 0.3.4 - 2026-11-09
 
-The imported-board list now uses a clear visibility switch and meaningful names for loose manufacturing layers. Disabling a board removes its placement immediately, the active manufacturing side is visibly selected, and right-clicking a placed board lists its name and imported layers. Complex Gerber previews retain parsed drawings and a cached static scene, so dragging, zooming, and live Wegstr head updates no longer rebuild all source geometry. Direct Wegstr control adds press-and-hold arrow-key X/Y jogging, `+`/`-` Z jogging, elapsed time beside progress, and explicit confirmation before continuing with preparation warnings; the unused centre `XY` button is gone. A new panelization also clears the previous head trail.
+Version 0.3.4 completes the Czech, English, German, and French interface resources and refreshes computed texts immediately after a language change, including the default work area, imported-file counts, USB state, prepared-operation summaries, surface status, and manual-motion mode. Version 0.3.3 added the imported-board visibility switch, placed-board details, cached preview rendering, keyboard jogging, elapsed task time, preparation-warning confirmation, and automatic clearing of the previous head trail.
 
 > [!WARNING]
 > **Current releases are not code-signed.** Windows SmartScreen may therefore display a warning for both the portable EXE and the MSI installer. Download only from this repository's [GitHub Releases](https://github.com/pihrt-com/gerber-panelizer/releases), verify the published SHA-256 checksum, and run it only if you trust that release. A publicly trusted code-signing certificate is required to resolve this properly; even a newly signed publisher can need time to establish SmartScreen reputation. See the [security and installation notice](SECURITY.md).
@@ -23,15 +23,25 @@ The application is implemented as a self-contained Windows x64 executable. It pr
 
 ## Screenshots
 
-### English interface
+### Version 0.3.3 interface
 
-![Panelized PCB work area in English](docs/images/english-panel-overview.png)
+![Language selector with four supported interface languages](docs/images/v0.3.3-language-selector.png)
+
+The entire interface can be switched between Czech, English, German, and French. The following screenshots show the Czech interface from version 0.3.3.
+
+![Panelized PCB work area](docs/images/v0.3.3-panelized-cs.png)
 
 The main screen shows imported boards, visible manufacturing layers, the machine work area, panelization controls, print preview, ZIP export, and status details.
 
-![Settings dialog in English](docs/images/english-settings.png)
+![Direct Wegstr machine control](docs/images/v0.3.3-wegstr-control-cs.png)
+
+Direct Wegstr control prepares current-panel operations without an intermediate export and provides connection, positioning, probing, and machining controls.
+
+![Machine and panel settings](docs/images/v0.3.3-settings-machine-cs.png)
 
 Settings provide the interface language, named machine work-area presets, safety margin, board spacing, Bottom mirror policy, automatic rotation, individual layer colours, and settings import/export.
+
+![Panel print preview](docs/images/v0.3.3-print-preview-cs.png)
 
 ## Core capabilities
 

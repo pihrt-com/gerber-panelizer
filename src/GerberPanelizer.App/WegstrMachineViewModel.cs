@@ -70,6 +70,7 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
         surfaceSummary = L("WegstrSurfaceNotMeasured");
         elapsedTimer = new DispatcherTimer(DispatcherPriority.Background, owner.Dispatcher) { Interval = TimeSpan.FromSeconds(1) };
         elapsedTimer.Tick += (_, _) => UpdateElapsedTime();
+        LocalizationService.Instance.PropertyChanged += OnLocalizationChanged;
         RefreshPortsCommand = new(_ => RefreshPorts(), _ => !IsRunning && !IsManualMoving && !isConnecting);
         PrepareCommand = new(_ => Prepare(), _ => !IsRunning && !IsManualMoving);
         ConnectCommand = new(_ => Connect(), _ => !IsConnected && !IsRunning && !IsManualMoving && !isConnecting && (UseSimulator || !string.IsNullOrWhiteSpace(SelectedPort)));
@@ -590,7 +591,7 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
             for (var blockIndex = 0; blockIndex < compiled.Blocks.Count; blockIndex++)
             {
                 var block = compiled.Blocks[blockIndex];
-                CurrentTool = block.ToolNumber == 0 ? "Current tool" : $"T{block.ToolNumber}";
+                CurrentTool = block.ToolNumber == 0 ? L("WegstrCurrentTool") : $"T{block.ToolNumber}";
                 if (blockIndex > 0)
                 {
                     IsPaused = true;
@@ -1006,8 +1007,27 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
         ElapsedTime = $"{(int)elapsed.TotalHours:00}:{elapsed.Minutes:00}:{elapsed.Seconds:00}";
     }
 
+    private void OnLocalizationChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs eventArgs)
+    {
+        if (eventArgs.PropertyName is not ("Item[]" or nameof(LocalizationService.Language))) return;
+        OnPropertyChanged(nameof(ManualModeLabel));
+        OnPropertyChanged(nameof(ConnectionCaption));
+        OnPropertyChanged(nameof(ConnectionButtonText));
+        if (surfaceMap is null) SurfaceSummary = L("WegstrSurfaceNotMeasured");
+        else
+        {
+            var calibrationZ = directSettings().CalibrationZ;
+            var minimum = StepsToMillimetres(surfaceMap.MinimumCorrectionSteps, calibrationZ);
+            var maximum = StepsToMillimetres(surfaceMap.MaximumCorrectionSteps, calibrationZ);
+            SurfaceSummary = L("WegstrSurfaceMeasured", surfaceMap.PointCount, minimum, maximum);
+        }
+        if (!IsRunning && !IsManualMoving)
+            Status = IsConnected ? ConnectionCaption : L("WegstrStatusSimulatorSelected");
+    }
+
     public async ValueTask DisposeAsync()
     {
+        LocalizationService.Instance.PropertyChanged -= OnLocalizationChanged;
         elapsedTimer.Stop();
         jogRequested = false;
         OnPropertyChanged(nameof(CanJog));
@@ -1051,12 +1071,33 @@ public sealed record WegstrDirectSettings(
     double AutoLevelSafeZMillimetres,
     int AutoLevelZBacklashSteps);
 
-public sealed class WegstrPreparedProgram(string fileName, WegstrCompiledProgram compiled, string gCode)
+public sealed class WegstrPreparedProgram : ObservableObject
 {
-    public string FileName { get; } = fileName;
-    public WegstrCompiledProgram Compiled { get; } = compiled;
-    public string GCode { get; } = gCode;
-    public string DisplayName => Compiled.Name;
+    public WegstrPreparedProgram(string fileName, WegstrCompiledProgram compiled, string gCode)
+    {
+        FileName = fileName;
+        Compiled = compiled;
+        GCode = gCode;
+        LocalizationService.Instance.PropertyChanged += (_, eventArgs) =>
+        {
+            if (eventArgs.PropertyName is "Item[]" or nameof(LocalizationService.Language))
+            {
+                OnPropertyChanged(nameof(DisplayName));
+                OnPropertyChanged(nameof(Summary));
+            }
+        };
+    }
+
+    public string FileName { get; }
+    public WegstrCompiledProgram Compiled { get; }
+    public string GCode { get; }
+    public string DisplayName => FileName switch
+    {
+        "01-copper-isolation.txt" => LocalizationService.Instance["WegstrOperationCopperIsolation"],
+        "02-drill.txt" => LocalizationService.Instance["WegstrOperationDrilling"],
+        "03-board-outline.txt" => LocalizationService.Instance["WegstrOperationBoardOutline"],
+        _ => Compiled.Name,
+    };
     public int PacketCount => Compiled.PacketCount;
     public int ToolChanges => Math.Max(0, Compiled.Blocks.Count - 1);
     public string EstimatedDuration => TimeSpan.FromSeconds(Compiled.EstimatedDurationSeconds).ToString(@"hh\:mm\:ss");

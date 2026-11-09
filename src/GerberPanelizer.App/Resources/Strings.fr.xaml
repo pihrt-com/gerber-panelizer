@@ -105,6 +105,7 @@
     <sys:String x:Key="StatusWegstrExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Échec de l’export Wegstr : {0}</sys:String>
     <sys:String x:Key="WegstrExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">Le ZIP G-code Wegstr a été exporté vers :&#10;{0}&#10;&#10;Exécutez d’abord l’isolation du cuivre, puis le perçage et enfin la découpe. Vérifiez chaque parcours avant de démarrer la broche.</sys:String>
     <sys:String x:Key="WorkAreaPresets" xmlns:sys="clr-namespace:System;assembly=mscorlib">Préréglages de zone de travail</sys:String>
+    <sys:String x:Key="DefaultWorkAreaPreset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Zone de travail par défaut</sys:String>
     <sys:String x:Key="WorkAreaPresetsHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nommez les zones de travail des différentes machines. Le préréglage sélectionné peut être changé directement au-dessus du panneau.</sys:String>
     <sys:String x:Key="WorkAreaPresetName" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nom</sys:String>
     <sys:String x:Key="WorkAreaWidthShort" xmlns:sys="clr-namespace:System;assembly=mscorlib">Largeur mm</sys:String>
@@ -142,7 +143,11 @@
     <sys:String x:Key="WegstrPrepareHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Crée les opérations depuis le panneau et les réglages Wegstr actuels, sans export de fichier.</sys:String>
     <sys:String x:Key="WegstrOperations" xmlns:sys="clr-namespace:System;assembly=mscorlib">Opérations préparées</sys:String>
     <sys:String x:Key="WegstrOperationSummary" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0:N0} paquets • changements d'outil : {1} • env. {2}</sys:String>
+    <sys:String x:Key="WegstrOperationCopperIsolation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Isolation du cuivre</sys:String>
+    <sys:String x:Key="WegstrOperationDrilling" xmlns:sys="clr-namespace:System;assembly=mscorlib">Perçage</sys:String>
+    <sys:String x:Key="WegstrOperationBoardOutline" xmlns:sys="clr-namespace:System;assembly=mscorlib">Contour de la carte</sys:String>
     <sys:String x:Key="WegstrCurrentTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Outil actuel</sys:String>
+    <sys:String x:Key="WindowsInstallerFilter" xmlns:sys="clr-namespace:System;assembly=mscorlib">Programme d'installation Windows (*.exe)|*.exe</sys:String>
     <sys:String x:Key="WegstrControl" xmlns:sys="clr-namespace:System;assembly=mscorlib">Commande du travail</sys:String>
     <sys:String x:Key="WegstrStartContinue" xmlns:sys="clr-namespace:System;assembly=mscorlib">Démarrer / Continuer</sys:String>
     <sys:String x:Key="WegstrPause" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pause</sys:String>
@@ -199,4 +204,87 @@
     <sys:String x:Key="WegstrErrorSimulatorNotConnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Le simulateur Wegstr n’est pas connecté.</sys:String>
     <sys:String x:Key="WegstrErrorSerialPortNotConnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Le port série Wegstr n’est pas connecté.</sys:String>
     <sys:String x:Key="WegstrErrorPacketAlreadyPending" xmlns:sys="clr-namespace:System;assembly=mscorlib">Le paquet Wegstr précédent attend encore la réponse du contrôleur.</sys:String>
+    <sys:String x:Key="InvalidDimensions" xmlns:sys="clr-namespace:System;assembly=mscorlib">Les dimensions de la zone de travail doivent être positives et les espacements ne peuvent pas être négatifs.</sys:String>
+    <sys:String x:Key="InvalidLayerColours" xmlns:sys="clr-namespace:System;assembly=mscorlib">Toutes les couleurs de couche doivent utiliser le format hexadécimal valide #RRGGBB.</sys:String>
+    <sys:String x:Key="SettingsReadFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Impossible de lire le fichier de paramètres.</sys:String>
+    <sys:String x:Key="SettingsInvalid" xmlns:sys="clr-namespace:System;assembly=mscorlib">Le fichier de paramètres n’est pas valide.</sys:String>
+    <sys:String x:Key="StatusReady" xmlns:sys="clr-namespace:System;assembly=mscorlib">Prêt.</sys:String>
+    <sys:String x:Key="DiagnosticsLogPath" xmlns:sys="clr-namespace:System;assembly=mscorlib">Journal de diagnostic : {0}</sys:String>
+    <sys:String x:Key="StatusImportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Échec de l’importation : {0}</sys:String>
+    <sys:String x:Key="StatusNoBoardImported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Aucune carte importée ; {0} erreur(s) nécessitent une vérification.</sys:String>
+    <sys:String x:Key="StatusNoLayersRecognised" xmlns:sys="clr-namespace:System;assembly=mscorlib">Aucune couche de fabrication reconnue.</sys:String>
+    <sys:String x:Key="StatusImported" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} carte(s) importée(s) avec {1} fichier(s) de fabrication. {2} erreur(s), {3} avertissement(s).</sys:String>
+    <sys:String x:Key="StatusBoardsStaged" xmlns:sys="clr-namespace:System;assembly=mscorlib">Les {0} carte(s) importée(s) sont visibles dans la zone d’attente. Faites-les glisser sur le panneau ou sélectionnez Panéliser.</sys:String>
+    <sys:String x:Key="StatusNoBoardsOnPanel" xmlns:sys="clr-namespace:System;assembly=mscorlib">Aucune carte complète ne se trouve dans la zone de travail de la machine. Faites-en glisser une ou sélectionnez Panéliser.</sys:String>
+    <sys:String x:Key="StatusBoardsCrossPanelBoundary" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} carte(s) franchissent le bord de la zone de travail. Placez chacune entièrement à l’intérieur ou à l’extérieur avant l’exportation ou l’impression.</sys:String>
+    <sys:String x:Key="NewProjectConfirm" xmlns:sys="clr-namespace:System;assembly=mscorlib">Créer un nouveau projet et abandonner la liste actuelle de cartes non enregistrée ?</sys:String>
+    <sys:String x:Key="StatusNewProject" xmlns:sys="clr-namespace:System;assembly=mscorlib">Un nouveau projet vide a été créé.</sys:String>
+    <sys:String x:Key="StatusProjectSaved" xmlns:sys="clr-namespace:System;assembly=mscorlib">Projet enregistré dans {0}.</sys:String>
+    <sys:String x:Key="StatusProjectSaveFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Impossible d’enregistrer le projet : {0}</sys:String>
+    <sys:String x:Key="StatusProjectLoadFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Impossible d’ouvrir le projet : {0}</sys:String>
+    <sys:String x:Key="StatusProjectNoSources" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} : aucun fichier source enregistré.</sys:String>
+    <sys:String x:Key="StatusProjectLoaded" xmlns:sys="clr-namespace:System;assembly=mscorlib">Projet chargé : {0} carte(s), {1} fichier(s) source manquant(s).</sys:String>
+    <sys:String x:Key="StatusBoardDeleted" xmlns:sys="clr-namespace:System;assembly=mscorlib">Carte {0} supprimée.</sys:String>
+    <sys:String x:Key="BoardCopyName" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} (copie)</sys:String>
+    <sys:String x:Key="StatusBoardCloned" xmlns:sys="clr-namespace:System;assembly=mscorlib">Carte {0} dupliquée.</sys:String>
+    <sys:String x:Key="StatusBoardMoved" xmlns:sys="clr-namespace:System;assembly=mscorlib">Carte {0} déplacée.</sys:String>
+    <sys:String x:Key="StatusManufacturingSide" xmlns:sys="clr-namespace:System;assembly=mscorlib">Face de fabrication : {0}. Les cartes sont placées en attente pour le positionnement manuel ou la panélisation automatique.</sys:String>
+    <sys:String x:Key="StatusSelectBoard" xmlns:sys="clr-namespace:System;assembly=mscorlib">Sélectionnez au moins une carte importée pour la panélisation.</sys:String>
+    <sys:String x:Key="StatusPanelized" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} carte(s) panélisée(s) sur {1}.</sys:String>
+    <sys:String x:Key="StatusPanelizedUnplaced" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} carte(s) panélisée(s) ; {1} carte(s) ne tiennent pas sur {2}.</sys:String>
+    <sys:String x:Key="StatusPanelSettingsInvalid" xmlns:sys="clr-namespace:System;assembly=mscorlib">Les paramètres du panneau sont invalides : {0}</sys:String>
+    <sys:String x:Key="StatusPanelizeBeforeExport" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panélisez les cartes avant l’exportation.</sys:String>
+    <sys:String x:Key="StatusExported" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} fichier(s) de fabrication exporté(s) vers {1}. {2} avertissement(s).</sys:String>
+    <sys:String x:Key="StatusExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Échec de l’exportation : {0}</sys:String>
+    <sys:String x:Key="StatusPrintSent" xmlns:sys="clr-namespace:System;assembly=mscorlib">Aperçu envoyé à l’imprimante sélectionnée.</sys:String>
+    <sys:String x:Key="StatusPanelizeBeforePrint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panélisez les cartes avant d’ouvrir l’aperçu avant impression.</sys:String>
+    <sys:String x:Key="StatusPrintPreviewOpened" xmlns:sys="clr-namespace:System;assembly=mscorlib">Aperçu avant impression ouvert.</sys:String>
+    <sys:String x:Key="StatusSettingsSaved" xmlns:sys="clr-namespace:System;assembly=mscorlib">Paramètres enregistrés. Les cartes sont replacées à côté de la nouvelle zone de travail.</sys:String>
+    <sys:String x:Key="BoardDetail" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0:0.##} × {1:0.##} mm · {2} fichier(s)</sys:String>
+    <sys:String x:Key="BoardDetailNoOutline" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} fichier(s) · aucun contour mesurable</sys:String>
+    <sys:String x:Key="PrintPreviewDescription" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0:0.##} × {1:0.##} mm · {2} carte(s)</sys:String>
+    <sys:String x:Key="PanelPrintJob" xmlns:sys="clr-namespace:System;assembly=mscorlib">Panneau Gerber Panelizer</sys:String>
+    <sys:String x:Key="StatusProjectAbsoluteSource" xmlns:sys="clr-namespace:System;assembly=mscorlib">Le projet contient un chemin source absolu non portable.</sys:String>
+    <sys:String x:Key="WegstrModeStepping" xmlns:sys="clr-namespace:System;assembly=mscorlib">Mode pas à pas : 3 pas du contrôleur par clic</sys:String>
+    <sys:String x:Key="WegstrModeContinuous" xmlns:sys="clr-namespace:System;assembly=mscorlib">Mouvement manuel continu : {0} %</sys:String>
+    <sys:String x:Key="WegstrStatusSimulatorSelected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Le simulateur est sélectionné. Préparez une tâche depuis le panneau actuel.</sys:String>
+    <sys:String x:Key="WegstrStatusNoPorts" xmlns:sys="clr-namespace:System;assembly=mscorlib">Aucun port série trouvé. Le simulateur reste disponible.</sys:String>
+    <sys:String x:Key="WegstrStatusPortsFound" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} port(s) série trouvé(s). Aucun port n’a été ouvert.</sys:String>
+    <sys:String x:Key="WegstrStatusPreparing" xmlns:sys="clr-namespace:System;assembly=mscorlib">Préparation des trajectoires et paquets Wegstr…</sys:String>
+    <sys:String x:Key="WegstrStatusPrepared" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} opération(s) préparée(s). Vérifiez l’opération sélectionnée avant de démarrer.</sys:String>
+    <sys:String x:Key="WegstrStatusPreparedOperationsCleared" xmlns:sys="clr-namespace:System;assembly=mscorlib">Les opérations préparées ont été effacées car le projet a changé.</sys:String>
+    <sys:String x:Key="WegstrStatusPreparingCompensation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Préparation de la trajectoire d’usinage compensée…</sys:String>
+    <sys:String x:Key="WegstrStatusWarnings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Avertissements : {0}</sys:String>
+    <sys:String x:Key="WegstrStatusPreparationFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Échec de la préparation : {0}</sys:String>
+    <sys:String x:Key="WegstrConfirmConnect" xmlns:sys="clr-namespace:System;assembly=mscorlib">Se connecter à {0} en 9600 8N1 ?&#10;&#10;L’application enverra un paquet d’identification sans mouvement. L’arrêt d’urgence doit être accessible et la zone de broche dégagée.</sys:String>
+    <sys:String x:Key="WegstrConfirmConnectTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connecter Wegstr</sys:String>
+    <sys:String x:Key="WegstrStatusConnectedReady" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connecté à {0} ; la machine est prête.</sys:String>
+    <sys:String x:Key="WegstrStatusConnectedOverload" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connecté à {0} ; la surcharge de broche est active.</sys:String>
+    <sys:String x:Key="WegstrStatusConnectedReleased" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connecté à {0} ; l’état de libération ou d’urgence est actif.</sys:String>
+    <sys:String x:Key="WegstrStatusConnectionFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Échec de la connexion : {0}</sys:String>
+    <sys:String x:Key="WegstrStatusDisconnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Déconnecté. L’arrêt de la broche a été demandé avant la fermeture du port.</sys:String>
+    <sys:String x:Key="WegstrStatusResuming" xmlns:sys="clr-namespace:System;assembly=mscorlib">Reprise après le paquet confirmé.</sys:String>
+    <sys:String x:Key="WegstrConfirmStart" xmlns:sys="clr-namespace:System;assembly=mscorlib">Démarrer « {0} » sur {1} ?&#10;&#10;Paquets : {2:N0}&#10;Durée de mouvement estimée : {3}&#10;&#10;Vérifiez l’origine de travail, l’outil, le bridage, le Z sûr et le dégagement de la broche.</sys:String>
+    <sys:String x:Key="WegstrConfirmStartTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Démarrer la tâche Wegstr</sys:String>
+    <sys:String x:Key="WegstrStatusToolChange" xmlns:sys="clr-namespace:System;assembly=mscorlib">Changement d’outil requis : installez T{0}, puis appuyez sur Continuer.</sys:String>
+    <sys:String x:Key="WegstrStatusPaused" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pause après un paquet confirmé. Appuyez sur Continuer ou STOP.</sys:String>
+    <sys:String x:Key="WegstrStatusRunning" xmlns:sys="clr-namespace:System;assembly=mscorlib">Exécution de {0} : paquet {1:N0} sur {2:N0}.</sys:String>
+    <sys:String x:Key="WegstrStatusCompleted" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0} terminé. Paquet d’arrêt de broche envoyé.</sys:String>
+    <sys:String x:Key="WegstrStatusStopped" xmlns:sys="clr-namespace:System;assembly=mscorlib">Tâche arrêtée. Un paquet d’arrêt de broche a été envoyé.</sys:String>
+    <sys:String x:Key="WegstrStatusSafetyStop" xmlns:sys="clr-namespace:System;assembly=mscorlib">Tâche arrêtée pour raison de sécurité : {0}</sys:String>
+    <sys:String x:Key="WegstrStatusManualStep" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pas manuel {0}{1} terminé.</sys:String>
+    <sys:String x:Key="WegstrStatusManualMove" xmlns:sys="clr-namespace:System;assembly=mscorlib">Mouvement manuel {0}{1} à {2} %. Relâchez la touche pour arrêter.</sys:String>
+    <sys:String x:Key="WegstrStatusManualSafetyStop" xmlns:sys="clr-namespace:System;assembly=mscorlib">Mouvement manuel arrêté pour raison de sécurité : {0}</sys:String>
+    <sys:String x:Key="WegstrStatusSpindleOn" xmlns:sys="clr-namespace:System;assembly=mscorlib">Broche activée.</sys:String>
+    <sys:String x:Key="WegstrStatusSpindleOff" xmlns:sys="clr-namespace:System;assembly=mscorlib">Broche désactivée.</sys:String>
+    <sys:String x:Key="WegstrStatusSpindleFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Échec sécurisé de la commande de broche : {0}</sys:String>
+    <sys:String x:Key="WegstrConfirmReturnZero" xmlns:sys="clr-namespace:System;assembly=mscorlib">Revenir au zéro de travail affiché ?&#10;&#10;La machine montera d’abord Z à la hauteur sûre configurée, déplacera ensuite X/Y vers zéro, puis abaissera Z à zéro. Les coordonnées affichées doivent correspondre à la position réelle de la machine.</sys:String>
+    <sys:String x:Key="WegstrConfirmReturnZeroTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Ramener Wegstr à zéro</sys:String>
+    <sys:String x:Key="WegstrStatusReturnZeroStopped" xmlns:sys="clr-namespace:System;assembly=mscorlib">Retour à zéro arrêté après un paquet confirmé.</sys:String>
+    <sys:String x:Key="WegstrStatusReturnedZero" xmlns:sys="clr-namespace:System;assembly=mscorlib">La machine est revenue au zéro de travail affiché.</sys:String>
+    <sys:String x:Key="WegstrStatusReturnZeroSafetyStop" xmlns:sys="clr-namespace:System;assembly=mscorlib">Retour à zéro arrêté pour raison de sécurité : {0}</sys:String>
+    <sys:String x:Key="WegstrStatusCoordinatesReset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Les coordonnées de travail affichées ont été remises à zéro ; aucune commande de mouvement n’a été envoyée.</sys:String>
+    <sys:String x:Key="WegstrStatusPauseRequested" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pause demandée ; attente de la confirmation du paquet actuel.</sys:String>
+    <sys:String x:Key="WegstrStatusStoppingJob" xmlns:sys="clr-namespace:System;assembly=mscorlib">Arrêt après l’opération série actuelle…</sys:String>
+    <sys:String x:Key="WegstrStatusStoppingManual" xmlns:sys="clr-namespace:System;assembly=mscorlib">Arrêt du mouvement manuel après le paquet confirmé actuel…</sys:String>
 </ResourceDictionary>

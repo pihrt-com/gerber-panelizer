@@ -146,6 +146,7 @@
     <sys:String x:Key="StatusWegstrExportFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Export Wegstr se nezdařil: {0}</sys:String>
     <sys:String x:Key="WegstrExportSuccessText" xmlns:sys="clr-namespace:System;assembly=mscorlib">ZIP s G-code pro Wegstr byl úspěšně exportován do:&#10;{0}&#10;&#10;Pořadí je izolace mědi, vrtání a nakonec vyříznutí obrysu. Před zapnutím vřetena ověřte všechny dráhy na řídicím systému.</sys:String>
     <sys:String x:Key="WorkAreaPresets" xmlns:sys="clr-namespace:System;assembly=mscorlib">Předvolby pracovních ploch</sys:String>
+    <sys:String x:Key="DefaultWorkAreaPreset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Výchozí pracovní plocha</sys:String>
     <sys:String x:Key="WorkAreaPresetsHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pojmenujte pracovní plochy jednotlivých strojů. Vybranou předvolbu lze kdykoli přepnout přímo nad panelem.</sys:String>
     <sys:String x:Key="WorkAreaPresetName" xmlns:sys="clr-namespace:System;assembly=mscorlib">Název</sys:String>
     <sys:String x:Key="WorkAreaWidthShort" xmlns:sys="clr-namespace:System;assembly=mscorlib">Šířka mm</sys:String>
@@ -183,7 +184,11 @@
     <sys:String x:Key="WegstrPrepareHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vytvoří operace přímo z aktuálního panelu a nastavení Wegstr. Na disk se nic neexportuje.</sys:String>
     <sys:String x:Key="WegstrOperations" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připravené operace</sys:String>
     <sys:String x:Key="WegstrOperationSummary" xmlns:sys="clr-namespace:System;assembly=mscorlib">{0:N0} paketů • výměn nástroje: {1} • přibl. {2}</sys:String>
+    <sys:String x:Key="WegstrOperationCopperIsolation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Izolace mědi</sys:String>
+    <sys:String x:Key="WegstrOperationDrilling" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vrtání</sys:String>
+    <sys:String x:Key="WegstrOperationBoardOutline" xmlns:sys="clr-namespace:System;assembly=mscorlib">Obrys desky</sys:String>
     <sys:String x:Key="WegstrCurrentTool" xmlns:sys="clr-namespace:System;assembly=mscorlib">Aktuální nástroj</sys:String>
+    <sys:String x:Key="WindowsInstallerFilter" xmlns:sys="clr-namespace:System;assembly=mscorlib">Instalační program Windows (*.exe)|*.exe</sys:String>
     <sys:String x:Key="WegstrControl" xmlns:sys="clr-namespace:System;assembly=mscorlib">Průběh úlohy</sys:String>
     <sys:String x:Key="WegstrStartContinue" xmlns:sys="clr-namespace:System;assembly=mscorlib">Spustit / Pokračovat</sys:String>
     <sys:String x:Key="WegstrPause" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pozastavit</sys:String>
