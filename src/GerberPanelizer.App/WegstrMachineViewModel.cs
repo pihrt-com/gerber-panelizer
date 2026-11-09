@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Ports;
 using System.Windows;
+using System.Windows.Threading;
 using GerberPanelizer.Core.Exporting;
 using GerberPanelizer.Core.Machines.Wegstr;
 
@@ -18,6 +19,8 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
     private readonly WegstrGCodeCompiler compiler = new();
     private readonly WegstrSurfaceLeveler surfaceLeveler = new();
     private readonly CancellationTokenSource lifetimeCancellation = new();
+    private readonly Stopwatch elapsedStopwatch = new();
+    private readonly DispatcherTimer elapsedTimer;
     private IWegstrMachineLink? link;
     private CancellationTokenSource? runCancellation;
     private Task? activeRunTask;
@@ -52,6 +55,7 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
     private bool probeDisconnectRequired;
     private string surfaceSummary = string.Empty;
     private bool isSafetyNoticeVisible;
+    private string elapsedTime = "00:00:00";
 
     public WegstrMachineViewModel(Window owner, Func<WegstrProgramSet> preparePrograms, Func<WegstrDirectSettings> directSettings, Func<bool> isSafetyNoticeAcknowledged, Action acknowledgeSafetyNotice)
     {
@@ -64,6 +68,8 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
         manualSpeedPercent = directSettings().SpeedPercent;
         status = L("WegstrStatusSimulatorSelected");
         surfaceSummary = L("WegstrSurfaceNotMeasured");
+        elapsedTimer = new DispatcherTimer(DispatcherPriority.Background, owner.Dispatcher) { Interval = TimeSpan.FromSeconds(1) };
+        elapsedTimer.Tick += (_, _) => UpdateElapsedTime();
         RefreshPortsCommand = new(_ => RefreshPorts(), _ => !IsRunning && !IsManualMoving && !isConnecting);
         PrepareCommand = new(_ => Prepare(), _ => !IsRunning && !IsManualMoving);
         ConnectCommand = new(_ => Connect(), _ => !IsConnected && !IsRunning && !IsManualMoving && !isConnecting && (UseSimulator || !string.IsNullOrWhiteSpace(SelectedPort)));
@@ -137,7 +143,32 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
     public bool CoordinatesEditable => !IsRunning && !IsManualMoving;
     public bool IsConnected { get => isConnected; private set { if (SetProperty(ref isConnected, value)) { OnPropertyChanged(nameof(ConnectionModeEnabled)); OnPropertyChanged(nameof(CanUseManualControls)); OnPropertyChanged(nameof(CanMeasureSurface)); OnPropertyChanged(nameof(CanJog)); OnPropertyChanged(nameof(ConnectionCaption)); OnPropertyChanged(nameof(ConnectionButtonText)); RefreshCommands(); } } }
     public bool IsMachineReady { get => isMachineReady; private set { if (SetProperty(ref isMachineReady, value)) { OnPropertyChanged(nameof(CanUseManualControls)); OnPropertyChanged(nameof(CanMeasureSurface)); OnPropertyChanged(nameof(CanJog)); OnPropertyChanged(nameof(ConnectionCaption)); OnPropertyChanged(nameof(ConnectionButtonText)); RefreshCommands(); } } }
-    public bool IsRunning { get => isRunning; private set { if (SetProperty(ref isRunning, value)) { OnPropertyChanged(nameof(ConnectionModeEnabled)); OnPropertyChanged(nameof(CanUseManualControls)); OnPropertyChanged(nameof(CanMeasureSurface)); OnPropertyChanged(nameof(CanJog)); OnPropertyChanged(nameof(CoordinatesEditable)); RefreshCommands(); } } }
+    public bool IsRunning
+    {
+        get => isRunning;
+        private set
+        {
+            if (!SetProperty(ref isRunning, value)) return;
+            if (value)
+            {
+                elapsedStopwatch.Restart();
+                ElapsedTime = "00:00:00";
+                elapsedTimer.Start();
+            }
+            else
+            {
+                UpdateElapsedTime();
+                elapsedTimer.Stop();
+                elapsedStopwatch.Stop();
+            }
+            OnPropertyChanged(nameof(ConnectionModeEnabled));
+            OnPropertyChanged(nameof(CanUseManualControls));
+            OnPropertyChanged(nameof(CanMeasureSurface));
+            OnPropertyChanged(nameof(CanJog));
+            OnPropertyChanged(nameof(CoordinatesEditable));
+            RefreshCommands();
+        }
+    }
     public bool IsPaused { get => isPaused; private set { if (SetProperty(ref isPaused, value)) RefreshCommands(); } }
     public bool IsManualMoving { get => isManualMoving; private set { if (SetProperty(ref isManualMoving, value)) { OnPropertyChanged(nameof(ConnectionModeEnabled)); OnPropertyChanged(nameof(CanUseManualControls)); OnPropertyChanged(nameof(CanMeasureSurface)); OnPropertyChanged(nameof(CanJog)); OnPropertyChanged(nameof(CoordinatesEditable)); RefreshCommands(); } } }
     public bool IsSpindleOn { get => isSpindleOn; private set => SetProperty(ref isSpindleOn, value); }
@@ -155,6 +186,7 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
     public double PositionYMillimetres { get => StepsToMillimetres(positionYSteps, directSettings().CalibrationY); set => SetPosition(WegstrAxis.Y, value); }
     public double PositionZMillimetres { get => StepsToMillimetres(positionZSteps, directSettings().CalibrationZ); set => SetPosition(WegstrAxis.Z, value); }
     public double Progress { get => progress; private set => SetProperty(ref progress, value); }
+    public string ElapsedTime { get => elapsedTime; private set => SetProperty(ref elapsedTime, value); }
     public string Status { get => status; private set => SetProperty(ref status, value); }
     public string CurrentTool { get => currentTool; private set => SetProperty(ref currentTool, value); }
     public string SurfaceSummary { get => surfaceSummary; private set => SetProperty(ref surfaceSummary, value); }
@@ -184,6 +216,7 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
         SelectedProgram = null;
         ResetSurfaceMap();
         Progress = 0;
+        ElapsedTime = "00:00:00";
         CurrentTool = "-";
         OnPropertyChanged(nameof(CanMeasureSurface));
         Status = L("WegstrStatusPreparedOperationsCleared");
@@ -218,8 +251,20 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
     {
         try
         {
+            ClearPreparedOperations();
             Status = L("WegstrStatusPreparing");
             var set = preparePrograms();
+            if (set.Warnings.Count > 0)
+            {
+                var answer = MessageBox.Show(owner,
+                    L("WegstrConfirmRiskyPreparation", string.Join(Environment.NewLine, set.Warnings.Select(warning => $"• {warning}"))),
+                    L("WegstrConfirmRiskyPreparationTitle"), MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+                if (answer != MessageBoxResult.Yes)
+                {
+                    Status = L("WegstrStatusPreparationCancelled");
+                    return;
+                }
+            }
             var machine = directSettings();
             var compiled = await Task.Run(() => set.Programs.Select(program =>
             {
@@ -955,8 +1000,15 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
     private static TaskCompletionSource<bool> CompletedSignal() { var signal = NewSignal(); signal.SetResult(true); return signal; }
     private static string L(string key, params object[] arguments) => string.Format(LocalizationService.Instance[key], arguments);
 
+    private void UpdateElapsedTime()
+    {
+        var elapsed = elapsedStopwatch.Elapsed;
+        ElapsedTime = $"{(int)elapsed.TotalHours:00}:{elapsed.Minutes:00}:{elapsed.Seconds:00}";
+    }
+
     public async ValueTask DisposeAsync()
     {
+        elapsedTimer.Stop();
         jogRequested = false;
         OnPropertyChanged(nameof(CanJog));
         manualStopRequested = true;

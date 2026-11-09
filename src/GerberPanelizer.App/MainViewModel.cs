@@ -142,7 +142,20 @@ public sealed class MainViewModel : ObservableObject
     public string MachinePositionCaption => L("WegstrMachinePosition", MachinePositionXMillimetres, MachinePositionYMillimetres);
     public string MachinePositionColor => settings.WegstrMachinePositionColor;
     public Visibility MachinePositionVisibility => WegstrMachine.IsRunning ? Visibility.Visible : Visibility.Collapsed;
-    public string ManufacturingSide { get => manufacturingSide; private set => SetProperty(ref manufacturingSide, value); }
+    public string ManufacturingSide
+    {
+        get => manufacturingSide;
+        private set
+        {
+            if (!SetProperty(ref manufacturingSide, value)) return;
+            OnPropertyChanged(nameof(IsTopSideSelected));
+            OnPropertyChanged(nameof(IsBottomSideSelected));
+            OnPropertyChanged(nameof(IsBothSidesSelected));
+        }
+    }
+    public bool IsTopSideSelected => ManufacturingSide == "Top";
+    public bool IsBottomSideSelected => ManufacturingSide == "Bottom";
+    public bool IsBothSidesSelected => ManufacturingSide == "Both";
     public string StatusText { get => statusText; private set => SetProperty(ref statusText, value); }
     public ImportedBoardItemViewModel? SelectedBoard
     {
@@ -248,7 +261,13 @@ public sealed class MainViewModel : ObservableObject
     private void AddBoard(ImportedBoard board, bool included = true)
     {
         var item = new ImportedBoardItemViewModel(board, included);
-        item.PropertyChanged += (_, args) => { if (args.PropertyName == nameof(ImportedBoardItemViewModel.IsIncluded)) PanelizeCommand.RaiseCanExecuteChanged(); };
+        item.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName != nameof(ImportedBoardItemViewModel.IsIncluded)) return;
+            PanelizeCommand.RaiseCanExecuteChanged();
+            if (item.IsIncluded) StageBoards([item.Board], preserveExisting: true);
+            else DeletePlacementForBoard(item.Board);
+        };
         Boards.Add(item);
         RefreshBoardCommands();
     }
@@ -382,7 +401,15 @@ public sealed class MainViewModel : ObservableObject
 
     private void SelectSide(string? side)
     {
-        ManufacturingSide = side ?? "Both";
+        var selectedSide = side ?? "Both";
+        if (ManufacturingSide == selectedSide)
+        {
+            OnPropertyChanged(nameof(IsTopSideSelected));
+            OnPropertyChanged(nameof(IsBottomSideSelected));
+            OnPropertyChanged(nameof(IsBothSidesSelected));
+            return;
+        }
+        ManufacturingSide = selectedSide;
         StageAllBoards();
         AddStatus(StatusSeverity.Information, L("StatusManufacturingSide", L($"Side{ManufacturingSide}")));
     }
@@ -399,6 +426,8 @@ public sealed class MainViewModel : ObservableObject
             var staged = stagingLayout.Arrange(arranged.UnplacedBoards, panelSize, settings.BoardSpacingMm, mirrorMode);
             var visiblePlacements = placed.Concat(staged.Placements).ToList();
             panelization = new(visiblePlacements, arranged.UnplacedBoards, GetUsedBounds(visiblePlacements));
+            MachinePositionHistory.Clear();
+            WegstrMachine.ClearPreparedOperations();
             RebuildPlacementPreviews(); OnPropertyChanged(nameof(RenderPlacements)); RefreshExportCommands();
             AddStatus(arranged.UnplacedBoards.Count == 0 ? StatusSeverity.Success : StatusSeverity.Warning, arranged.UnplacedBoards.Count == 0 ? L("StatusPanelized", placed.Count, WorkAreaCaption) : L("StatusPanelizedUnplaced", placed.Count, arranged.UnplacedBoards.Count, WorkAreaCaption));
         }

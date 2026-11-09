@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using GerberPanelizer.Core.Exporting;
 using GerberPanelizer.Core.Geometry;
+using GerberPanelizer.Core.Importing;
 using GerberPanelizer.Core.IO;
 using GerberPanelizer.Core.Models;
 using GerberPanelizer.Core.Panelization;
@@ -48,6 +49,29 @@ public sealed class ParserAndPanelizationTests
         Assert.Equal(4, document.CoordinateFormat.DecimalDigits);
         Assert.Equal(10.2, document.Bounds.Width, 6);
         Assert.Equal(5.2, document.Bounds.Height, 6);
+    }
+
+    [Fact]
+    public void ManufacturingImporter_UsesCommonFilePrefixForLooseBoardName()
+    {
+        const string gerber = "%MOMM*%\n%FSLAX34Y34*%\n%ADD10C,0.200*%\nD10*\nX0Y0D02*\nX100000Y0D01*\nM02*";
+        var directory = Path.Combine(Path.GetTempPath(), $"gerber-panelizer-import-{Guid.NewGuid():N}");
+        var top = Path.Combine(directory, "controller-copper_top.gtl");
+        var outline = Path.Combine(directory, "controller-profile.gko");
+        try
+        {
+            Directory.CreateDirectory(directory);
+            File.WriteAllText(top, gerber);
+            File.WriteAllText(outline, gerber);
+
+            var result = new ManufacturingImporter().ImportFiles([top, outline]);
+
+            Assert.Equal("controller", Assert.Single(result.Boards).DisplayName);
+        }
+        finally
+        {
+            if (Directory.Exists(directory)) Directory.Delete(directory, recursive: true);
+        }
     }
 
     [Fact]

@@ -47,11 +47,48 @@ public sealed class ManufacturingImporter
 
         if (looseFiles.Count > 0)
         {
-            var name = looseFiles.Count == 1 ? Path.GetFileNameWithoutExtension(looseFiles[0].Name) : "Imported layers";
+            var name = GetLooseBoardName(looseFiles);
             boards.Add(CreateBoard(name, looseFiles, looseFiles.Select(file => file.SourcePath).ToArray()));
         }
 
         return new ImportResult(boards, issues);
+    }
+
+    private static string GetLooseBoardName(IReadOnlyList<ManufacturingFile> files)
+    {
+        var stems = files.Select(file => Path.GetFileNameWithoutExtension(file.Name)).Where(name => !string.IsNullOrWhiteSpace(name)).ToArray();
+        if (stems.Length == 1) return stems[0];
+
+        var commonPrefix = GetCommonPrefix(stems).TrimEnd(' ', '-', '_', '.');
+        if (!string.IsNullOrWhiteSpace(commonPrefix)) return commonPrefix;
+
+        var directories = files.Select(file => Path.GetDirectoryName(file.SourcePath))
+            .Where(path => !string.IsNullOrWhiteSpace(path))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        if (directories.Length == 1)
+        {
+            var directoryName = Path.GetFileName(Path.TrimEndingDirectorySeparator(directories[0]!));
+            if (!string.IsNullOrWhiteSpace(directoryName)) return directoryName;
+        }
+
+        return stems.FirstOrDefault() ?? "Board";
+    }
+
+    private static string GetCommonPrefix(IReadOnlyList<string> values)
+    {
+        if (values.Count == 0) return string.Empty;
+        var first = values[0];
+        var length = first.Length;
+        for (var valueIndex = 1; valueIndex < values.Count && length > 0; valueIndex++)
+        {
+            var value = values[valueIndex];
+            length = Math.Min(length, value.Length);
+            var characterIndex = 0;
+            while (characterIndex < length && char.ToUpperInvariant(first[characterIndex]) == char.ToUpperInvariant(value[characterIndex])) characterIndex++;
+            length = characterIndex;
+        }
+        return first[..length];
     }
 
     private void ImportZip(string path, ICollection<ImportedBoard> boards, ICollection<ImportIssue> issues)

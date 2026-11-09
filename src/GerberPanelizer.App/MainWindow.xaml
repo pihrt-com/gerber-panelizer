@@ -63,6 +63,56 @@
                 <Trigger Property="IsChecked" Value="False"><Setter Property="Background" Value="#C6D0CE" /><Setter Property="Foreground" Value="#647573" /></Trigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="BoardInclusionToggle" TargetType="ToggleButton">
+            <Setter Property="Width" Value="38" />
+            <Setter Property="Height" Value="20" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="ToolTip" Value="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[BoardVisibilityToggle]}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Track" Background="#B8C7C5" CornerRadius="10" Padding="3">
+                            <Ellipse x:Name="Knob" Width="14" Height="14" Fill="White" HorizontalAlignment="Left" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Track" Property="Background" Value="#0B766E" />
+                                <Setter TargetName="Knob" Property="HorizontalAlignment" Value="Right" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Track" Property="Opacity" Value="0.86" /></Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ManufacturingSideToggle" TargetType="ToggleButton">
+            <Setter Property="Background" Value="#E5F1EF" />
+            <Setter Property="Foreground" Value="#145C57" />
+            <Setter Property="BorderBrush" Value="#C8E0DD" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="8,6" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="SideBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Background" Value="#0B766E" />
+                                <Setter Property="BorderBrush" Value="#0B766E" />
+                                <Setter Property="Foreground" Value="White" />
+                                <Setter Property="FontWeight" Value="SemiBold" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="SideBorder" Property="Opacity" Value="0.88" /></Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style x:Key="MainNavigationTab" TargetType="TabItem">
             <Setter Property="MinWidth" Value="150" />
             <Setter Property="Margin" Value="0,0,8,0" />
@@ -185,7 +235,10 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0">
-                                            <CheckBox IsChecked="{Binding IsIncluded}" FontWeight="SemiBold" Foreground="#184E49" Content="{Binding Name}" />
+                                            <DockPanel>
+                                                <ToggleButton DockPanel.Dock="Left" Style="{StaticResource BoardInclusionToggle}" IsChecked="{Binding IsIncluded}" />
+                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="#184E49" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                            </DockPanel>
                                             <TextBlock Text="{Binding Detail}" FontSize="11" Foreground="#5B7774" Margin="19,3,0,0" />
                                         </StackPanel>
                                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
@@ -200,9 +253,9 @@
                     <StackPanel Grid.Row="4">
                         <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[ManufacturingSide]}" FontSize="12" Foreground="#486764" Margin="0,0,0,6" />
                         <UniformGrid Columns="3">
-                            <Button Command="{Binding SelectSideCommand}" CommandParameter="Top" Style="{StaticResource SmallActionButton}" Margin="0,0,3,0" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[SideTop]}" />
-                            <Button Command="{Binding SelectSideCommand}" CommandParameter="Bottom" Style="{StaticResource SmallActionButton}" Margin="3,0" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[SideBottom]}" />
-                            <Button Command="{Binding SelectSideCommand}" CommandParameter="Both" Style="{StaticResource SmallActionButton}" Margin="3,0,0,0" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[SideBoth]}" />
+                            <ToggleButton Command="{Binding SelectSideCommand}" CommandParameter="Top" IsChecked="{Binding IsTopSideSelected, Mode=OneWay}" Style="{StaticResource ManufacturingSideToggle}" Margin="0,0,3,0" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[SideTop]}" />
+                            <ToggleButton Command="{Binding SelectSideCommand}" CommandParameter="Bottom" IsChecked="{Binding IsBottomSideSelected, Mode=OneWay}" Style="{StaticResource ManufacturingSideToggle}" Margin="3,0" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[SideBottom]}" />
+                            <ToggleButton Command="{Binding SelectSideCommand}" CommandParameter="Both" IsChecked="{Binding IsBothSidesSelected, Mode=OneWay}" Style="{StaticResource ManufacturingSideToggle}" Margin="3,0,0,0" Content="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[SideBoth]}" />
                         </UniformGrid>
                     </StackPanel>
                 </Grid>
@@ -243,7 +296,7 @@
                         </StackPanel>
                         <Border Grid.Row="1" Background="White" BorderBrush="#0B766E" BorderThickness="2" Margin="0,14,0,0" ClipToBounds="True">
                             <Grid>
-                                <local:PanelPreviewControl Placements="{Binding RenderPlacements}" Layers="{Binding Layers}" PanelWidthMm="{Binding WorkAreaWidthMm}" PanelHeightMm="{Binding WorkAreaHeightMm}" WorkspaceWidthMm="{Binding PreviewWorkspaceWidthMm}" WorkspaceHeightMm="{Binding PreviewWorkspaceHeightMm}" StagingAreaLabel="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[StagingArea]}" MachinePositionXMillimetres="{Binding MachinePositionXMillimetres}" MachinePositionYMillimetres="{Binding MachinePositionYMillimetres}" MachinePath="{Binding MachinePositionHistory}" ShowMachinePosition="{Binding WegstrMachine.IsRunning}" MachinePositionLabel="{Binding MachinePositionCaption}" MachinePositionColor="{Binding MachinePositionColor}" MovePlacementCommand="{Binding MovePlacementCommand}" DeletePlacementCommand="{Binding DeletePlacementCommand}" />
+                                <local:PanelPreviewControl Placements="{Binding RenderPlacements}" Layers="{Binding Layers}" PanelWidthMm="{Binding WorkAreaWidthMm}" PanelHeightMm="{Binding WorkAreaHeightMm}" WorkspaceWidthMm="{Binding PreviewWorkspaceWidthMm}" WorkspaceHeightMm="{Binding PreviewWorkspaceHeightMm}" StagingAreaLabel="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[StagingArea]}" BoardContextNameLabel="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[BoardContextName]}" BoardContextLayersLabel="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[BoardContextLayers]}" MachinePositionXMillimetres="{Binding MachinePositionXMillimetres}" MachinePositionYMillimetres="{Binding MachinePositionYMillimetres}" MachinePath="{Binding MachinePositionHistory}" ShowMachinePosition="{Binding WegstrMachine.IsRunning}" MachinePositionLabel="{Binding MachinePositionCaption}" MachinePositionColor="{Binding MachinePositionColor}" MovePlacementCommand="{Binding MovePlacementCommand}" DeletePlacementCommand="{Binding DeletePlacementCommand}" />
                                 <StackPanel Visibility="{Binding EmptyPreviewVisibility}" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False">
                                     <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[CanvasEmptyTitle]}" FontSize="18" FontWeight="SemiBold" Foreground="#42615E" HorizontalAlignment="Center" />
                                     <TextBlock Text="{Binding Source={x:Static local:LocalizationService.Instance}, Path=[CanvasEmptyHint]}" Margin="0,6,0,0" Foreground="#71908D" HorizontalAlignment="Center" />

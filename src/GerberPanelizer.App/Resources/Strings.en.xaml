@@ -1,6 +1,9 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <sys:String x:Key="ImportFiles" xmlns:sys="clr-namespace:System;assembly=mscorlib">Import files</sys:String>
     <sys:String x:Key="ImportedBoards" xmlns:sys="clr-namespace:System;assembly=mscorlib">Imported boards</sys:String>
+    <sys:String x:Key="BoardVisibilityToggle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Show or hide the board on the workspace</sys:String>
+    <sys:String x:Key="BoardContextName" xmlns:sys="clr-namespace:System;assembly=mscorlib">Board</sys:String>
+    <sys:String x:Key="BoardContextLayers" xmlns:sys="clr-namespace:System;assembly=mscorlib">Imported layers</sys:String>
     <sys:String x:Key="ManufacturingSide" xmlns:sys="clr-namespace:System;assembly=mscorlib">Manufacturing side</sys:String>
     <sys:String x:Key="Layers" xmlns:sys="clr-namespace:System;assembly=mscorlib">Layers</sys:String>
     <sys:String x:Key="WorkArea" xmlns:sys="clr-namespace:System;assembly=mscorlib">Machine work area</sys:String>
@@ -186,6 +189,7 @@
     <sys:String x:Key="WegstrPause" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pause</sys:String>
     <sys:String x:Key="WegstrStop" xmlns:sys="clr-namespace:System;assembly=mscorlib">STOP + spindle off</sys:String>
     <sys:String x:Key="WegstrManualControl" xmlns:sys="clr-namespace:System;assembly=mscorlib">Manual XYZ control</sys:String>
+    <sys:String x:Key="WegstrKeyboardHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Keyboard: arrow keys move X/Y and + or − moves Z. Hold the key for continuous movement.</sys:String>
     <sys:String x:Key="WegstrGoToZero" xmlns:sys="clr-namespace:System;assembly=mscorlib">Return to zero</sys:String>
     <sys:String x:Key="WegstrZeroAll" xmlns:sys="clr-namespace:System;assembly=mscorlib">Zero XYZ</sys:String>
     <sys:String x:Key="WegstrSpindle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Spindle on / off</sys:String>
@@ -203,6 +207,9 @@
     <sys:String x:Key="WegstrStatusNoPorts" xmlns:sys="clr-namespace:System;assembly=mscorlib">No serial ports were found. Simulator remains available.</sys:String>
     <sys:String x:Key="WegstrStatusPortsFound" xmlns:sys="clr-namespace:System;assembly=mscorlib">Found {0} serial port(s). No port has been opened.</sys:String>
     <sys:String x:Key="WegstrStatusPreparing" xmlns:sys="clr-namespace:System;assembly=mscorlib">Preparing Wegstr toolpaths and packets…</sys:String>
+    <sys:String x:Key="WegstrConfirmRiskyPreparationTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Risky Wegstr preparation</sys:String>
+    <sys:String x:Key="WegstrConfirmRiskyPreparation" xmlns:sys="clr-namespace:System;assembly=mscorlib">The design contains risky or unsupported elements:&#10;&#10;{0}&#10;&#10;Continue and prepare the available Wegstr data anyway? Inspect the paths carefully and perform a dry run above the material before machining.</sys:String>
+    <sys:String x:Key="WegstrStatusPreparationCancelled" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr preparation was cancelled by the user.</sys:String>
     <sys:String x:Key="WegstrStatusPrepared" xmlns:sys="clr-namespace:System;assembly=mscorlib">Prepared {0} operation(s). Review the selected operation before starting.</sys:String>
     <sys:String x:Key="WegstrStatusPreparedOperationsCleared" xmlns:sys="clr-namespace:System;assembly=mscorlib">Prepared operations were cleared because the project changed.</sys:String>
     <sys:String x:Key="WegstrStatusPreparingCompensation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Preparing the compensated machining path…</sys:String>

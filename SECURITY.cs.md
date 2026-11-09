@@ -19,7 +19,7 @@ Get-FileHash -Algorithm SHA256 .\GerberPanelizer.App.exe
 Get-FileHash -Algorithm SHA256 .\GerberPanelizer-<verze>-win-x64.msi
 ```
 
-Pokračujte jen tehdy, když kontrolní součet přesně souhlasí s poznámkami daného vydání a zdrojovému repozitáři důvěřujete. Dokud nebude zaveden veřejně důvěryhodný certifikát a chráněný proces podepisování, projekt bude vydání jasně označovat jako nepodepsaná.
+Pokračujte jen tehdy, když kontrolní součet přesně souhlasí s poznámkami daného vydání a zdrojovému repozitáři důvěřujete. Dokud nebude zaveden veřejně důvěryhodný certifikát a chráněný proces podepisování, projekt bude vydání označovat jako nepodepsaná.
 
 ## Chování MSI
 Pro běžnou instalaci použijte Setup EXE. MSI nainstaluje Gerber Panelizer pro všechny uživatele do `Program Files\Martin Pihrt\Gerber Panelizer`. Nabídne volbu zástupce na ploše a v nabídce Start. Pokud nalezne starší verzi Gerber Panelizeru, nabídne její nahrazení a Windows Installer ji před instalací nové verze odebere. Obsahuje tutéž samostatnou aplikaci jako přenosné EXE. Nepoužívá se online instalátor ani kloudová závislost.

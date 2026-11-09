@@ -1,6 +1,9 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <sys:String x:Key="ImportFiles" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vložit soubory</sys:String>
     <sys:String x:Key="ImportedBoards" xmlns:sys="clr-namespace:System;assembly=mscorlib">Načtené desky</sys:String>
+    <sys:String x:Key="BoardVisibilityToggle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Zobrazit nebo skrýt desku na pracovní ploše</sys:String>
+    <sys:String x:Key="BoardContextName" xmlns:sys="clr-namespace:System;assembly=mscorlib">Deska</sys:String>
+    <sys:String x:Key="BoardContextLayers" xmlns:sys="clr-namespace:System;assembly=mscorlib">Načtené vrstvy</sys:String>
     <sys:String x:Key="ManufacturingSide" xmlns:sys="clr-namespace:System;assembly=mscorlib">Strana výroby</sys:String>
     <sys:String x:Key="Layers" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vrstvy</sys:String>
     <sys:String x:Key="WorkArea" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pracovní plocha stroje</sys:String>
@@ -186,6 +189,7 @@
     <sys:String x:Key="WegstrPause" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pozastavit</sys:String>
     <sys:String x:Key="WegstrStop" xmlns:sys="clr-namespace:System;assembly=mscorlib">STOP + vypnout vřeteno</sys:String>
     <sys:String x:Key="WegstrManualControl" xmlns:sys="clr-namespace:System;assembly=mscorlib">Ruční ovládání XYZ</sys:String>
+    <sys:String x:Key="WegstrKeyboardHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Klávesnice: šipky ovládají X/Y, klávesy + a − ovládají Z. Pro souvislý pohyb klávesu podržte.</sys:String>
     <sys:String x:Key="WegstrGoToZero" xmlns:sys="clr-namespace:System;assembly=mscorlib">Návrat na nulu</sys:String>
     <sys:String x:Key="WegstrZeroAll" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vynulovat XYZ</sys:String>
     <sys:String x:Key="WegstrSpindle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vřeteno zapnout / vypnout</sys:String>
@@ -203,6 +207,9 @@
     <sys:String x:Key="WegstrStatusNoPorts" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nebyl nalezen žádný sériový port. Simulátor zůstává dostupný.</sys:String>
     <sys:String x:Key="WegstrStatusPortsFound" xmlns:sys="clr-namespace:System;assembly=mscorlib">Nalezeno sériových portů: {0}. Žádný port nebyl otevřen.</sys:String>
     <sys:String x:Key="WegstrStatusPreparing" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připravuji dráhy a pakety Wegstr…</sys:String>
+    <sys:String x:Key="WegstrConfirmRiskyPreparationTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Riziková příprava Wegstr</sys:String>
+    <sys:String x:Key="WegstrConfirmRiskyPreparation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Návrh obsahuje rizikové nebo nepodporované prvky:&#10;&#10;{0}&#10;&#10;Chcete přesto pokračovat a připravit dostupná data pro Wegstr? Před spuštěním pečlivě zkontrolujte dráhy a proveďte zkušební chod nad materiálem.</sys:String>
+    <sys:String x:Key="WegstrStatusPreparationCancelled" xmlns:sys="clr-namespace:System;assembly=mscorlib">Příprava Wegstr byla zrušena uživatelem.</sys:String>
     <sys:String x:Key="WegstrStatusPrepared" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připraveno operací: {0}. Před spuštěním zkontrolujte vybranou operaci.</sys:String>
     <sys:String x:Key="WegstrStatusPreparedOperationsCleared" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připravené operace byly smazány, protože se změnil projekt.</sys:String>
     <sys:String x:Key="WegstrStatusPreparingCompensation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připravuji kompenzovanou dráhu obrábění…</sys:String>

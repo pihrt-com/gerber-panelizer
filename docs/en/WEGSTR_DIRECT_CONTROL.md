@@ -21,8 +21,8 @@ Each packet waits for one response; another packet is never sent while the first
 | Load and close a G-code file | Replaced by direct preparation of isolation, drilling, and outline operations from the current panel; no intermediate file is required. |
 | Start, pause, continue, and STOP | Yes; pause and STOP occur at an acknowledged packet boundary. |
 | Tool changes | Yes; the job pauses between tool blocks and requires Continue. |
-| Progress and current tool | Yes. |
-| Press-and-hold manual X/Y/Z | Yes; the original acceleration sequence `3, 6, 9, 10, 11, 12, 13, 14` steps is used before remaining at 14 steps per sample at 100%. |
+| Progress, elapsed time, and current tool | Yes. |
+| Press-and-hold manual X/Y/Z | Yes; mouse buttons or the keyboard use the original acceleration sequence `3, 6, 9, 10, 11, 12, 13, 14` steps before remaining at 14 steps per sample at 100%. Arrow keys control X/Y and `+`/`-` controls Z. |
 | 1% stepping | Yes; one click sends three one-step samples, equal to 0.012 mm at 2500 steps/10 mm. |
 | Fast positioning | Yes; **100% rapid** changes manual positioning only. It does not change machining feeds. |
 | Work coordinates and X/Y/Z zeroing | Yes; coordinates can be edited or reset individually or together without machine motion. |
@@ -38,13 +38,13 @@ The first measured Z is the reference. Every other cell stores `reference - meas
 
 ## Manual positioning
 
-For fast positioning above the board, connect the simulator first, verify every axis direction, and then select **100% rapid**. At 2–100%, motion continues while the button is held; release takes effect after the currently transmitted packet is acknowledged. A value of 1% intentionally performs one step packet rather than continuous motion. This setting applies only to manual control and return to zero; cutting and drilling feeds remain those of the Wegstr profile and prepared program.
+For fast positioning above the board, connect the simulator first, verify every axis direction, and then select **100% rapid**. At 2–100%, motion continues while the mouse button or keyboard key is held; release takes effect after the currently transmitted packet is acknowledged. Left/Right controls X, Up/Down controls Y, and `+`/`-` controls Z. A value of 1% intentionally performs one step packet rather than continuous motion. This setting applies only to manual control and return to zero; cutting and drilling feeds remain those of the Wegstr profile and prepared program.
 
 ## Acceptance checklist
 
 1. On the Panel tab, import the data, select the work area, place complete boards, and inspect layers, orientation, and profiles.
 2. In Settings, confirm X/Y/Z calibration within 2400–2600 steps per 10 mm, safe Z, depths, tools, manufacturing feeds, probing raster (0.5–70 mm), probing safe Z (0.1–40 mm), and Z backlash (0–30 steps).
-3. Open **Direct Wegstr control**, keep the simulator enabled, choose **Prepare panel data**, and review every operation, packet count, and tool change.
+3. Open **Direct Wegstr control**, keep the simulator enabled, choose **Prepare panel data**, and review every operation, packet count, tool change, and preparation warning. If the warning dialog appears, continue only after checking which geometry will be omitted or treated as risky.
 4. In the simulator, verify stepping, continuous movement, STOP, zeroing, spindle control, return to zero, the full surface measurement, its point count and correction range, and a compensated program run.
 5. Only then disable the simulator, select the correct COM port, and confirm the connection. The application sends a stationary identification packet and must report ready.
 6. With the spindle disconnected or the tool removed and Z safely above the workpiece, verify X/Y/Z signs, a measured 10 mm distance, the default-calibration 0.012 mm step, STOP, and the physical emergency stop.

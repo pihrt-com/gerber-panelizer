@@ -1,5 +1,13 @@
 # Change log
 
+## Unreleased - 2026-11-09
+
+- Replace the imported-board checkbox with a clear switch, derive a useful board name for loose Gerber/Excellon layers instead of `Imported layers`, hide or restore the corresponding placement immediately, and visibly highlight the selected manufacturing side.
+- Show the board name and every imported layer in a right-click menu over a panel placement, and clear the completed Wegstr head trail whenever a new automatic panelization is created.
+- Cache parsed Gerber/Excellon drawings and the static panel scene so board dragging, zooming, and live machine-path updates do not repeatedly parse and redraw complex source geometry; keep the changing head trail as a separate compact geometry.
+- Add press-and-hold keyboard jogging with arrow keys for X/Y and `+`/`-` for Z, remove the inactive centre `XY` button, and display elapsed task time beside packet progress.
+- When direct Wegstr preparation reports risky or unsupported geometry, show the warnings and let the operator explicitly continue preparing the available operations or cancel; retain the raised-tool dry-run requirement before machining.
+
 ## 0.3.2 - 2026-11-03
 
 - Add an explicit USB connection state, a one-click acknowledgment that hides the machine-safety notice persistently, and a recovery action that switches the spindle off, clears surface measurement, and checks the controller again without moving an axis.

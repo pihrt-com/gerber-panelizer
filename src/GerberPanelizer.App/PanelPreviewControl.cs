@@ -16,11 +16,11 @@ public sealed class PanelPreviewControl : FrameworkElement
 {
     public static readonly DependencyProperty PlacementsProperty = DependencyProperty.Register(nameof(Placements), typeof(IEnumerable<BoardPlacement>), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender, OnPlacementsChanged));
     public static readonly DependencyProperty LayersProperty = DependencyProperty.Register(nameof(Layers), typeof(IEnumerable<LayerItemViewModel>), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(null, OnLayersChanged));
-    public static readonly DependencyProperty PanelWidthMmProperty = DependencyProperty.Register(nameof(PanelWidthMm), typeof(double), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(200d, FrameworkPropertyMetadataOptions.AffectsRender));
-    public static readonly DependencyProperty PanelHeightMmProperty = DependencyProperty.Register(nameof(PanelHeightMm), typeof(double), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(130d, FrameworkPropertyMetadataOptions.AffectsRender));
-    public static readonly DependencyProperty WorkspaceWidthMmProperty = DependencyProperty.Register(nameof(WorkspaceWidthMm), typeof(double), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(200d, FrameworkPropertyMetadataOptions.AffectsRender));
-    public static readonly DependencyProperty WorkspaceHeightMmProperty = DependencyProperty.Register(nameof(WorkspaceHeightMm), typeof(double), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(130d, FrameworkPropertyMetadataOptions.AffectsRender));
-    public static readonly DependencyProperty StagingAreaLabelProperty = DependencyProperty.Register(nameof(StagingAreaLabel), typeof(string), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.AffectsRender));
+    public static readonly DependencyProperty PanelWidthMmProperty = RegisterStaticVisualProperty(nameof(PanelWidthMm), 200d);
+    public static readonly DependencyProperty PanelHeightMmProperty = RegisterStaticVisualProperty(nameof(PanelHeightMm), 130d);
+    public static readonly DependencyProperty WorkspaceWidthMmProperty = RegisterStaticVisualProperty(nameof(WorkspaceWidthMm), 200d);
+    public static readonly DependencyProperty WorkspaceHeightMmProperty = RegisterStaticVisualProperty(nameof(WorkspaceHeightMm), 130d);
+    public static readonly DependencyProperty StagingAreaLabelProperty = RegisterStaticVisualProperty(nameof(StagingAreaLabel), string.Empty);
     public static readonly DependencyProperty MachinePositionXMillimetresProperty = DependencyProperty.Register(nameof(MachinePositionXMillimetres), typeof(double), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.AffectsRender));
     public static readonly DependencyProperty MachinePositionYMillimetresProperty = DependencyProperty.Register(nameof(MachinePositionYMillimetres), typeof(double), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.AffectsRender));
     public static readonly DependencyProperty ShowMachinePositionProperty = DependencyProperty.Register(nameof(ShowMachinePosition), typeof(bool), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.AffectsRender));
@@ -29,11 +29,18 @@ public sealed class PanelPreviewControl : FrameworkElement
     public static readonly DependencyProperty MachinePathProperty = DependencyProperty.Register(nameof(MachinePath), typeof(IEnumerable<PcbPoint>), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender, OnMachinePathChanged));
     public static readonly DependencyProperty MovePlacementCommandProperty = DependencyProperty.Register(nameof(MovePlacementCommand), typeof(ICommand), typeof(PanelPreviewControl));
     public static readonly DependencyProperty DeletePlacementCommandProperty = DependencyProperty.Register(nameof(DeletePlacementCommand), typeof(ICommand), typeof(PanelPreviewControl));
-    public static readonly DependencyProperty SelectedPlacementProperty = DependencyProperty.Register(nameof(SelectedPlacement), typeof(BoardPlacement), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
+    public static readonly DependencyProperty SelectedPlacementProperty = DependencyProperty.Register(nameof(SelectedPlacement), typeof(BoardPlacement), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender, OnStaticVisualPropertyChanged));
+    public static readonly DependencyProperty BoardContextNameLabelProperty = DependencyProperty.Register(nameof(BoardContextNameLabel), typeof(string), typeof(PanelPreviewControl), new PropertyMetadata("Board"));
+    public static readonly DependencyProperty BoardContextLayersLabelProperty = DependencyProperty.Register(nameof(BoardContextLayersLabel), typeof(string), typeof(PanelPreviewControl), new PropertyMetadata("Layers"));
 
     private readonly Dictionary<BoardPlacement, PcbPoint> transientOffsets = new();
+    private readonly Dictionary<ManufacturingFile, Drawing> fileDrawings = new(ReferenceEqualityComparer.Instance);
     private INotifyCollectionChanged? observableLayers;
     private INotifyCollectionChanged? observableMachinePath;
+    private Drawing? staticDrawing;
+    private StreamGeometry? machinePathGeometry;
+    private bool staticDrawingDirty = true;
+    private bool machinePathDirty = true;
     private double zoom = 1;
     private Vector pan;
     private bool isPanning;
@@ -64,6 +71,18 @@ public sealed class PanelPreviewControl : FrameworkElement
     public ICommand? MovePlacementCommand { get => (ICommand?)GetValue(MovePlacementCommandProperty); set => SetValue(MovePlacementCommandProperty, value); }
     public ICommand? DeletePlacementCommand { get => (ICommand?)GetValue(DeletePlacementCommandProperty); set => SetValue(DeletePlacementCommandProperty, value); }
     public BoardPlacement? SelectedPlacement { get => (BoardPlacement?)GetValue(SelectedPlacementProperty); set => SetValue(SelectedPlacementProperty, value); }
+    public string BoardContextNameLabel { get => (string)GetValue(BoardContextNameLabelProperty); set => SetValue(BoardContextNameLabelProperty, value); }
+    public string BoardContextLayersLabel { get => (string)GetValue(BoardContextLayersLabelProperty); set => SetValue(BoardContextLayersLabelProperty, value); }
+
+    private static DependencyProperty RegisterStaticVisualProperty<T>(string name, T defaultValue) => DependencyProperty.Register(name, typeof(T), typeof(PanelPreviewControl), new FrameworkPropertyMetadata(defaultValue, FrameworkPropertyMetadataOptions.AffectsRender, OnStaticVisualPropertyChanged));
+
+    private static void OnStaticVisualPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs eventArgs)
+    {
+        var control = (PanelPreviewControl)dependencyObject;
+        control.staticDrawingDirty = true;
+        control.machinePathDirty = true;
+        control.InvalidateVisual();
+    }
 
     /// <summary>Deletes the selected placement through <see cref="DeletePlacementCommand"/>.</summary>
     public void RequestDeleteSelection()
@@ -76,6 +95,7 @@ public sealed class PanelPreviewControl : FrameworkElement
         var control = (PanelPreviewControl)dependencyObject;
         control.transientOffsets.Clear();
         if (control.SelectedPlacement is { } selected && !(eventArgs.NewValue as IEnumerable<BoardPlacement> ?? Enumerable.Empty<BoardPlacement>()).Contains(selected)) control.SelectedPlacement = null;
+        control.staticDrawingDirty = true;
         control.InvalidateVisual();
     }
 
@@ -84,6 +104,8 @@ public sealed class PanelPreviewControl : FrameworkElement
         var control = (PanelPreviewControl)dependencyObject;
         control.DetachLayerEvents(eventArgs.OldValue as IEnumerable<LayerItemViewModel>);
         control.AttachLayerEvents(eventArgs.NewValue as IEnumerable<LayerItemViewModel>);
+        control.fileDrawings.Clear();
+        control.staticDrawingDirty = true;
         control.InvalidateVisual();
     }
 
@@ -93,10 +115,15 @@ public sealed class PanelPreviewControl : FrameworkElement
         if (control.observableMachinePath is not null) control.observableMachinePath.CollectionChanged -= control.OnMachinePathChanged;
         control.observableMachinePath = eventArgs.NewValue as INotifyCollectionChanged;
         if (control.observableMachinePath is not null) control.observableMachinePath.CollectionChanged += control.OnMachinePathChanged;
+        control.machinePathDirty = true;
         control.InvalidateVisual();
     }
 
-    private void OnMachinePathChanged(object? sender, NotifyCollectionChangedEventArgs eventArgs) => InvalidateVisual();
+    private void OnMachinePathChanged(object? sender, NotifyCollectionChangedEventArgs eventArgs)
+    {
+        machinePathDirty = true;
+        InvalidateVisual();
+    }
 
     private void AttachLayerEvents(IEnumerable<LayerItemViewModel>? layers)
     {
@@ -119,10 +146,24 @@ public sealed class PanelPreviewControl : FrameworkElement
     {
         if (eventArgs.OldItems is IEnumerable oldItems) foreach (var layer in oldItems.OfType<LayerItemViewModel>()) layer.PropertyChanged -= OnLayerPropertyChanged;
         if (eventArgs.NewItems is IEnumerable newItems) foreach (var layer in newItems.OfType<LayerItemViewModel>()) layer.PropertyChanged += OnLayerPropertyChanged;
+        fileDrawings.Clear();
+        staticDrawingDirty = true;
         InvalidateVisual();
     }
 
-    private void OnLayerPropertyChanged(object? sender, PropertyChangedEventArgs eventArgs) => InvalidateVisual();
+    private void OnLayerPropertyChanged(object? sender, PropertyChangedEventArgs eventArgs)
+    {
+        fileDrawings.Clear();
+        staticDrawingDirty = true;
+        InvalidateVisual();
+    }
+
+    protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+    {
+        base.OnRenderSizeChanged(sizeInfo);
+        staticDrawingDirty = true;
+        machinePathDirty = true;
+    }
 
     protected override void OnRender(DrawingContext drawingContext)
     {
@@ -132,10 +173,8 @@ public sealed class PanelPreviewControl : FrameworkElement
         // including empty grid cells where no Gerber geometry is drawn.
         drawingContext.DrawRectangle(Brushes.Transparent, null, new Rect(RenderSize));
         drawingContext.PushClip(new RectangleGeometry(new Rect(RenderSize)));
-        DrawStagingArea(drawingContext);
-        DrawPanelSubstrate(drawingContext);
-        foreach (var placement in Placements ?? Enumerable.Empty<BoardPlacement>()) DrawBoard(drawingContext, GetEffectivePlacement(placement));
-        if (SelectedPlacement is { } selected) DrawSelection(drawingContext, GetEffectivePlacement(selected).Bounds);
+        if (staticDrawingDirty || staticDrawing is null) RebuildStaticDrawing();
+        drawingContext.DrawDrawing(staticDrawing);
         DrawMachinePath(drawingContext);
         if (ShowMachinePosition) DrawMachinePosition(drawingContext);
         drawingContext.Pop();
@@ -152,6 +191,8 @@ public sealed class PanelPreviewControl : FrameworkElement
         var center = GetViewportCenter();
         pan = pointer - center - (unzoomed - center) * zoom;
         Cursor = zoom > 1.001 ? Cursors.SizeAll : Cursors.Arrow;
+        staticDrawingDirty = true;
+        machinePathDirty = true;
         InvalidateVisual();
         eventArgs.Handled = true;
     }
@@ -168,6 +209,15 @@ public sealed class PanelPreviewControl : FrameworkElement
             Cursor = Cursors.SizeAll;
             CaptureMouse();
             eventArgs.Handled = true;
+            return;
+        }
+
+        if (eventArgs.ChangedButton == MouseButton.Right)
+        {
+            var contextPlacement = HitTestPlacement(ScreenToPanel(pointer));
+            SelectedPlacement = contextPlacement;
+            if (contextPlacement is not null) OpenBoardContextMenu(contextPlacement);
+            eventArgs.Handled = contextPlacement is not null;
             return;
         }
 
@@ -194,6 +244,8 @@ public sealed class PanelPreviewControl : FrameworkElement
         {
             pan += pointer - pointerOrigin;
             pointerOrigin = pointer;
+            staticDrawingDirty = true;
+            machinePathDirty = true;
             InvalidateVisual();
             eventArgs.Handled = true;
             return;
@@ -204,6 +256,7 @@ public sealed class PanelPreviewControl : FrameworkElement
         var to = ScreenToPanel(pointer);
         var requested = new PcbPoint(dragOriginOffset.X + to.X - from.X, dragOriginOffset.Y + to.Y - from.Y);
         transientOffsets[placement] = ClampOffsetToWorkspace(placement, requested);
+        staticDrawingDirty = true;
         InvalidateVisual();
         eventArgs.Handled = true;
     }
@@ -255,6 +308,8 @@ public sealed class PanelPreviewControl : FrameworkElement
             zoom = 1;
             pan = default;
             Cursor = Cursors.Arrow;
+            staticDrawingDirty = true;
+            machinePathDirty = true;
             InvalidateVisual();
             eventArgs.Handled = true;
         }
@@ -281,6 +336,49 @@ public sealed class PanelPreviewControl : FrameworkElement
 
     private BoardPlacement GetEffectivePlacement(BoardPlacement placement) => transientOffsets.TryGetValue(placement, out var offset) ? placement with { Offset = offset } : placement;
 
+    private void RebuildStaticDrawing()
+    {
+        var group = new DrawingGroup();
+        using (var context = group.Open())
+        {
+            DrawStagingArea(context);
+            DrawPanelSubstrate(context);
+            foreach (var placement in Placements ?? Enumerable.Empty<BoardPlacement>()) DrawBoard(context, GetEffectivePlacement(placement));
+            if (SelectedPlacement is { } selected) DrawSelection(context, GetEffectivePlacement(selected).Bounds);
+        }
+        if (group.CanFreeze) group.Freeze();
+        staticDrawing = group;
+        staticDrawingDirty = false;
+    }
+
+    private void OpenBoardContextMenu(BoardPlacement placement)
+    {
+        var menu = new System.Windows.Controls.ContextMenu();
+        menu.Items.Add(new System.Windows.Controls.MenuItem { Header = $"{BoardContextNameLabel}: {placement.Board.DisplayName}", FontWeight = FontWeights.SemiBold, IsEnabled = false });
+        menu.Items.Add(new System.Windows.Controls.Separator());
+        menu.Items.Add(new System.Windows.Controls.MenuItem { Header = $"{BoardContextLayersLabel}:", FontWeight = FontWeights.SemiBold, IsEnabled = false });
+        foreach (var file in placement.Board.Files.OrderBy(file => file.Layer).ThenBy(file => file.Name, StringComparer.CurrentCultureIgnoreCase))
+        {
+            menu.Items.Add(new System.Windows.Controls.MenuItem { Header = $"{GetLayerDisplayName(file.Layer)} — {file.Name}", IsEnabled = false });
+        }
+        ContextMenu = menu;
+        menu.IsOpen = true;
+    }
+
+    private string GetLayerDisplayName(ManufacturingLayerKind kind)
+    {
+        var identifier = kind switch
+        {
+            ManufacturingLayerKind.Drill => "Drill",
+            ManufacturingLayerKind.CopperTop => "Top",
+            ManufacturingLayerKind.CopperBottom => "Bottom",
+            ManufacturingLayerKind.Profile => "Outline",
+            ManufacturingLayerKind.SilkScreenTop or ManufacturingLayerKind.SilkScreenBottom => "Silkscreen",
+            _ => string.Empty,
+        };
+        return Layers?.FirstOrDefault(layer => layer.Identifier == identifier)?.Name ?? kind.ToString();
+    }
+
     private PcbPoint ClampOffsetToWorkspace(BoardPlacement placement, PcbPoint requested)
     {
         var bounds = (placement with { Offset = new PcbPoint(0, 0) }).Bounds;
@@ -305,8 +403,16 @@ public sealed class PanelPreviewControl : FrameworkElement
     {
         foreach (var file in placement.Board.Files)
         {
-            if (file.Format == FileFormat.Gerber && TryGetLayer(file.Layer, out var brush)) DrawGerber(context, file.Content, placement, brush);
-            if (file.Format == FileFormat.Excellon && TryGetLayer(ManufacturingLayerKind.Drill, out var drillBrush)) DrawExcellon(context, file.Content, placement, drillBrush);
+            var layer = file.Format == FileFormat.Excellon ? ManufacturingLayerKind.Drill : file.Layer;
+            if (!TryGetLayer(layer, out var brush)) continue;
+            if (!fileDrawings.TryGetValue(file, out var drawing))
+            {
+                drawing = BuildFileDrawing(file, brush);
+                fileDrawings[file] = drawing;
+            }
+            context.PushTransform(CreatePlacementTransform(placement));
+            context.DrawDrawing(drawing);
+            context.Pop();
         }
     }
 
@@ -326,26 +432,40 @@ public sealed class PanelPreviewControl : FrameworkElement
         return layer is not null;
     }
 
-    private void DrawGerber(DrawingContext context, string content, BoardPlacement placement, Brush brush)
+    private Drawing BuildFileDrawing(ManufacturingFile file, Brush brush)
     {
-        GerberDocument document;
-        try { document = new GerberParser().Parse(content); }
-        catch (ArgumentException) { return; }
+        var group = new DrawingGroup();
+        using (var context = group.Open())
+        {
+            try
+            {
+                if (file.Format == FileFormat.Gerber) DrawGerberFile(context, file.Content, brush);
+                else if (file.Format == FileFormat.Excellon) DrawExcellonFile(context, file.Content, brush);
+            }
+            catch (ArgumentException) { }
+        }
+        if (group.CanFreeze) group.Freeze();
+        return group;
+    }
+
+    private static void DrawGerberFile(DrawingContext context, string content, Brush brush)
+    {
+        var document = new GerberParser().Parse(content);
         foreach (var operation in document.Operations)
         {
             if (operation.Type == GerberOperationType.Move) continue;
-            var start = ToScreen(placement.TransformPoint(operation.Start));
-            var end = ToScreen(placement.TransformPoint(operation.End));
-            var diameter = Math.Max(1, operation.ApertureDiameterMillimetres * PixelsPerMillimetre);
+            var start = ToDrawingPoint(operation.Start);
+            var end = ToDrawingPoint(operation.End);
+            var diameter = Math.Max(.01, operation.ApertureDiameterMillimetres);
             if (operation.Type == GerberOperationType.Draw) context.DrawLine(CreateTracePen(brush, diameter), start, end);
             if (operation.Type == GerberOperationType.Flash) DrawGerberFlash(context, brush, end, operation.Aperture);
         }
     }
 
-    private void DrawGerberFlash(DrawingContext context, Brush brush, Point center, GerberAperture aperture)
+    private static void DrawGerberFlash(DrawingContext context, Brush brush, Point center, GerberAperture aperture)
     {
-        var width = Math.Max(1, aperture.WidthMillimetres * PixelsPerMillimetre);
-        var height = Math.Max(1, aperture.HeightMillimetres * PixelsPerMillimetre);
+        var width = Math.Max(.01, aperture.WidthMillimetres);
+        var height = Math.Max(.01, aperture.HeightMillimetres);
         var bounds = new Rect(center.X - width / 2, center.Y - height / 2, width, height);
         switch (aperture.Shape)
         {
@@ -419,15 +539,31 @@ public sealed class PanelPreviewControl : FrameworkElement
     private void DrawMachinePath(DrawingContext context)
     {
         if (MachinePath is null) return;
+        if (machinePathDirty || machinePathGeometry is null) RebuildMachinePathGeometry();
+        if (machinePathGeometry is null) return;
         var accent = CreateMachinePositionBrush();
         var trace = new Pen(new SolidColorBrush(Color.FromArgb(185, accent.Color.R, accent.Color.G, accent.Color.B)), Math.Max(1.5, PixelsPerMillimetre * .24)) { LineJoin = PenLineJoin.Round, StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
-        Point? previous = null;
-        foreach (var position in MachinePath)
+        context.DrawGeometry(null, trace, machinePathGeometry);
+    }
+
+    private void RebuildMachinePathGeometry()
+    {
+        var points = MachinePath?.Select(ToScreen).ToList() ?? [];
+        if (points.Count < 2)
         {
-            var point = ToScreen(position);
-            if (previous is not null) context.DrawLine(trace, previous.Value, point);
-            previous = point;
+            machinePathGeometry = null;
+            machinePathDirty = false;
+            return;
         }
+        var geometry = new StreamGeometry();
+        using (var context = geometry.Open())
+        {
+            context.BeginFigure(points[0], false, false);
+            context.PolyLineTo(points.Skip(1).ToList(), true, false);
+        }
+        if (geometry.CanFreeze) geometry.Freeze();
+        machinePathGeometry = geometry;
+        machinePathDirty = false;
     }
 
     private static bool IsMajorGridLine(double value) => Math.Abs(value % 25) < .001 || Math.Abs(value % 25 - 25) < .001;
@@ -442,18 +578,26 @@ public sealed class PanelPreviewControl : FrameworkElement
         return new SolidColorBrush(Color.FromRgb(180, 35, 24));
     }
 
-    private void DrawExcellon(DrawingContext context, string content, BoardPlacement placement, Brush brush)
+    private static void DrawExcellonFile(DrawingContext context, string content, Brush brush)
     {
-        ExcellonDocument document;
-        try { document = new ExcellonParser().Parse(content); }
-        catch (ArgumentException) { return; }
+        var document = new ExcellonParser().Parse(content);
         foreach (var hit in document.Hits)
         {
             var diameterMm = document.Tools.TryGetValue(hit.ToolNumber, out var diameter) ? diameter : 0.5;
-            var radius = Math.Max(1, diameterMm * PixelsPerMillimetre) / 2;
-            context.DrawEllipse(brush, null, ToScreen(placement.TransformPoint(hit.Position)), radius, radius);
+            var radius = Math.Max(.01, diameterMm) / 2;
+            context.DrawEllipse(brush, null, ToDrawingPoint(hit.Position), radius, radius);
         }
     }
+
+    private Transform CreatePlacementTransform(BoardPlacement placement)
+    {
+        var origin = ToScreen(placement.TransformPoint(new PcbPoint(0, 0)));
+        var xAxis = ToScreen(placement.TransformPoint(new PcbPoint(1, 0)));
+        var yAxis = ToScreen(placement.TransformPoint(new PcbPoint(0, -1)));
+        return new MatrixTransform(new Matrix(xAxis.X - origin.X, xAxis.Y - origin.Y, yAxis.X - origin.X, yAxis.Y - origin.Y, origin.X, origin.Y));
+    }
+
+    private static Point ToDrawingPoint(PcbPoint point) => new(point.X, -point.Y);
 
     private double PixelsPerMillimetre => Math.Min(ActualWidth / WorkspaceWidthMm, ActualHeight / WorkspaceHeightMm) * zoom;
 

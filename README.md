@@ -10,6 +10,10 @@
 
 Gerber Panelizer is a lightweight Windows desktop application for preparing printed-circuit-board manufacturing panels. It imports manufacturing data exported from tools such as Autodesk Fusion, renders and filters the board layers, arranges multiple boards on a milling-machine work area, and exports one production ZIP package containing Gerber and Excellon files.
 
+## Development update - 2026-11-09
+
+The imported-board list now uses a clear visibility switch and meaningful names for loose manufacturing layers. Disabling a board removes its placement immediately, the active manufacturing side is visibly selected, and right-clicking a placed board lists its name and imported layers. Complex Gerber previews retain parsed drawings and a cached static scene, so dragging, zooming, and live Wegstr head updates no longer rebuild all source geometry. Direct Wegstr control adds press-and-hold arrow-key X/Y jogging, `+`/`-` Z jogging, elapsed time beside progress, and explicit confirmation before continuing with preparation warnings; the unused centre `XY` button is gone. A new panelization also clears the previous head trail.
+
 ## Version 0.3.2 - 2026-11-03
 
 The live Wegstr head preview is throttled to ten updates per second and keeps a compact finished-motion trail, so opening the Panel tab no longer slows surface probing or prevents switching tabs. Preparing a level-compensated machining path now runs on a cancellable worker task and reports its state before the first machining packet is sent. Manual rapid remains within the verified 1–100% range after physical testing showed that queued packets above 100% can freeze the controller.
@@ -50,14 +54,14 @@ Settings provide the interface language, named machine work-area presets, safety
 ## Core capabilities
 
 - Import ZIP, RAR, and individual Gerber/Excellon files.
-- Interactive layer preview with an immediate post-import staging area, visibility filtering, mouse-wheel zoom, manual dragging into or out of the panel, continuous 45-degree trace rendering, circular, rectangular, and obround SMT pad flashes, and configurable HEX colours with a click-to-select palette.
+- Interactive cached layer preview with an immediate post-import staging area, per-board visibility switches, mouse-wheel zoom, manual dragging into or out of the panel, right-click board/layer details, continuous 45-degree trace rendering, circular, rectangular, and obround SMT pad flashes, and configurable HEX colours with a click-to-select palette.
 - Named milling work-area presets with X/Y dimensions, switched directly in the layer panel; the active preset is used consistently for preview, panelization, printing, and export.
 - Top, Bottom, or both-side production selection; optional Bottom Mirror X or Mirror Y is applied consistently to preview, Gerber, Excellon, project data, and G-code.
 - Panel export as one production ZIP package containing per-layer Gerbers and merged Excellon drilling data, with safe confirmation before replacing an existing ZIP and a success dialog showing its final location.
 - Separate TrackMaker export as a flat ZIP with conventional Gerber layer extensions and Excellon drilling data, intended for importing the complete board rather than importing layers one by one.
 - Legacy inch `M72`/`.drd` drilling support and explicit decimal metric Excellon output for reliable TrackMaker import.
 - Separate Wegstr ZIP export with `01-copper-isolation.txt`, optional `02-drill.txt`, and optional `03-board-outline.txt`; it uses negative Y from the top-left origin as in the supplied Wegstr samples and exposes depths, isolation offset, outline-cutter diameter, feeds, spindle speed, and tool number in Settings. By default, `01-copper-isolation.txt` also traces every closed board profile at isolation depth so its outline can be marked without generating a separate cut.
-- Direct Wegstr control from the current panel, with simulator-first connection, serial status and acknowledgement checks, start/pause/continue/STOP, tool-change pauses, packet progress, spindle control, editable work coordinates, zeroing, safe-Z return to zero, manual X/Y/Z positioning, path-scoped automatic surface probing, and gradual Z level compensation. Physical-machine and probe acceptance is still required before production use.
+- Direct Wegstr control from the current panel, with simulator-first connection, serial status and acknowledgement checks, start/pause/continue/STOP, tool-change pauses, packet progress plus elapsed time, spindle control, editable work coordinates, zeroing, safe-Z return to zero, mouse or keyboard press-and-hold X/Y/Z positioning, warning confirmation during operation preparation, path-scoped automatic surface probing, and gradual Z level compensation. Physical-machine and probe acceptance is still required before production use.
 - Incremental import, board duplication/deletion, portable saved projects, detailed status diagnostics, Czech, English, German, and French UI, panel-only print preview, and printing.
 - Custom PCB application icon embedded in the executable, title bar, and taskbar, a localized confirmation before exit, automatic GitHub Release checking after startup with direct Setup EXE download or download-and-install choices, and a retained manual update-check button beside Settings.
 - Rotating `gerber-panelizer.log` diagnostics beside the launched executable; when the installation folder is not writable, the log falls back to `%LOCALAPPDATA%\GerberPanelizer\logs`.

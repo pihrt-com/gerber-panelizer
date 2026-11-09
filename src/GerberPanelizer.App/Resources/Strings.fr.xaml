@@ -1,6 +1,9 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <sys:String x:Key="ImportFiles" xmlns:sys="clr-namespace:System;assembly=mscorlib">Importer des fichiers</sys:String>
     <sys:String x:Key="ImportedBoards" xmlns:sys="clr-namespace:System;assembly=mscorlib">Cartes importées</sys:String>
+    <sys:String x:Key="BoardVisibilityToggle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Afficher ou masquer la carte dans l’espace de travail</sys:String>
+    <sys:String x:Key="BoardContextName" xmlns:sys="clr-namespace:System;assembly=mscorlib">Carte</sys:String>
+    <sys:String x:Key="BoardContextLayers" xmlns:sys="clr-namespace:System;assembly=mscorlib">Couches importées</sys:String>
     <sys:String x:Key="ManufacturingSide" xmlns:sys="clr-namespace:System;assembly=mscorlib">Face de fabrication</sys:String>
     <sys:String x:Key="Layers" xmlns:sys="clr-namespace:System;assembly=mscorlib">Couches</sys:String>
     <sys:String x:Key="WorkArea" xmlns:sys="clr-namespace:System;assembly=mscorlib">Zone de travail de la machine</sys:String>
@@ -145,6 +148,7 @@
     <sys:String x:Key="WegstrPause" xmlns:sys="clr-namespace:System;assembly=mscorlib">Pause</sys:String>
     <sys:String x:Key="WegstrStop" xmlns:sys="clr-namespace:System;assembly=mscorlib">STOP + broche arrêtée</sys:String>
     <sys:String x:Key="WegstrManualControl" xmlns:sys="clr-namespace:System;assembly=mscorlib">Commande manuelle XYZ</sys:String>
+    <sys:String x:Key="WegstrKeyboardHint" xmlns:sys="clr-namespace:System;assembly=mscorlib">Clavier : les flèches déplacent X/Y et + ou − déplace Z. Maintenez la touche pour un mouvement continu.</sys:String>
     <sys:String x:Key="WegstrGoToZero" xmlns:sys="clr-namespace:System;assembly=mscorlib">Retour à zéro</sys:String>
     <sys:String x:Key="WegstrZeroAll" xmlns:sys="clr-namespace:System;assembly=mscorlib">Mettre XYZ à zéro</sys:String>
     <sys:String x:Key="WegstrSpindle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Broche marche / arrêt</sys:String>
@@ -181,6 +185,9 @@
     <sys:String x:Key="WegstrStatusRecoveryFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">L'opération ne peut pas être rétablie ; le contrôleur n'est pas prêt ({0}).</sys:String>
     <sys:String x:Key="WegstrStatusRecoveryRequiredAfterReset" xmlns:sys="clr-namespace:System;assembly=mscorlib">Coordonnées remises à zéro. Le contrôleur n'est pas prêt après l'erreur précédente ; utilisez Rétablir l'opération avant le palpage.</sys:String>
     <sys:String x:Key="WegstrMachinePosition" xmlns:sys="clr-namespace:System;assembly=mscorlib">Tête machine : X {0:F2}, Y {1:F2} mm</sys:String>
+    <sys:String x:Key="WegstrConfirmRiskyPreparationTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Préparation Wegstr risquée</sys:String>
+    <sys:String x:Key="WegstrConfirmRiskyPreparation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Le dessin contient des éléments risqués ou non pris en charge :&#10;&#10;{0}&#10;&#10;Continuer et préparer tout de même les données Wegstr disponibles ? Vérifiez attentivement les trajectoires et effectuez un essai à vide au-dessus du matériau avant l’usinage.</sys:String>
+    <sys:String x:Key="WegstrStatusPreparationCancelled" xmlns:sys="clr-namespace:System;assembly=mscorlib">La préparation Wegstr a été annulée par l’utilisateur.</sys:String>
     <sys:String x:Key="WegstrErrorNotConnected" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr n'est pas connecté.</sys:String>
     <sys:String x:Key="WegstrErrorUnexpectedControllerResponse" xmlns:sys="clr-namespace:System;assembly=mscorlib">Le contrôleur a renvoyé la réponse inattendue {0}.</sys:String>
     <sys:String x:Key="WegstrErrorProbePreflightResponse" xmlns:sys="clr-namespace:System;assembly=mscorlib">Le contrôleur a renvoyé la réponse inattendue {0} avant le palpage.</sys:String>
