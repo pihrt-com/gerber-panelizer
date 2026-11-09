@@ -1,6 +1,6 @@
 # Gerber Panelizer
 
-## Vývojová aktualizace – 2026-11-09
+## Verze 0.3.3 – 2026-11-09
 
 Seznam načtených desek nyní používá přepínač viditelnosti a pro samostatně načtené výrobní vrstvy odvozuje smysluplný název místo textu `Imported layers`. Vypnutí desky okamžitě odstraní její umístění, vybraná strana výroby je zřetelně zvýrazněná a pravé kliknutí na umístěnou desku ukáže její název i načtené vrstvy. Náhled složitých Gerberů uchovává zpracovanou kresbu a statickou scénu, takže přesun, zoom ani živá dráha hlavy znovu nezpracovávají veškerou zdrojovou geometrii. Přímé řízení Wegstr přidává držení šipek pro X/Y, kláves `+`/`-` pro Z, uběhnutý čas vedle průběhu a výslovné potvrzení před pokračováním při varováních přípravy; nefunkční prostřední tlačítko `XY` bylo odstraněno. Nová panelizace také smaže předchozí stopu hlavy.
 

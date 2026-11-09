@@ -1,6 +1,6 @@
 # Change log
 
-## Unreleased - 2026-11-09
+## 0.3.3 - 2026-11-09
 
 - Replace the imported-board checkbox with a clear switch, derive a useful board name for loose Gerber/Excellon layers instead of `Imported layers`, hide or restore the corresponding placement immediately, and visibly highlight the selected manufacturing side.
 - Show the board name and every imported layer in a right-click menu over a panel placement, and clear the completed Wegstr head trail whenever a new automatic panelization is created.

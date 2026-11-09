@@ -10,7 +10,7 @@
 
 Gerber Panelizer is a lightweight Windows desktop application for preparing printed-circuit-board manufacturing panels. It imports manufacturing data exported from tools such as Autodesk Fusion, renders and filters the board layers, arranges multiple boards on a milling-machine work area, and exports one production ZIP package containing Gerber and Excellon files.
 
-## Development update - 2026-11-09
+## Version 0.3.3 - 2026-11-09
 
 The imported-board list now uses a clear visibility switch and meaningful names for loose manufacturing layers. Disabling a board removes its placement immediately, the active manufacturing side is visibly selected, and right-clicking a placed board lists its name and imported layers. Complex Gerber previews retain parsed drawings and a cached static scene, so dragging, zooming, and live Wegstr head updates no longer rebuild all source geometry. Direct Wegstr control adds press-and-hold arrow-key X/Y jogging, `+`/`-` Z jogging, elapsed time beside progress, and explicit confirmation before continuing with preparation warnings; the unused centre `XY` button is gone. A new panelization also clears the previous head trail.
 
