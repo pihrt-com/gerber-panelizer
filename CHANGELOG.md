@@ -1,6 +1,6 @@
 # Change log
 
-## Next version - 2026-11-11
+## 0.3.5 - 2026-11-11
 
 - Render filled Gerber regions as filled polygons instead of tracing their outlines with the active aperture, preserving the separation between adjacent SMT pads in the panel preview.
 - Accept ZIP archives stored inside an imported ZIP and ask the operator to assign a manufacturing layer to each Gerber file whose filename does not identify its layer.

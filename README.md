@@ -10,9 +10,9 @@
 
 Gerber Panelizer is a lightweight Windows desktop application for preparing printed-circuit-board manufacturing panels. It imports manufacturing data exported from tools such as Autodesk Fusion, renders and filters the board layers, arranges multiple boards on a milling-machine work area, and exports one production ZIP package containing Gerber and Excellon files. The complete interface is available in Czech, English, German, and French.
 
-## Development update - 2026-11-11
+## Version 0.3.5 - 2026-11-11
 
-The current source version renders filled Gerber regions as polygons, avoiding spurious connections between SMT pads in the preview. Production data can be dropped directly on the panel work area, ZIP archives may contain another ZIP archive, and the application asks for a layer assignment when imported Gerber filenames do not identify their manufacturing layer.
+Version 0.3.5 renders filled Gerber regions as polygons, avoiding spurious connections between SMT pads in the preview. Production data can be dropped directly on the panel work area, ZIP archives may contain another ZIP archive, and the application asks for a layer assignment when imported Gerber filenames do not identify their manufacturing layer.
 
 ## Version 0.3.4 - 2026-11-09
 

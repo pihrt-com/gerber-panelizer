@@ -1,5 +1,9 @@
 # Gerber Panelizer
 
+## Verze 0.3.5 – 2026-11-11
+
+Verze 0.3.5 vykresluje vyplněné oblasti Gerberu jako plochy, takže náhled nespojí sousední SMT plošky širokou aktivní aperturou. Výrobní data lze přetáhnout přímo na pracovní plochu, import přečte i výrobní ZIP uložený v jiném ZIPu a u Gerberu bez rozpoznaného názvu vrstvy vyžádá přiřazení vrstvy.
+
 ## Verze 0.3.4 – 2026-11-09
 
 Verze 0.3.4 doplňuje všechny texty českého, anglického, německého a francouzského rozhraní a po změně jazyka ihned obnoví také dopočítávané údaje, například výchozí pracovní plochu, počty načtených souborů, stav USB, souhrny připravených operací, stav povrchu a režim ručního pohybu. Verze 0.3.3 přidala přepínač viditelnosti načtených desek, podrobnosti o umístěné desce, rychlejší vykreslování náhledu, polohování klávesnicí, uběhnutý čas úlohy, potvrzení varování při přípravě a mazání předchozí stopy hlavy při nové panelizaci.
