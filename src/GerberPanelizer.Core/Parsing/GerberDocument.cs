@@ -2,7 +2,7 @@ using GerberPanelizer.Core.Geometry;
 
 namespace GerberPanelizer.Core.Parsing;
 
-public enum GerberOperationType { Move, Draw, Flash }
+public enum GerberOperationType { Move, Draw, Flash, Region }
 
 public enum GerberApertureShape { Unknown, Circle, Rectangle, Obround, Polygon }
 
@@ -13,7 +13,7 @@ public sealed record GerberAperture(GerberApertureShape Shape, double WidthMilli
     public double EffectiveDiameterMillimetres => Math.Max(WidthMillimetres, HeightMillimetres);
 }
 
-public sealed record GerberOperation(GerberOperationType Type, PcbPoint Start, PcbPoint End, GerberAperture Aperture)
+public sealed record GerberOperation(GerberOperationType Type, PcbPoint Start, PcbPoint End, GerberAperture Aperture, IReadOnlyList<PcbPoint>? RegionPoints = null)
 {
     public double ApertureDiameterMillimetres => Aperture.EffectiveDiameterMillimetres;
 }

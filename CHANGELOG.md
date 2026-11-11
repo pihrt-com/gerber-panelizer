@@ -1,5 +1,11 @@
 # Change log
 
+## Next version - 2026-11-11
+
+- Render filled Gerber regions as filled polygons instead of tracing their outlines with the active aperture, preserving the separation between adjacent SMT pads in the panel preview.
+- Accept ZIP archives stored inside an imported ZIP and ask the operator to assign a manufacturing layer to each Gerber file whose filename does not identify its layer.
+- Accept supported production files by dropping them onto the panel work area as well as through the import-file dialog.
+
 ## 0.3.4 - 2026-11-09
 
 - Complete the Czech, English, German, and French UI resource sets so every language exposes the same controls, labels, hints, statuses, and Wegstr terminology.

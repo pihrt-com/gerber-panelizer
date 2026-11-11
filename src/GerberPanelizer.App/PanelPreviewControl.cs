@@ -459,7 +459,21 @@ public sealed class PanelPreviewControl : FrameworkElement
             var diameter = Math.Max(.01, operation.ApertureDiameterMillimetres);
             if (operation.Type == GerberOperationType.Draw) context.DrawLine(CreateTracePen(brush, diameter), start, end);
             if (operation.Type == GerberOperationType.Flash) DrawGerberFlash(context, brush, end, operation.Aperture);
+            if (operation.Type == GerberOperationType.Region) DrawGerberRegion(context, brush, operation.RegionPoints);
         }
+    }
+
+    private static void DrawGerberRegion(DrawingContext context, Brush brush, IReadOnlyList<PcbPoint>? points)
+    {
+        if (points is not { Count: >= 3 }) return;
+        var geometry = new StreamGeometry();
+        using (var geometryContext = geometry.Open())
+        {
+            geometryContext.BeginFigure(ToDrawingPoint(points[0]), isFilled: true, isClosed: true);
+            geometryContext.PolyLineTo(points.Skip(1).Select(ToDrawingPoint).ToArray(), isStroked: false, isSmoothJoin: false);
+        }
+        if (geometry.CanFreeze) geometry.Freeze();
+        context.DrawGeometry(brush, null, geometry);
     }
 
     private static void DrawGerberFlash(DrawingContext context, Brush brush, Point center, GerberAperture aperture)

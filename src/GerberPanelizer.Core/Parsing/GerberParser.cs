@@ -22,6 +22,7 @@ public sealed class GerberParser
         var current = new PcbPoint(0, 0);
         var selectedAperture = 0;
         var interpolation = GerberOperationType.Move;
+        List<PcbPoint>? regionPoints = null;
         var bounds = PcbBounds.Empty;
         var maximumApertureDiameter = 0d;
 
@@ -30,6 +31,21 @@ public sealed class GerberParser
         {
             var token = rawToken.Trim();
             if (token.Length == 0 || token.StartsWith("G04", StringComparison.OrdinalIgnoreCase)) continue;
+            if (token.Equals("G36", StringComparison.OrdinalIgnoreCase))
+            {
+                regionPoints = [];
+                continue;
+            }
+            if (token.Equals("G37", StringComparison.OrdinalIgnoreCase))
+            {
+                if (regionPoints is { Count: >= 3 })
+                {
+                    operations.Add(new GerberOperation(GerberOperationType.Region, regionPoints[0], regionPoints[^1], GerberAperture.Unknown, regionPoints.ToArray()));
+                    bounds = regionPoints.Aggregate(bounds, (currentBounds, point) => currentBounds.Include(point));
+                }
+                regionPoints = null;
+                continue;
+            }
             var apertureSelection = ApertureSelectRegex.Match(token);
             if (apertureSelection.Success && int.TryParse(apertureSelection.Groups["code"].Value, out var code) && code >= 10)
             {
@@ -52,6 +68,12 @@ public sealed class GerberParser
             if (!token.Contains('X') && !token.Contains('Y')) continue;
             var next = ReadPoint(token, current, format, warnings);
             var aperture = apertures.TryGetValue(selectedAperture, out var knownAperture) ? knownAperture : GerberAperture.Unknown;
+            if (regionPoints is not null)
+            {
+                if (regionPoints.Count == 0 || regionPoints[^1] != next) regionPoints.Add(next);
+                current = next;
+                continue;
+            }
             operations.Add(new GerberOperation(interpolation, current, next, aperture));
             if (interpolation == GerberOperationType.Draw)
             {

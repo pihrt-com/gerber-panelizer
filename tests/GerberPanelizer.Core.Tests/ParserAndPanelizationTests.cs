@@ -99,6 +99,20 @@ public sealed class ParserAndPanelizationTests
     }
 
     [Fact]
+    public void GerberParser_ReadsFilledRegionsWithoutUsingTheActiveTraceAperture()
+    {
+        const string gerber = "%MOMM*%\n%FSLAX34Y34*%\n%ADD10R,1.600X0.800*%\nD10*\nG36*\nX0Y0D02*\nX10000Y0D01*\nX10000Y5000D01*\nX0Y5000D01*\nG37*\nM02*";
+
+        var document = new GerberParser().Parse(gerber);
+
+        var region = Assert.Single(document.Operations, operation => operation.Type == GerberOperationType.Region);
+        Assert.Equal(4, region.RegionPoints!.Count);
+        Assert.Equal(new PcbPoint(0, 0), region.RegionPoints[0]);
+        Assert.Equal(new PcbPoint(1, .5), region.RegionPoints[^1]);
+        Assert.DoesNotContain(document.Operations, operation => operation.Type == GerberOperationType.Draw);
+    }
+
+    [Fact]
     public void ExcellonParser_ReadsFusionMetricDrillCoordinates()
     {
         const string drill = "M48\nMETRIC,TZ,000.000\nT1C0.800\n%\nG90\nM71\nT1\nX19050Y27940\nM30\n";

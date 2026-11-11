@@ -97,12 +97,7 @@ public sealed class ManufacturingImporter
         {
             using var archive = ZipFile.OpenRead(path);
             var files = new List<ManufacturingFile>();
-            foreach (var entry in archive.Entries.Where(entry => !string.IsNullOrEmpty(entry.Name)))
-            {
-                using var reader = new StreamReader(entry.Open(), Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
-                var file = ReadManufacturingFile(entry.FullName, reader.ReadToEnd());
-                if (file is not null) files.Add(file);
-            }
+            ReadZipEntries(archive, path, files, issues);
 
             if (files.Count == 0) issues.Add(new ImportIssue(path, "The archive contains no recognised Gerber or Excellon files.", true));
             else boards.Add(CreateBoard(Path.GetFileNameWithoutExtension(path), files, [path]));
@@ -110,6 +105,38 @@ public sealed class ManufacturingImporter
         catch (InvalidDataException)
         {
             issues.Add(new ImportIssue(path, "The selected ZIP archive is corrupt or unsupported.", true));
+        }
+    }
+
+    private void ReadZipEntries(ZipArchive archive, string sourcePath, ICollection<ManufacturingFile> files, ICollection<ImportIssue> issues)
+    {
+        foreach (var entry in archive.Entries.Where(entry => !string.IsNullOrEmpty(entry.Name)))
+        {
+            if (entry.Length > MaximumArchiveEntryBytes)
+            {
+                issues.Add(new ImportIssue(sourcePath, $"ZIP entry '{entry.FullName}' exceeds the {MaximumArchiveEntryBytes / (1024 * 1024)} MB safety limit.", true));
+                continue;
+            }
+
+            var entryPath = $"{sourcePath}!/{entry.FullName}";
+            if (Path.GetExtension(entry.Name).Equals(".zip", StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    using var entryStream = entry.Open();
+                    using var nestedArchive = new ZipArchive(entryStream, ZipArchiveMode.Read);
+                    ReadZipEntries(nestedArchive, entryPath, files, issues);
+                }
+                catch (InvalidDataException)
+                {
+                    issues.Add(new ImportIssue(entryPath, "The nested ZIP archive is corrupt or unsupported.", true));
+                }
+                continue;
+            }
+
+            using var reader = new StreamReader(entry.Open(), Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
+            var file = ReadManufacturingFile(entryPath, reader.ReadToEnd());
+            if (file is not null) files.Add(file);
         }
     }
 

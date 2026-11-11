@@ -30,6 +30,18 @@ public partial class MainWindow : Window
         e.Handled = true;
     }
 
+    private void WorkspaceDragOver(object sender, DragEventArgs e)
+    {
+        e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
+        e.Handled = true;
+    }
+
+    private void WorkspaceDrop(object sender, DragEventArgs e)
+    {
+        if (e.Data.GetData(DataFormats.FileDrop) is string[] paths && DataContext is MainViewModel viewModel) viewModel.ImportFiles(paths);
+        e.Handled = true;
+    }
+
     protected override void OnClosing(CancelEventArgs e)
     {
         base.OnClosing(e);

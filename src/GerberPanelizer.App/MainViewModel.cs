@@ -228,13 +228,21 @@ public sealed class MainViewModel : ObservableObject
     {
         var dialog = new OpenFileDialog { Multiselect = true, Filter = $"{L("FilterProductionData")}|*.zip;*.rar;*.gbr;*.ger;*.gtl;*.gbl;*.gko;*.gm1;*.gml;*.gto;*.gbo;*.gts;*.gbs;*.gtp;*.gbp;*.drl;*.drd;*.xln;*.exc;*.txt|{L("FilterArchives")}|*.zip;*.rar|{L("FilterGerberExcellon")}|*.gbr;*.ger;*.gtl;*.gbl;*.gko;*.gm1;*.gml;*.gto;*.gbo;*.gts;*.gbs;*.gtp;*.gbp;*.drl;*.drd;*.xln;*.exc;*.txt|{L("FilterAllFiles")}|*.*", Title = LocalizationService.Instance["ImportFiles"] };
         if (dialog.ShowDialog(owner) != true) return;
+        ImportFiles(dialog.FileNames);
+    }
+
+    public void ImportFiles(IEnumerable<string> sourcePaths)
+    {
+        var paths = sourcePaths.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+        if (paths.Length == 0) return;
         try
         {
             var results = new List<ImportResult>();
-            results.AddRange(dialog.FileNames.Where(IsArchive).Select(path => importer.ImportFiles([path])));
-            var looseFiles = dialog.FileNames.Where(path => !IsArchive(path)).ToArray();
+            results.AddRange(paths.Where(IsArchive).Select(path => importer.ImportFiles([path])));
+            var looseFiles = paths.Where(path => !IsArchive(path)).ToArray();
             if (looseFiles.Length > 0) results.Add(importer.ImportFiles(looseFiles));
-            var boards = results.SelectMany(result => result.Boards).ToList();
+            var boards = AssignUnknownLayers(results.SelectMany(result => result.Boards).ToList());
+            if (boards is null) return;
             foreach (var board in boards) AddBoard(board);
             if (boards.Count > 0) StageBoards(boards, preserveExisting: true);
             var issues = results.SelectMany(result => result.Issues).ToList();
@@ -245,6 +253,16 @@ public sealed class MainViewModel : ObservableObject
         {
             AddStatus(StatusSeverity.Error, L("StatusImportFailed", exception.Message), exception: exception);
         }
+    }
+
+    private List<ImportedBoard>? AssignUnknownLayers(List<ImportedBoard> boards)
+    {
+        var unknownFiles = boards.SelectMany(board => board.Files).Where(file => file.Format == FileFormat.Gerber && file.Layer == ManufacturingLayerKind.Unknown).ToArray();
+        if (unknownFiles.Length == 0) return boards;
+        var dialog = new LayerAssignmentWindow(unknownFiles) { Owner = owner };
+        if (dialog.ShowDialog() != true) return null;
+        var assignments = dialog.Items.ToDictionary(item => item.File.SourcePath, item => item.Layer, StringComparer.OrdinalIgnoreCase);
+        return boards.Select(board => board with { Files = board.Files.Select(file => assignments.TryGetValue(file.SourcePath, out var layer) ? file with { Layer = layer } : file).ToArray() }).ToList();
     }
 
     private static bool IsArchive(string path) => Path.GetExtension(path).Equals(".zip", StringComparison.OrdinalIgnoreCase) || Path.GetExtension(path).Equals(".rar", StringComparison.OrdinalIgnoreCase);
