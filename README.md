@@ -10,13 +10,7 @@
 
 Gerber Panelizer is a lightweight Windows desktop application for preparing printed-circuit-board manufacturing panels. It imports manufacturing data exported from tools such as Autodesk Fusion, renders and filters the board layers, arranges multiple boards on a milling-machine work area, and exports one production ZIP package containing Gerber and Excellon files. The complete interface is available in Czech, English, German, and French.
 
-## Version 0.3.5 - 2026-11-11
-
-Version 0.3.5 renders filled Gerber regions as polygons, avoiding spurious connections between SMT pads in the preview. Production data can be dropped directly on the panel work area, ZIP archives may contain another ZIP archive, and the application asks for a layer assignment when imported Gerber filenames do not identify their manufacturing layer.
-
-## Version 0.3.4 - 2026-11-09
-
-Version 0.3.4 completes the Czech, English, German, and French interface resources and refreshes computed texts immediately after a language change, including the default work area, imported-file counts, USB state, prepared-operation summaries, surface status, and manual-motion mode. Version 0.3.3 added the imported-board visibility switch, placed-board details, cached preview rendering, keyboard jogging, elapsed task time, preparation-warning confirmation, and automatic clearing of the previous head trail.
+See [CHANGELOG.md](CHANGELOG.md) for the version history and release notes.
 
 > [!WARNING]
 > **Current releases are not code-signed.** Windows SmartScreen may therefore display a warning for both the portable EXE and the MSI installer. Download only from this repository's [GitHub Releases](https://github.com/pihrt-com/gerber-panelizer/releases), verify the published SHA-256 checksum, and run it only if you trust that release. A publicly trusted code-signing certificate is required to resolve this properly; even a newly signed publisher can need time to establish SmartScreen reputation. See the [security and installation notice](SECURITY.md).

@@ -1,13 +1,5 @@
 # Gerber Panelizer
 
-## Verze 0.3.5 – 2026-11-11
-
-Verze 0.3.5 vykresluje vyplněné oblasti Gerberu jako plochy, takže náhled nespojí sousední SMT plošky širokou aktivní aperturou. Výrobní data lze přetáhnout přímo na pracovní plochu, import přečte i výrobní ZIP uložený v jiném ZIPu a u Gerberu bez rozpoznaného názvu vrstvy vyžádá přiřazení vrstvy.
-
-## Verze 0.3.4 – 2026-11-09
-
-Verze 0.3.4 doplňuje všechny texty českého, anglického, německého a francouzského rozhraní a po změně jazyka ihned obnoví také dopočítávané údaje, například výchozí pracovní plochu, počty načtených souborů, stav USB, souhrny připravených operací, stav povrchu a režim ručního pohybu. Verze 0.3.3 přidala přepínač viditelnosti načtených desek, podrobnosti o umístěné desce, rychlejší vykreslování náhledu, polohování klávesnicí, uběhnutý čas úlohy, potvrzení varování při přípravě a mazání předchozí stopy hlavy při nové panelizaci.
-
 [![Nejnovější vydání](https://img.shields.io/github/v/release/pihrt-com/gerber-panelizer?display_name=tag&sort=semver&label=release)](https://github.com/pihrt-com/gerber-panelizer/releases/latest)
 [![Windows x64](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011%20x64-0078D4?logo=windows&logoColor=white)](https://github.com/pihrt-com/gerber-panelizer/releases/latest)
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/cs-cz/download/dotnet/8.0)
@@ -17,6 +9,8 @@ Verze 0.3.4 doplňuje všechny texty českého, anglického, německého a franc
 [English](README.md) | **Česky**
 
 Gerber Panelizer je odlehčená aplikace pro Windows pro přípravu výrobních panelů desek plošných spojů. Načte výrobní data exportovaná například z Autodesk Fusionu, zobrazí jejich vrstvy, rozmístí více desek na pracovní plochu frézky a vyexportuje jednu výrobní ZIP sadu Gerber a Excellon souborů. Celé rozhraní je dostupné v češtině, angličtině, němčině a francouzštině.
+
+Historii verzí a poznámky k vydáním obsahuje [CHANGELOG.md](CHANGELOG.md).
 
 > [!WARNING]
 > **Aktuální vydání nejsou podepsaná certifikátem pro podepisování kódu.** Windows SmartScreen proto může ukázat upozornění jak u přenosného EXE, tak u instalačního MSI. Stahujte pouze z [GitHub Releases tohoto repozitáře](https://github.com/pihrt-com/gerber-panelizer/releases), ověřte zveřejněný SHA-256 kontrolní součet a spusťte soubor jen tehdy, když danému vydání důvěřujete. K řádnému odstranění upozornění je nutný veřejně důvěryhodný certifikát; i nově podepsaný vydavatel může potřebovat čas na vytvoření reputace SmartScreenu. Viz [bezpečnostní a instalační informace](SECURITY.cs.md).
