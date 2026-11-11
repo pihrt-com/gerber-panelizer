@@ -282,7 +282,10 @@ public sealed class WegstrMachineViewModel : ObservableObject, IAsyncDisposable
         }
         catch (Exception exception) when (exception is InvalidOperationException or ArgumentOutOfRangeException or NotSupportedException)
         {
-            Status = L("WegstrStatusPreparationFailed", exception.Message);
+            var detail = exception is WegstrUnsupportedGerberGeometryException unsupportedGerber
+                ? L("WegstrErrorGerberArcsUnsupported", unsupportedGerber.FileName)
+                : exception.Message;
+            Status = L("WegstrStatusPreparationFailed", detail);
         }
     }
 

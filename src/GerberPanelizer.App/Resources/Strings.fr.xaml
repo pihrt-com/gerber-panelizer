@@ -256,6 +256,7 @@
     <sys:String x:Key="WegstrStatusPreparingCompensation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Préparation de la trajectoire d’usinage compensée…</sys:String>
     <sys:String x:Key="WegstrStatusWarnings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Avertissements : {0}</sys:String>
     <sys:String x:Key="WegstrStatusPreparationFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Échec de la préparation : {0}</sys:String>
+    <sys:String x:Key="WegstrErrorGerberArcsUnsupported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Le Gerber « {0} » contient des arcs qui ne peuvent pas encore être convertis de manière sûre en G-code Wegstr.</sys:String>
     <sys:String x:Key="WegstrConfirmConnect" xmlns:sys="clr-namespace:System;assembly=mscorlib">Se connecter à {0} en 9600 8N1 ?&#10;&#10;L’application enverra un paquet d’identification sans mouvement. L’arrêt d’urgence doit être accessible et la zone de broche dégagée.</sys:String>
     <sys:String x:Key="WegstrConfirmConnectTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connecter Wegstr</sys:String>
     <sys:String x:Key="WegstrStatusConnectedReady" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connecté à {0} ; la machine est prête.</sys:String>

@@ -1,5 +1,10 @@
 # Change log
 
+## Next version - 2026-11-11
+
+- Convert filled `G36`/`G37` copper regions into Wegstr isolation geometry, so panels using region-based SMT copper can be prepared directly in the Wegstr tab.
+- Localize the remaining unsupported-Gerber-arc preparation error in the Czech, English, German, and French interfaces.
+
 ## 0.3.5 - 2026-11-11
 
 - Render filled Gerber regions as filled polygons instead of tracing their outlines with the active aperture, preserving the separation between adjacent SMT pads in the panel preview.

@@ -220,6 +220,7 @@
     <sys:String x:Key="WegstrStatusPreparingCompensation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Preparing the compensated machining path…</sys:String>
     <sys:String x:Key="WegstrStatusWarnings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Warnings: {0}</sys:String>
     <sys:String x:Key="WegstrStatusPreparationFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Preparation failed: {0}</sys:String>
+    <sys:String x:Key="WegstrErrorGerberArcsUnsupported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Gerber "{0}" contains arcs that cannot yet be converted safely to Wegstr G-code.</sys:String>
     <sys:String x:Key="WegstrConfirmConnect" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connect to {0} at 9600 8N1?&#10;&#10;The application will send a zero-motion identification packet. Make sure the emergency stop is reachable and the spindle is clear.</sys:String>
     <sys:String x:Key="WegstrConfirmConnectTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connect Wegstr</sys:String>
     <sys:String x:Key="WegstrStatusConnectedReady" xmlns:sys="clr-namespace:System;assembly=mscorlib">Connected to {0}; machine reports ready.</sys:String>

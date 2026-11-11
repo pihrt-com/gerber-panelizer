@@ -371,6 +371,26 @@ public sealed class ParserAndPanelizationTests
         }
     }
 
+    [Fact]
+    public void WegstrExport_ConvertsFilledCopperRegionsToIsolationPaths()
+    {
+        const string copper = "%MOMM*%\n%FSLAX34Y34*%\n%ADD10R,1.600X0.800*%\nD10*\nG36*\nX10000Y10000D02*\nX30000Y10000D01*\nX30000Y20000D01*\nX10000Y20000D01*\nG37*\nM02*";
+        var board = new ImportedBoard("region", "region", [new ManufacturingFile("copper_top.gbr", "copper_top.gbr", ManufacturingLayerKind.CopperTop, FileFormat.Gerber, copper, new PcbBounds(1, 1, 3, 2), [])], new PcbBounds(1, 1, 3, 2));
+        var archivePath = Path.Combine(Path.GetTempPath(), $"gerber-panelizer-{Guid.NewGuid():N}.zip");
+
+        try
+        {
+            var result = new WegstrGCodeExportService().Export(archivePath, [new BoardPlacement(board, new PcbPoint(0, 0))], new WegstrMachineProfile { IncludeOutlineInCopper = false });
+
+            Assert.Contains("01-copper-isolation.txt", result.Entries);
+            Assert.Contains("G1Z-0.080", ReadEntry(archivePath, "01-copper-isolation.txt"));
+        }
+        finally
+        {
+            if (File.Exists(archivePath)) File.Delete(archivePath);
+        }
+    }
+
     [Theory]
     [InlineData("soldermask_top.gbr", ManufacturingLayerKind.SolderMaskTop)]
     [InlineData("soldermask_bottom.gbr", ManufacturingLayerKind.SolderMaskBottom)]

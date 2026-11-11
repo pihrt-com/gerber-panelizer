@@ -220,6 +220,7 @@
     <sys:String x:Key="WegstrStatusPreparingCompensation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připravuji kompenzovanou dráhu obrábění…</sys:String>
     <sys:String x:Key="WegstrStatusWarnings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Varování: {0}</sys:String>
     <sys:String x:Key="WegstrStatusPreparationFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Příprava se nezdařila: {0}</sys:String>
+    <sys:String x:Key="WegstrErrorGerberArcsUnsupported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Gerber „{0}“ obsahuje oblouky, které zatím nelze bezpečně převést na G-kód Wegstr.</sys:String>
     <sys:String x:Key="WegstrConfirmConnect" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připojit se k {0} rychlostí 9600 8N1?&#10;&#10;Aplikace odešle identifikační paket bez pohybu. Nouzové zastavení musí být dostupné a prostor vřetena volný.</sys:String>
     <sys:String x:Key="WegstrConfirmConnectTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připojit Wegstr</sys:String>
     <sys:String x:Key="WegstrStatusConnectedReady" xmlns:sys="clr-namespace:System;assembly=mscorlib">Připojeno k {0}; stroj hlásí připraveno.</sys:String>

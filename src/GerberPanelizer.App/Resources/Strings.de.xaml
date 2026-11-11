@@ -256,6 +256,7 @@
     <sys:String x:Key="WegstrStatusPreparingCompensation" xmlns:sys="clr-namespace:System;assembly=mscorlib">Kompensierter Bearbeitungsweg wird vorbereitet…</sys:String>
     <sys:String x:Key="WegstrStatusWarnings" xmlns:sys="clr-namespace:System;assembly=mscorlib">Warnungen: {0}</sys:String>
     <sys:String x:Key="WegstrStatusPreparationFailed" xmlns:sys="clr-namespace:System;assembly=mscorlib">Vorbereitung fehlgeschlagen: {0}</sys:String>
+    <sys:String x:Key="WegstrErrorGerberArcsUnsupported" xmlns:sys="clr-namespace:System;assembly=mscorlib">Gerber „{0}“ enthält Bögen, die noch nicht sicher in Wegstr-G-Code umgewandelt werden können.</sys:String>
     <sys:String x:Key="WegstrConfirmConnect" xmlns:sys="clr-namespace:System;assembly=mscorlib">Mit {0} über 9600 8N1 verbinden?&#10;&#10;Die Anwendung sendet ein Identifikationspaket ohne Bewegung. Not-Halt muss erreichbar und der Spindelbereich frei sein.</sys:String>
     <sys:String x:Key="WegstrConfirmConnectTitle" xmlns:sys="clr-namespace:System;assembly=mscorlib">Wegstr verbinden</sys:String>
     <sys:String x:Key="WegstrStatusConnectedReady" xmlns:sys="clr-namespace:System;assembly=mscorlib">Mit {0} verbunden; Maschine meldet bereit.</sys:String>

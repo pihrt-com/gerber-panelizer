@@ -14,6 +14,11 @@ public sealed record WegstrProgram(string FileName, string DisplayName, string G
 public sealed record WegstrProgramSet(IReadOnlyList<WegstrProgram> Programs, IReadOnlyList<string> Warnings);
 
 /// <summary>Writes Wegstr/Vectric-style metric G-code for copper isolation, drilling, and compensated board outlines.</summary>
+public sealed class WegstrUnsupportedGerberGeometryException(string fileName) : NotSupportedException
+{
+    public string FileName { get; } = fileName;
+}
+
 public sealed class WegstrGCodeExportService
 {
     private const int GeometryPrecision = 4;
@@ -176,8 +181,14 @@ public sealed class WegstrGCodeExportService
     {
         var result = new PathsD();
         var warnedShapes = new HashSet<GerberApertureShape>();
-        foreach (var operation in document.Operations.Where(operation => operation.Type is GerberOperationType.Draw or GerberOperationType.Flash))
+        foreach (var operation in document.Operations)
         {
+            if (operation.Type == GerberOperationType.Region)
+            {
+                if (operation.RegionPoints is { Count: >= 3 }) result.Add(new PathD(operation.RegionPoints.Select(ToClipperPoint)));
+                continue;
+            }
+            if (operation.Type is not (GerberOperationType.Draw or GerberOperationType.Flash)) continue;
             if (operation.Aperture.Shape == GerberApertureShape.Unknown || operation.Aperture.WidthMillimetres <= 0 || operation.Aperture.HeightMillimetres <= 0)
             {
                 if (warnedShapes.Add(GerberApertureShape.Unknown)) warnings.Add($"{fileName}: copper objects with an unknown aperture were skipped.");
@@ -332,9 +343,9 @@ public sealed class WegstrGCodeExportService
 
     private static void EnsureLinearGerber(ManufacturingFile file)
     {
-        if (file.Content.Contains("G02", StringComparison.OrdinalIgnoreCase) || file.Content.Contains("G03", StringComparison.OrdinalIgnoreCase) || file.Content.Contains("G36", StringComparison.OrdinalIgnoreCase) || file.Content.Contains("G37", StringComparison.OrdinalIgnoreCase))
+        if (file.Content.Contains("G02", StringComparison.OrdinalIgnoreCase) || file.Content.Contains("G03", StringComparison.OrdinalIgnoreCase))
         {
-            throw new NotSupportedException($"Gerber '{file.Name}' contains arcs or regions that cannot yet be converted safely to Wegstr G-code.");
+            throw new WegstrUnsupportedGerberGeometryException(file.Name);
         }
     }
 
